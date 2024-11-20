@@ -6,16 +6,15 @@
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
 
-  display: grid;
   grid-template-rows: 20px 1fr 20px;
   align-items: center;
   justify-items: center;
-  min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
-  font-family: var(--font-geist-sans);
+height: auto;
+align-items: start; /* Align content to the top */
+justify-items: center;
+grid-template-rows: 1fr auto; /* Main content takes up available space, footer at the bottom */
+min-height: 80vh;
 }
-
 @media (prefers-color-scheme: dark) {
   .page {
     --gray-rgb: 255, 255, 255;
@@ -43,12 +42,15 @@
 }
 
 .title {
+  margin-top: 1.2em;
   font-size: 100px; 
   font-family: 'Uchen', serif;
   opacity: 0; /* Initially invisible */
   animation: fadeIn 2.3s ease-in forwards; /* 2-second fade-in effect */
 }
-
+.page > :nth-child(1) {
+  flex: 1; /* Allow the main content to grow and push the footer down */
+}
 @keyframes fadeIn {
   from {
       opacity: 0; /* Start with opacity 0 */
@@ -56,4 +58,28 @@
   to {
       opacity: 1; /* End with full opacity */
   }
+}
+.desp{
+  font-family: 'Uchen', serif;
+  font-size: 35px;
+  opacity: 0;
+  border: none;
+  margin-top: 2em;
+  animation: fadeIn 2s ease-in forwards; /* Fade-in animation */
+  animation-delay: 0.8s;
+}
+.getStartedButton{
+  margin-top: 2.5em;
+  padding: 10px 20px;
+  font-size: 28px;
+  font-family: 'Uchen', serif;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 10px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  animation: fadeIn 2s ease-in forwards;
+}
+.getStartedButton:hover {
+  background-color: #0056b3; /* Darker blue on hover */
 }
