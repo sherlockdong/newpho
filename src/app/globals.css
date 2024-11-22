@@ -46,4 +46,76 @@ a {
   text-align: center;
   font-size: 20px;
   margin-bottom: 25px;
+  margin-top: 20em;
+}
+#home{
+  font-family: 'Uchen', serif;
+  text-align: left;
+  font-size: 22px;
+  margin-left: 1.5em;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #000050;
+  color: white;
+  padding: 20px 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.header.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.header.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+#start{
+  margin-top: 80px;
+  font-family: "Playfair Display", serif;
+  font-size: 40px;
+}
+.container {
+  display: flex; /* Use flexbox to align items horizontally */
+  justify-content: space-between; /* Space between the grids */
+  align-items: center; /* Align items vertically */
+  width: 100%; /* Full-width container */
+  padding: 10px;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.grid {
+  flex: 1; 
+  margin: 0 23px; /* Add some margin between grids */
+  padding: 20px; /* Add padding inside the grids */
+  text-align: center; /* Center the content */
+  border: 3px solid white; /* Add a border to the grids */
+  border-radius: 5px; /* Optional: round the corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.2s ease-in-out, box-shadow 0.4s ease-in-out;
+  margin-top: 40px;
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+}
+
+.grid:hover {
+  cursor: pointer;
+  transform: scale(1.05); /* Slightly enlarge the grid */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+#intr p{
+  margin-top: 120px;
+  line-height: 1.3em;
+  max-width: 80%;
+  margin-left: 4em;
+  font-family: "Playfair Display", serif;
+  font-size: 34px;
+  color: white;
+  margin-bottom: 100px;
 }

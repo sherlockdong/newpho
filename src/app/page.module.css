@@ -13,7 +13,6 @@ height: auto;
 align-items: start; /* Align content to the top */
 justify-items: center;
 grid-template-rows: 1fr auto; /* Main content takes up available space, footer at the bottom */
-min-height: 80vh;
 }
 @media (prefers-color-scheme: dark) {
   .page {
@@ -42,11 +41,11 @@ min-height: 80vh;
 }
 
 .title {
-  margin-top: 1.2em;
+  margin-top: 1.4em;
   font-size: 100px; 
   font-family: 'Uchen', serif;
   opacity: 0; /* Initially invisible */
-  animation: fadeIn 2.3s ease-in forwards; /* 2-second fade-in effect */
+  animation: fadeIn 1.6s ease-in forwards; /* 2-second fade-in effect */
 }
 .page > :nth-child(1) {
   flex: 1; /* Allow the main content to grow and push the footer down */
@@ -64,12 +63,13 @@ min-height: 80vh;
   font-size: 35px;
   opacity: 0;
   border: none;
-  margin-top: 2em;
-  animation: fadeIn 2s ease-in forwards; /* Fade-in animation */
+  color: #00FFFF;
+  margin-top: 2.2em;
+  animation: fadeIn 1.6s ease-in forwards; /* Fade-in animation */
   animation-delay: 0.8s;
 }
 .getStartedButton{
-  margin-top: 2.5em;
+  margin-top: 2.8em;
   padding: 10px 20px;
   font-size: 28px;
   font-family: 'Uchen', serif;
@@ -78,8 +78,49 @@ min-height: 80vh;
   border-radius: 10px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
   transition: background-color 0.3s ease; /* Smooth hover effect */
-  animation: fadeIn 2s ease-in forwards;
+  animation: fadeIn 1.6s ease-in forwards;
 }
 .getStartedButton:hover {
   background-color: #0056b3; /* Darker blue on hover */
+}
+.us{
+  font-family: 'Uchen', serif;
+}
+.us h2{
+  color: white;
+  font-size: 30px;
+  margin-top: 6em;
+  align-items: center;
+}
+.gridsContainer {
+  margin-top: 22px;
+  display: flex; /* Display grids side by side */
+  justify-content: space-between; /* Ensure grids share horizontal space */
+  align-items: flex-start; /* Align content to the top of each grid */
+  gap: 5px; /* Space between the grids */
+}
+
+.grid {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column; /* Stack items (h3 and p) vertically */
+  gap: 10px; /* Space between h3 and p */
+  border: 1px solid black;
+  padding: 20px; /* Space inside the grid box */
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px; /* Optional rounded corners */
+  width: 45%; /* Each grid takes up about half the container width */
+  max-width: 600px; /* Limit the width of the grid */
+  overflow: auto;
+}
+
+.grid h3 {
+  font-size: 23px;
+  margin: 0; /* Reset default margin for h3 */
+}
+
+.grid p {
+  font-size: 19px;
+  line-height: 1.5em;
+  margin: 0; /* Reset default margin for p */
 }

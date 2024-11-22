@@ -3,6 +3,7 @@ import styles from "./page.module.css";
 import "./globals.css";
 import Footer from "./comp/footer";
 import classNames from 'classnames';
+import Header from "./comp/header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
      <body className={classNames(geistSans.variable, geistMono.variable, styles.page)}>
-        {children}<Footer />
+      <Header />  {children}<Footer />
       </body>
 
     </html>
