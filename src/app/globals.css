@@ -83,25 +83,25 @@ a {
 }
 .container {
   display: flex; /* Use flexbox to align items horizontally */
-  justify-content: space-between; /* Space between the grids */
   align-items: center; /* Align items vertically */
+  justify-content: center; /* Center items horizontally */
+  flex-wrap: wrap; /* Allow wrapping if items don't fit */
   width: 100%; /* Full-width container */
-  padding: 10px;
+  margin-top: 20px;
   box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .grid {
-  flex: 1; 
-  margin: 0 23px; /* Add some margin between grids */
+  margin: 0 50px; /* Add some margin between grids */
   padding: 20px; /* Add padding inside the grids */
   text-align: center; /* Center the content */
   border: 3px solid white; /* Add a border to the grids */
   border-radius: 5px; /* Optional: round the corners */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
   transition: transform 0.2s ease-in-out, box-shadow 0.4s ease-in-out;
-  margin-top: 40px;
   font-family: "Playfair Display", serif;
   font-size: 25px;
+  cursor: pointer; /* Optional: Change cursor to pointer */
 }
 
 .grid:hover {
@@ -118,4 +118,76 @@ a {
   font-size: 34px;
   color: white;
   margin-bottom: 100px;
+}
+.grid-container {
+  display: flex; /* Use flexbox for two columns */
+  gap: 20px; /* Space between the columns */
+  width: 100%; /* Full width */
+  max-width: 1300px; /* Optional: Limit the maximum width */
+  margin: 0 auto; /* Center the container */
+}
+
+.grid-container__image, .grid-container__text {
+  flex: 1; /* Make columns take up equal space */
+}
+
+.grid-container__image img {
+  width: 100%; /* Make the images responsive */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Prevent inline spacing */
+}
+
+.grid-container__text {
+  font-size: 1.2rem; /* Adjust text size */
+  line-height: 1.6; /* Improve readability */
+  padding: 10px; /* Optional padding for spacing */
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    flex-direction: column; /* Stack columns vertically on small screens */
+  }
+
+  .grid-container__image img {
+    max-width: 80%; /* Limit image width */
+    margin: 0 auto; /* Center the image */
+  }
+
+  .grid-container__text {
+    text-align: center; /* Center text on smaller screens */
+  }
+}
+.grid-container__item grid-container__text p{
+  font-size: 12px;
+}
+.gold{
+  color:  #FFD700;
+}
+.silver{
+ color:  #C0C0C0;
+
+}
+.bronze{
+  color: #CD7F32;
+}
+.grid-container h3{
+  color: red;
+}
+#highschool{
+  margin-top: 100px;
+
+}
+.generated-text {
+  white-space: pre-wrap;       /* Preserve whitespace and line breaks */
+  word-wrap: break-word;      /* Wrap long words */
+  overflow-wrap: break-word;  /* Ensure compatibility for text wrapping */
+  width: 100%;                /* Let the text container use full width */
+  font-size: 16px;            /* Set a readable font size */
+  line-height: 1.5;           /* Improve readability */
+  padding: 10px;              /* Add padding for spacing */
+  border: 1px solid #ccc;     /* Optional: Add a border for clarity */
+  border-radius: 5px;         /* Optional: Add rounded corners */
+  background-color: black;  /* Optional: Use a light background color */
+  max-width: 90%;             /* Optional: Constrain container width for large screens */
+  margin: 0 auto;             /* Center the text container */
 }

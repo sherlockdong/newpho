@@ -4,9 +4,9 @@ const Rout =()=>{
     return (<>
         <div id="start">What do you want to know about?</div>
         <div className="container">
-        <div className="grid"><Link href='../olymco'>Olympics by Country</Link></div>
-        <div className="grid">Pre-College Physics</div>
-        <div className="grid">Olympiad Physics</div>
+    <Link href='../olymco'><div className="grid">Olympics by Country</div></Link>
+    <Link href='../highschool'><div className="grid">Pre-College Physics</div></Link>
+        <Link href='../highschool'><div className="grid">Olympiad Physics</div></Link>
     </div>
     </>
     )
