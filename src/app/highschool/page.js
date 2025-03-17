@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Simp from './phoai1/simple';
 const Count = () => {
     return (
       <>
@@ -16,12 +15,15 @@ for the olympics. </p>
 <li><a href="/">Circular Motion</a></li>
 <li><a href="/">Pure Rotational Motion</a></li>
 <li><a href="/">Test Yourself</a></li>	
+
 </ul>
 </div>
-<Simp />
+
       </>
     );
   };
   
   export default Count;
   
+
+ 

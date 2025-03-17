@@ -177,17 +177,6 @@ a {
   margin-top: 100px;
 
 }
-.generated-text {
-  white-space: pre-wrap;       /* Preserve whitespace and line breaks */
-  word-wrap: break-word;      /* Wrap long words */
-  overflow-wrap: break-word;  /* Ensure compatibility for text wrapping */
-  width: 100%;                /* Let the text container use full width */
-  font-size: 16px;            /* Set a readable font size */
-  line-height: 1.5;           /* Improve readability */
-  padding: 10px;              /* Add padding for spacing */
-  border: 1px solid #ccc;     /* Optional: Add a border for clarity */
-  border-radius: 5px;         /* Optional: Add rounded corners */
-  background-color: black;  /* Optional: Use a light background color */
-  max-width: 90%;             /* Optional: Constrain container width for large screens */
-  margin: 0 auto;             /* Center the text container */
+#try{
+  color: white;
 }
