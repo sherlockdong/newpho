@@ -6,8 +6,8 @@ const NotFound = () => {
   return (
     <div style={{ textAlign: 'center', padding: '50px' , marginTop: '100px'}}>
       <h1>404</h1>
-      <p>Oops! The page you're looking for doesn't exist.</p>
-      <Link href="/" style={{ color: 'blue', textDecoration: 'underline' }}>
+      <p>Soryy! This part of the universe of physics is still completely dark. </p>
+      <Link href="/" style={{ color: 'orange', textDecoration: 'underline' ,fontSize:'20px'}}>
         Go back to Home
       </Link>
     </div>
