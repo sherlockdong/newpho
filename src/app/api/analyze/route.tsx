@@ -1,4 +1,4 @@
-import { analyzeStudentProgress } from '@/flow/analyzeProgress';
+import { analyzeStudentProgress } from '../../../flow/analyzeProgress';
 
 export async function POST(request: Request) {
   const { quizScores, incorrectTopics, studyLogs } = await request.json();
