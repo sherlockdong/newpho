@@ -8,7 +8,7 @@ const DeepSeekLLM = {
     const prompt = typeof input === "string" ? input : input?.value || String(input);
     if (!prompt) throw new Error("No valid prompt string provided to DeepSeekLLM");
 
-    const deepseekUrl = "https://api.deepseek.com/v1/chat/completions";
+    const deepseekUrl = "https://api.deepseek.com/v1";
     try {
       console.log("Calling DeepSeek with prompt:", prompt.substring(0, 50) + "...");
       console.log("Using DEEPSEEK_API_KEY:", process.env.DEEPSEEK_API_KEY ? "Set" : "Not set");
