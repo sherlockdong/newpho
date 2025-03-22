@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     `;
   
     try {
-      const completion = await fetch("https://api.deepseek.com/chat/completions", {
+      const completion = await fetch("https://api.deepseek.com/v1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
