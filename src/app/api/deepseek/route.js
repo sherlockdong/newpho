@@ -18,7 +18,7 @@ export async function POST(request) {
       temperature: 0.7,
     };
 
-    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    const response = await fetch("https://api.deepseek.com/v1", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 // Initialize the OpenAI instance with DeepSeek configuration.
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
+  baseURL: "https://api.deepseek.com/v1",
   apiKey: process.env.DEEPSEEK_API_KEY!,
 });
 
