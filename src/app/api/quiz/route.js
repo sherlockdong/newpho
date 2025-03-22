@@ -8,41 +8,50 @@ const DeepSeekLLM = {
     const prompt = typeof input === "string" ? input : input?.value || String(input);
     if (!prompt) throw new Error("No valid prompt string provided to DeepSeekLLM");
 
-    const deepseekUrl = "https://api.deepseek.com/v1/chat/completions"; // Direct DeepSeek URL
-    const response = await fetch(deepseekUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`, // Add API key
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [{ role: "system", content: prompt }],
-      }),
-    });
+    const deepseekUrl = "https://api.deepseek.com/v1/chat/completions";
+    try {
+      console.log("Calling DeepSeek with prompt:", prompt.substring(0, 50) + "...");
+      console.log("Using DEEPSEEK_API_KEY:", process.env.DEEPSEEK_API_KEY ? "Set" : "Not set");
+      const response = await fetch(deepseekUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "system", content: prompt }],
+        }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`DeepSeek API call failed: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`DeepSeek API call failed: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      const quizText = data.choices?.[0]?.message?.content || "";
+      if (!quizText) {
+        console.error("DeepSeek returned no valid quiz content:", data);
+        return "";
+      }
+
+      return quizText
+        .split('\n')
+        .map(line => {
+          const match = line.trim().match(/^\d+\.\s*(.*)$/);
+          return match ? `${match[0]}[${match[1]}]` : line;
+        })
+        .join('\n');
+    } catch (error) {
+      console.error("DeepSeek fetch error:", {
+        message: error.message,
+        cause: error.cause, // Includes network-level details
+      });
+      throw error; // Re-throw to be caught by POST handler
     }
-
-    const data = await response.json();
-    const quizText = data.choices?.[0]?.message?.content || "";
-    if (!quizText) {
-      console.error("DeepSeek returned no valid quiz content:", data);
-      return ""; // Fallback to empty string
-    }
-
-    return quizText
-      .split('\n')
-      .map(line => {
-        const match = line.trim().match(/^\d+\.\s*(.*)$/);
-        return match ? `${match[0]}[${match[1]}]` : line;
-      })
-      .join('\n');
   },
 };
-
 async function getContentByTag(tag, userId, quizLogs) {
   const dirPath = path.join(process.cwd(), 'src', 'data', 'physicstopics');
   const files = await fs.readdir(dirPath);
