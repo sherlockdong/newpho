@@ -1,13 +1,11 @@
-// src/app/api/deepseek/route.js
-
 export async function POST(request) {
   try {
     const body = await request.json();
     console.log("Received body:", body);
-    const { prompt } = body; // expecting { "prompt": "your prompt text" }
+    const { prompt } = body;
 
-    if (!prompt) {
-      throw new Error("prompt is not defined");
+    if (!prompt || typeof prompt !== "string" || prompt.trim() === "") {
+      throw new Error("Valid prompt string is required");
     }
 
     if (!process.env.DEEPSEEK_API_KEY) {
@@ -29,13 +27,20 @@ export async function POST(request) {
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`DeepSeek API failed: ${response.status} - ${errorText}`);
+    }
+
     const data = await response.json();
+    console.log("DeepSeek API response:", JSON.stringify(data, null, 2));
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error calling DeepSeek API:", error);
+    console.error("Error calling DeepSeek API:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

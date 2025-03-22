@@ -1,19 +1,37 @@
 // src/flows/analyzeProgress.ts
-interface AnalyzeInput {
-    studentQuizScores: string;
-    incorrectTopics: string;
-    studyLogs: string;
-  }
-  
-  export async function analyzeStudentProgress(input: AnalyzeInput): Promise<string> {
-    const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("Google GenAI API key is not defined.");
+import { AnalyzeInput } from "./type";
+import OpenAI from "openai";
+
+// Initialize the OpenAI instance with DeepSeek configuration.
+const openai = new OpenAI({
+  baseURL: "https://api.deepseek.com",
+  apiKey: process.env.DEEPSEEK_API_KEY!,
+});
+
+export async function analyzeStudentProgress(input: AnalyzeInput): Promise<string> {
+  // Construct your prompt
+  const prompt = `
+    Analyze the following student progress data:
+    - Quiz Scores: ${input.studentQuizScores}
+    - Incorrect Topics: ${input.incorrectTopics}
+    - Study Logs: ${input.studyLogs}
+    
+    Provide a prediction of the student's future performance and a detailed study schedule for improvement.
+  `;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "system", content: prompt }],
+      model: "deepseek-chat",
+      temperature: 0.7,
+    });
+
+    if (completion.choices && completion.choices.length > 0) {
+      return completion.choices[0].message.content;
     }
-    // Use the apiKey in your API request to Genkit, e.g.:
-    // const response = await fetch("https://genkit.example/api/analyze", { headers: { Authorization: `Bearer ${apiKey}` } });
-    // Process the response and return your analysis.
-  
-    return `Analyzed progress for scores: ${input.studentQuizScores} using Genkit with key: ${apiKey.slice(0, 4)}...`; // For testing purposes, don't log the full key in production.
+    return "No analysis available.";
+  } catch (error) {
+    console.error("Error calling DeepSeek:", error);
+    throw error;
   }
-  
+}

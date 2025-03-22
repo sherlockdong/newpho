@@ -10,7 +10,7 @@ for the olympics. </p>
 <Link href='./highschool/kinematics'><h4>Kinematics</h4></Link>
 <ul>
 <li><a href="resource/kinematics/addimo.html">Analyzing Motions</a></li>
-<li><a href="resource/kinematics/projt.html">Projectile Motion</a></li>
+<li><a href="./highschool/quiz">Quizes</a></li>
 <li><a href="./highschool/anapa">Circular Motion</a></li>
 <li><a href="/">Pure Rotational Motion</a></li>
 <li><a href="/">Test Yourself</a></li>	

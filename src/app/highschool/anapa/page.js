@@ -29,7 +29,7 @@ export default function StudentProgressAnalyzer() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div className="quizzes" >
       <form
         onSubmit={handleSubmit}
         className="max-w-xl w-full bg-white shadow-md rounded-lg p-6"

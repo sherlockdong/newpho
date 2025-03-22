@@ -3,7 +3,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-// Import other services as needed
+import { getFirestore } from "firebase/firestore"; // Import Firestore
 
 const firebaseConfig = {
   apiKey: "AIzaSyCo8ShVpTbmTXWEtCmMfDH3pS69Db5NL0U",
@@ -20,7 +20,6 @@ const app = initializeApp(firebaseConfig);
 // Conditionally initialize Analytics
 let analytics;
 if (typeof window !== "undefined") {
-  // Check if analytics is supported in the current environment
   isSupported().then((supported) => {
     if (supported) {
       analytics = getAnalytics(app);
@@ -29,5 +28,17 @@ if (typeof window !== "undefined") {
 }
 
 const auth = getAuth(app);
+const db = getFirestore(app); // Initialize Firestore
+const migrateLogs = async (uid) => {
+  const userRef = doc(db, "users", uid);
+  const snap = await getDoc(userRef);
+  if (snap.exists() && snap.data().analysisLogs) {
+    const logs = snap.data().analysisLogs;
+    for (const log of logs) {
+      await setDoc(doc(db, "users", uid, "analysisLogs", Date.now().toString()), log);
+    }
+    await updateDoc(userRef, { analysisLogs: deleteField() });
+  }
+};
 
-export { app, analytics, auth };
+export { app, analytics, auth, db };
