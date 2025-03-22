@@ -7,16 +7,23 @@ const DeepSeekLLM = {
   async call(input) {
     const prompt = typeof input === "string" ? input : input?.value || String(input);
     if (!prompt) throw new Error("No valid prompt string provided to DeepSeekLLM");
-    const deepseekUrl = "/api/deepseek"; // relative URL
-    const response = await fetch(deepseekUrl,  {
+
+    const deepseekUrl = "https://api.deepseek.com/v1/chat/completions"; // Direct DeepSeek URL
+    const response = await fetch(deepseekUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`, // Add API key
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [{ role: "system", content: prompt }],
+      }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`DeepSeek API call failed: ${errorText}`);
+      throw new Error(`DeepSeek API call failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -44,7 +51,7 @@ async function getContentByTag(tag, userId, quizLogs) {
   let weakTopics = [tag];
 
   if (quizLogs && quizLogs.length > 0) {
-    const lastLog = quizLogs[0]; // Most recent log
+    const lastLog = quizLogs[0];
     weakTopics = lastLog.incorrectTopics.split(',').map(t => t.trim());
     console.log(`User weak topics from logs: ${weakTopics}`);
   } else {
