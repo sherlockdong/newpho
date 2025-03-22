@@ -7,12 +7,8 @@ const DeepSeekLLM = {
   async call(input) {
     const prompt = typeof input === "string" ? input : input?.value || String(input);
     if (!prompt) throw new Error("No valid prompt string provided to DeepSeekLLM");
-
-    const deepseekUrl = process.env.NEXT_PUBLIC_HOST
-      ? `${process.env.NEXT_PUBLIC_HOST}/api/deepseek`
-      : "http://localhost:3000/api/deepseek";
-
-    const response = await fetch(deepseekUrl, {
+    const deepseekUrl = "/api/deepseek"; // relative URL
+    const response = await fetch(deepseekUrl,  {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
