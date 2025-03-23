@@ -14,24 +14,6 @@ const PHYSICS_FACTS = [
   "The shortest war in history lasted 38 minutes.",
 ];
 
-// Fetch content from JSON files (client-side, pre-fetched or via API)
-async function getContentByTag(tag, quizLogs) {
-  // For client-side, we'll assume tags are enough for now; adjust if server-side needed
-  // Ideally, this would be an API call to /api/content, but keeping it simple for now
-  let weakTopics = [tag];
-  if (quizLogs && quizLogs.length > 0) {
-    const lastLog = quizLogs[0];
-    weakTopics = lastLog.incorrectTopics.split(',').map(t => t.trim());
-    console.log(`User weak topics from logs: ${weakTopics}`);
-  }
-
-  // Placeholder: Replace with actual fetch from JSON files or API
-  // Since this is client-side, you might need a separate API route or static data
-  const content = `Sample content for ${tag}.`; // Replace with real JSON fetch
-  console.log("Content for tag:", content);
-  return content.trim() || "No content available for this topic.";
-}
-
 export default function QuizPage() {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -91,20 +73,28 @@ export default function QuizPage() {
     setStartTime(Date.now());
 
     try {
-      const content = await getContentByTag(selectedTag, quizLogs);
-      const prompt = `Using the following content, generate ${questionCount} quiz questions for ${selectedTag}:\n\n${content}`;
+      const contentResponse = await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag: selectedTag, quizLogs }),
+      });
+      if (!contentResponse.ok) throw new Error(await contentResponse.text());
+      const { content } = await contentResponse.json();
+      if (!content || content.includes("No content available")) {
+        throw new Error("No valid content retrieved for tag: " + selectedTag);
+      }
+      console.log("Content from /api/content:", content);
+
+      const prompt = `Based strictly on this content, generate ${questionCount} quiz questions for ${selectedTag}. Do not use external knowledge:\n\n${content}`;
       console.log("Prompt sent to Render:", prompt);
 
-      const response = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
+      const quizResponse = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to generate quiz: ${response.status} - ${errorText}`);
-      }
-      const data = await response.json();
+      if (!quizResponse.ok) throw new Error(await quizResponse.text());
+      const data = await quizResponse.json();
       const quizContent = data.choices?.[0]?.message?.content || "";
       console.log("Raw quiz content:", quizContent);
       if (!quizContent) throw new Error("Quiz is empty or invalid");
@@ -123,14 +113,14 @@ export default function QuizPage() {
     let currentQuestion = "";
 
     for (const line of lines) {
-      if (line.match(/^### Question \d+:/)) {
+      if (line.match(/^\d+\.\s*\*\*Question:\*\*/)) {
         if (currentQuestion) questions.push(currentQuestion);
-        currentQuestion = line.replace(/^### Question \d+:\s*(.*)$/, "$1");
-      } else if (line.startsWith("**") && line.endsWith("**")) {
-        currentQuestion += " " + line.replace(/\*\*/g, "");
+        currentQuestion = line.replace(/^\d+\.\s*\*\*Question:\*\*\s*/, "");
+      } else if (!line.includes("**Answer:**") && line) {
+        currentQuestion += " " + line;
       }
     }
-    if (currentQuestion) questions.push(currentQuestion);
+    if (currentQuestion) questions.push(currentQuestion.trim());
     console.log("Parsed questions:", questions);
     return questions;
   };
