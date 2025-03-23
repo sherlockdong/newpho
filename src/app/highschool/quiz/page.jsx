@@ -6,7 +6,6 @@ import { app } from "../../../firebase";
 
 const auth = getAuth(app);
 
-// Sample physics facts (replace with fetch from file later)
 const PHYSICS_FACTS = [
   "The speed of light in a vacuum is approximately 299,792 kilometers per second.",
   "A day on Venus is longer than its year.",
@@ -14,6 +13,24 @@ const PHYSICS_FACTS = [
   "Black holes can bend light due to their immense gravitational pull.",
   "The shortest war in history lasted 38 minutes.",
 ];
+
+// Fetch content from JSON files (client-side, pre-fetched or via API)
+async function getContentByTag(tag, quizLogs) {
+  // For client-side, we'll assume tags are enough for now; adjust if server-side needed
+  // Ideally, this would be an API call to /api/content, but keeping it simple for now
+  let weakTopics = [tag];
+  if (quizLogs && quizLogs.length > 0) {
+    const lastLog = quizLogs[0];
+    weakTopics = lastLog.incorrectTopics.split(',').map(t => t.trim());
+    console.log(`User weak topics from logs: ${weakTopics}`);
+  }
+
+  // Placeholder: Replace with actual fetch from JSON files or API
+  // Since this is client-side, you might need a separate API route or static data
+  const content = `Sample content for ${tag}.`; // Replace with real JSON fetch
+  console.log("Content for tag:", content);
+  return content.trim() || "No content available for this topic.";
+}
 
 export default function QuizPage() {
   const [quiz, setQuiz] = useState(null);
@@ -27,9 +44,8 @@ export default function QuizPage() {
   const [startTime, setStartTime] = useState(null);
   const [user, setUser] = useState(null);
   const [quizLogs, setQuizLogs] = useState([]);
-  const [currentFact, setCurrentFact] = useState(""); // Current random fact
+  const [currentFact, setCurrentFact] = useState("");
 
-  // Sync auth state and load logs
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -39,7 +55,6 @@ export default function QuizPage() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch tags
   useEffect(() => {
     async function fetchTags() {
       try {
@@ -57,17 +72,15 @@ export default function QuizPage() {
     fetchTags();
   }, []);
 
-  // Rotate facts while loading
   useEffect(() => {
     let interval;
     if (loading) {
-      // Set initial fact immediately
       setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
       interval = setInterval(() => {
         setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
       }, 4000);
     }
-    return () => clearInterval(interval); // Cleanup on unmount or loading change
+    return () => clearInterval(interval);
   }, [loading]);
 
   async function handleGenerateQuiz() {
@@ -78,19 +91,22 @@ export default function QuizPage() {
     setStartTime(Date.now());
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz`, {
+      const content = await getContentByTag(selectedTag, quizLogs);
+      const prompt = `Using the following content, generate ${questionCount} quiz questions for ${selectedTag}:\n\n${content}`;
+      console.log("Prompt sent to Render:", prompt);
+
+      const response = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tag: selectedTag,
-          numQuestions: questionCount,
-          userId: user?.uid || "guest",
-          quizLogs,
-        }),
+        body: JSON.stringify({ prompt }),
       });
-      if (!response.ok) throw new Error(`Failed to generate quiz: ${response.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to generate quiz: ${response.status} - ${errorText}`);
+      }
       const data = await response.json();
-      const quizContent = typeof data.quiz === "string" ? data.quiz : data.quiz?.call || "";
+      const quizContent = data.choices?.[0]?.message?.content || "";
+      console.log("Raw quiz content:", quizContent);
       if (!quizContent) throw new Error("Quiz is empty or invalid");
       setQuiz(quizContent);
     } catch (err) {
@@ -102,11 +118,21 @@ export default function QuizPage() {
 
   const parseQuizQuestions = (quizString) => {
     if (!quizString || typeof quizString !== "string") return [];
-    return quizString
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.match(/^\d+\.\s*(?:\[.*\]|.*)$/))
-      .map((line) => line.replace(/^\d+\.\s*(\[)?(.*?)(\])?$/, "$2"));
+    const lines = quizString.split("\n").map((line) => line.trim());
+    const questions = [];
+    let currentQuestion = "";
+
+    for (const line of lines) {
+      if (line.match(/^### Question \d+:/)) {
+        if (currentQuestion) questions.push(currentQuestion);
+        currentQuestion = line.replace(/^### Question \d+:\s*(.*)$/, "$1");
+      } else if (line.startsWith("**") && line.endsWith("**")) {
+        currentQuestion += " " + line.replace(/\*\*/g, "");
+      }
+    }
+    if (currentQuestion) questions.push(currentQuestion);
+    console.log("Parsed questions:", questions);
+    return questions;
   };
 
   const handleAnswerChange = (index, field, value) => {
@@ -119,7 +145,7 @@ export default function QuizPage() {
   async function handleSubmitAnswers() {
     setLoading(true);
     try {
-      const timeTaken = (Date.now() - startTime) / 1000; // seconds
+      const timeTaken = (Date.now() - startTime) / 1000;
       const response = await fetch("/api/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -222,16 +248,11 @@ export default function QuizPage() {
           <h2 className="quiz-subtitle">Your Quiz</h2>
           <div className="quiz-questions">
             {questions.length > 0 ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmitAnswers();
-                }}
-              >
+              <form onSubmit={(e) => { e.preventDefault(); handleSubmitAnswers(); }}>
                 <ol>
                   {questions.map((question, index) => (
                     <li key={index} className="quiz-question">
-                      {question}
+                      <span>{question}</span>
                       <div>
                         <label>Answer:</label>
                         <textarea
@@ -271,7 +292,7 @@ export default function QuizPage() {
                 </button>
               </form>
             ) : (
-              <p>No valid questions generated.</p>
+              <p>No valid questions generated. Raw content: {quiz}</p>
             )}
           </div>
         </div>
