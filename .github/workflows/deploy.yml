@@ -1,0 +1,25 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: echo "Building project..."
+
+- name: Use secrets safely
+  run: |
+    echo "Using secret: ${{ secrets.DEEPSEEK_API_KEY }}"
+    echo "Another secret: ${{ secrets.GOOGLE_GENAI_API_KEY }}"
+    echo "Another secret: ${{ secrets.OPENAI_API_KEY }}"
+
+  
