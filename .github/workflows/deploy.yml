@@ -16,9 +16,10 @@ jobs:
       - name: Build
         run: echo "Building project..."
 
-      - name: Deploy
-        run: |
-        echo "Using secret: ${{ secrets.DEEPSEEK_API_KEY }}"
-        echo "Using secret: ${{ secrets.GOOGLE_GENAI_API_KEY }}"
-        echo "Using secret: ${{ secrets.OPENAI_API_KEY }}"
-        
+- name: Use secrets safely
+  run: |
+    echo "Using secret: ${{ secrets.DEEPSEEK_API_KEY }}"
+    echo "Another secret: ${{ secrets.GOOGLE_GENAI_API_KEY }}"
+    echo "Another secret: ${{ secrets.OPENAI_API_KEY }}"
+
+  
