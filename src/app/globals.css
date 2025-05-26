@@ -375,3 +375,30 @@ a {
   color: #0070f3;
   margin-top: 10px;
 }
+
+.quiz-question {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.quiz-question h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.quiz-options {
+  list-style: none;
+  padding: 0;
+}
+
+.quiz-options li {
+  margin: 0.5rem 0;
+}
+
+.correct-answer {
+  color: green;
+  font-weight: bold;
+  margin-top: 1rem;
+}

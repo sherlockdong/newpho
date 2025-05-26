@@ -1,41 +1,44 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-async function getContentByTag(tag, quizLogs) {
+async function getContentByTagAndDifficulty(topic, tag, difficulty) {
   const dirPath = path.join(process.cwd(), 'src', 'data', 'physicstopics');
-  const files = await fs.readdir(dirPath);
-  const jsonFiles = files.filter(file => file.endsWith('.json'));
+  const filePath = path.join(dirPath, `${topic}.json`);
   let content = '';
-  let weakTopics = [tag];
 
-  if (quizLogs && quizLogs.length > 0) {
-    const lastLog = quizLogs[0];
-    weakTopics = lastLog.incorrectTopics.split(',').map(t => t.trim());
-    console.log(`User weak topics from logs: ${weakTopics}`);
-  }
-
-  for (const file of jsonFiles) {
-    const filePath = path.join(dirPath, file);
+  try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data = JSON.parse(fileContent);
     const items = Array.isArray(data) ? data : [data];
+
     items.forEach(item => {
-      if (item.tags && item.tags.some(t => weakTopics.includes(t))) {
-        content += item.content + '\n';
+      if (
+        item.tags &&
+        item.tags.some(t => t.toLowerCase() === tag.toLowerCase()) &&
+        item.difficulty
+      ) {
+        const itemDifficulty = Array.isArray(item.difficulty) ? item.difficulty[0] : item.difficulty;
+        if (itemDifficulty && itemDifficulty.toLowerCase() === difficulty.toLowerCase()) {
+          content += item.content + '\n';
+          console.log(`Matched content for tag "${tag}" and difficulty "${difficulty}" in ${topic}.json:`, item.content);
+        }
       }
     });
-  }
 
-  return content.trim() || "No content available for this topic.";
+    return content.trim() || `No content found for tag "${tag}" and difficulty "${difficulty}" in ${topic}.json`;
+  } catch (error) {
+    console.error(`Error reading ${filePath}:`, error);
+    throw new Error(`Failed to fetch content from ${topic}.json`);
+  }
 }
 
 export async function POST(request) {
   try {
-    const { tag, quizLogs } = await request.json();
-    if (!tag) {
-      return Response.json({ error: "Tag is required" }, { status: 400 });
+    const { topic, tag, difficulty } = await request.json();
+    if (!topic || !tag || !difficulty) {
+      return Response.json({ error: "Topic, tag, and difficulty are required" }, { status: 400 });
     }
-    const content = await getContentByTag(tag, quizLogs);
+    const content = await getContentByTagAndDifficulty(topic, tag, difficulty);
     return Response.json({ content });
   } catch (error) {
     console.error("Content route error:", error);
