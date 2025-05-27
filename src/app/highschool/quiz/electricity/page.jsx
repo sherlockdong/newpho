@@ -236,7 +236,11 @@ export default function ElectricityQuizPage() {
           userId: user?.uid || "guest",
         }),
       });
-      if (!response.ok) throw new Error("Failed to evaluate answers");
+   if (!response.ok) {
+  const text = await response.text();
+  console.error("Evaluate error:", response.status, text);
+  throw new Error(`Evaluate failed: ${response.status} ${text}`);
+}
       const data = await response.json();
 
       const newLog = {
