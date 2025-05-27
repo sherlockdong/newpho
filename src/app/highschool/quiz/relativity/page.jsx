@@ -225,17 +225,20 @@ export default function RelativityQuizPage() {
     setLoading(true);
     try {
       const timeTaken = (Date.now() - startTime) / 1000;
-      const response = await fetch("/api/evaluate", {
+         const payload = {
+     quizScores: calculateScore(answers),
+     incorrectTopics: selectedSubtopic,
+      studyLogs: `Time taken: ${timeTaken}s`,
+   };
+   // 2) Point at your Render server’s analyze endpoint:
+   const response = await fetch(
+   "https://deepseek-backend-u2i2.onrender.com/api/analyze",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quiz: questions,
-          answers,
-          timeTaken,
-          tag: selectedSubtopic,
-          userId: user?.uid || "guest",
-        }),
-      });
+        body: JSON.stringify(payload),
+      }
+    );
       if (!response.ok) throw new Error("Failed to evaluate answers");
       const data = await response.json();
 
