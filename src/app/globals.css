@@ -402,3 +402,6 @@ a {
   font-weight: bold;
   margin-top: 1rem;
 }
+#cpy{
+  font-family: "Playfair Display", serif; /* Match your site’s typography */
+}
