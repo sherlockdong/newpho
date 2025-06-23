@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { app } from "../../../firebase"; // Adjust path based on your project structure
+import { app } from "../../firebase"; // Adjust path based on your project structure
 
 const auth = getAuth(app);
 
@@ -52,7 +52,7 @@ export default function QuizIndexPage() {
       <ul className="topic-list">
         {topics.map((topic) => (
           <li key={topic.slug} className="topic-item">
-            <Link href={`/highschool/quiz/${topic.slug}`} className="topic-link">
+            <Link href={`/quiz/${topic.slug}`} className="topic-link">
               {topic.name}
             </Link>
           </li>

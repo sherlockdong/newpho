@@ -42,8 +42,8 @@ const Header = () => {
         PHO - GUIDE
       </Link>
  <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
-        {user ? (     <Link href="../user">
-          <span style={{ marginRight: "1rem" }}>{user.email}</span>
+        {user ? (     <Link href="/user">
+          <span style={{ marginRight: "1rem" }}>{user.displayName}</span>
           </Link> ) : (
           <Link href="/auth">
             <button style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>Login / Register</button>

@@ -1,44 +1,24 @@
+// src/app/user/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  getAuth,
-  onAuthStateChanged,
-  User,
-  updatePassword,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
-  linkWithCredential,
-} from "firebase/auth";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import { app, db } from "../../firebase";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { app } from "../../firebase"; // Adjust path as needed
+import SettingsModal from "./settings/page";
 
 const auth = getAuth(app);
 
 export default function UserProfile() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [analysisLogs, setAnalysisLogs] = useState<any[]>([]);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [logoutMessage, setLogoutMessage] = useState("");
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (currentUser) {
-        // Check if the user signed in with Google
-        const googleProvider = currentUser.providerData.some(
-          (provider) => provider.providerId === "google.com"
-        );
-        setIsGoogleUser(googleProvider && !currentUser.providerData.some(p => p.providerId === "password"));
-      }
       setLoading(false);
     });
     return () => unsubscribe();
@@ -47,88 +27,36 @@ export default function UserProfile() {
   useEffect(() => {
     if (!user) return;
 
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setAnalysisLogs(data.analysisLogs || []);
-        } else {
-          setDoc(userRef, { analysisLogs: [] }, { merge: true })
-            .then(() => setAnalysisLogs([]))
-            .catch((error) => console.error("Error creating user doc:", error));
+    const fetchLogs = async () => {
+      setLogsLoading(true);
+      setErrorMessage("");
+      try {
+        const token = await user.getIdToken();
+        console.log("Fetching logs with token:", token.slice(0, 10) + "..."); // Debug
+        const response = await fetch(`/api/logs?userId=${user.uid}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("Fetch /api/logs status:", response.status); // Debug
+        if (!response.ok) {
+          const text = await response.text(); // Get raw response
+          console.log("Fetch /api/logs response:", text.slice(0, 100) + "..."); // Debug
+          throw new Error(`HTTP ${response.status}: ${text.slice(0, 100)}...`);
         }
-      },
-      (error) => {
-        console.error("Snapshot listener error:", error);
+        const data = await response.json();
+        setLogs(data || []);
+      } catch (err) {
+        console.error("Fetch logs error:", err); // Log full error
+        setErrorMessage(`Failed to load quiz logs: ${err.message}`);
+      } finally {
+        setLogsLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchLogs();
   }, [user]);
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError("");
-    setPasswordSuccess("");
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match.");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters long.");
-      return;
-    }
-
-    if (!user) {
-      setPasswordError("User not authenticated.");
-      return;
-    }
-
-    try {
-      if (isGoogleUser) {
-        // For Google users without a password, link an email/password credential
-        const credential = EmailAuthProvider.credential(user.email, newPassword);
-        await linkWithCredential(user, credential);
-        setPasswordSuccess("Password successfully added to your account!");
-      } else {
-        // For email/password users, re-authenticate and update
-        const credential = EmailAuthProvider.credential(user.email, currentPassword);
-        await reauthenticateWithCredential(user, credential);
-        await updatePassword(user, newPassword);
-        setPasswordSuccess("Password updated successfully!");
-      }
-      setNewPassword("");
-      setConfirmPassword("");
-      setCurrentPassword("");
-    } catch (error) {
-      console.error("Password update error:", error);
-      if (error.code === "auth/wrong-password") {
-        setPasswordError("Current password is incorrect.");
-      } else if (error.code === "auth/requires-recent-login") {
-        setPasswordError("Please re-authenticate. Log out and log in again.");
-      } else if (error.code === "auth/credential-already-in-use") {
-        setPasswordError("This email is already linked to another account.");
-      } else {
-        setPasswordError("Failed to update password: " + error.message);
-      }
-    }
-  };
-
-  const handleGoogleReauth = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider); // Re-authenticates the user
-      setPasswordError("");
-      setPasswordSuccess("Re-authenticated with Google. Now set your password.");
-    } catch (error) {
-      console.error("Google re-auth error:", error);
-      setPasswordError("Failed to re-authenticate with Google: " + error.message);
-    }
-  };
 
   const handleLogout = async () => {
     try {
@@ -138,7 +66,6 @@ export default function UserProfile() {
         window.location.href = "/auth";
       }, 1000);
     } catch (error) {
-      console.error("Log out error:", error);
       setLogoutMessage("Failed to log out: " + error.message);
     }
   };
@@ -190,90 +117,25 @@ export default function UserProfile() {
         )}
       </div>
 
-      <h2 style={{ marginTop: "2rem" }}>
-        {isGoogleUser ? "Add a Password" : "Change Password"}
-      </h2>
-      <form onSubmit={handlePasswordChange} style={{ marginTop: "1rem" }}>
-        {!isGoogleUser && (
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="current-password" style={{ display: "block" }}>
-              Current Password:
-            </label>
-            <input
-              id="current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-              required
-            />
-          </div>
-        )}
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="new-password" style={{ display: "block" }}>
-            New Password:
-          </label>
-          <input
-            id="new-password"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="confirm-password" style={{ display: "block" }}>
-            Confirm Password:
-          </label>
-          <input
-            id="confirm-password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-            required
-          />
-        </div>
-        {passwordError && (
-          <p style={{ color: "red", marginBottom: "1rem" }}>{passwordError}</p>
-        )}
-        {passwordSuccess && (
-          <p style={{ color: "green", marginBottom: "1rem" }}>{passwordSuccess}</p>
-        )}
-        <button
-          type="submit"
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#0070f3",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          {isGoogleUser ? "Add Password" : "Update Password"}
-        </button>
-      </form>
-
-      {isGoogleUser && (
-        <div style={{ marginTop: "1rem" }}>
-          <p>Google Sign-In user? Re-authenticate if needed:</p>
-          <button
-            onClick={handleGoogleReauth}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#4285f4",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Re-authenticate with Google
-          </button>
-        </div>
-      )}
+      <button
+        onClick={() => setIsSettingsOpen(true)}
+        style={{
+          marginTop: "1rem",
+          padding: "0.5rem 1rem",
+          backgroundColor: "#0070f3",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        Settings
+      </button>
+      <SettingsModal
+        user={user}
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
 
       <h2 style={{ marginTop: "2rem" }}>Log Out</h2>
       <button
@@ -295,10 +157,13 @@ export default function UserProfile() {
         </p>
       )}
 
-      <h2 style={{ marginTop: "2rem" }}>Analysis Logs</h2>
-      {analysisLogs.length > 0 ? (
+      <h2 style={{ marginTop: "2rem" }}>Quiz Logs</h2>
+      {errorMessage && <p style={{ color: "red", marginBottom: "1rem" }}>{errorMessage}</p>}
+      {logsLoading ? (
+        <p>Loading logs...</p>
+      ) : logs.length > 0 ? (
         <ul>
-          {analysisLogs.map((log, index) => (
+          {logs.map((log, index) => (
             <li
               key={index}
               style={{
@@ -308,11 +173,11 @@ export default function UserProfile() {
                 margin: "1rem 0",
               }}
             >
-              <p><strong>Quiz Scores:</strong> {log.quizScores}</p>
-              <p><strong>Incorrect Topics:</strong> {log.incorrectTopics}</p>
-              <p><strong>Study Logs:</strong> {log.studyLogs}</p>
-              <p><strong>Analysis:</strong> {log.analysis}</p>
-              <p><strong>Date:</strong> {log.timestamp}</p>
+              <p><strong>Quiz Scores:</strong> {log.quizScores || "N/A"}</p>
+              <p><strong>Incorrect Topics:</strong> {log.incorrectTopics || "N/A"}</p>
+              <p><strong>Study Logs:</strong> {log.studyLogs || "N/A"}</p>
+              <p><strong>Analysis:</strong> {log.analysis || "N/A"}</p>
+              <p><strong>Date:</strong> {new Date(log.timestamp).toLocaleString()}</p>
             </li>
           ))}
         </ul>

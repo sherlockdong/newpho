@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../../firebase";
+import { app } from "../../../firebase";
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 
