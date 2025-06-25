@@ -1,9 +1,16 @@
-// src/app/user/settings/page.jsx
+// src/components/SettingsModal.jsx
 "use client";
 import { useState, useEffect } from "react";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 
-export default function SettingsModal({ user, isOpen, onClose }) {
+// Define prop types
+interface SettingsModalProps {
+  user: any; // Replace with Firebase User type if using TypeScript
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function SettingsModal({ user, isOpen, onClose }: SettingsModalProps) {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [email, setEmail] = useState(user?.email || "");
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
@@ -18,19 +25,19 @@ export default function SettingsModal({ user, isOpen, onClose }) {
     }
   }, [user]);
 
-  const handleSave = async (e) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     try {
       const auth = getAuth();
-      await updateProfile(auth.currentUser, { displayName, photoURL });
+      await updateProfile(auth.currentUser!, { displayName, photoURL });
       if (email !== user.email) {
-        await updateEmail(auth.currentUser, email);
+        await updateEmail(auth.currentUser!, email);
       }
       setSuccess("Profile updated successfully!");
       setTimeout(onClose, 2000);
-    } catch (err) {
+    } catch (err: any) {
       setError(`Failed to update profile: ${err.message}`);
     }
   };

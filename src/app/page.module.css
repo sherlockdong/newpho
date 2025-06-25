@@ -124,3 +124,52 @@ grid-template-rows: 1fr auto; /* Main content takes up available space, footer a
   line-height: 1.5em;
   margin: 0; /* Reset default margin for p */
 }
+/* src/app/user/page.module.css */
+.userContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 100px auto 0;
+  font-family: "Playfair Display", serif;
+  color: #ededed;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profilePicture {
+  border-radius: 50%;
+  border: 2px solid #C0C0C0; /* Silver border */
+  margin-bottom: 1rem;
+}
+
+.profilePicturePlaceholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #C0C0C0;
+  background-color: #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C0C0C0;
+  font-family: "Playfair Display", serif;
+  margin-bottom: 1rem;
+}
+
+.profileName {
+  font-size: 24px;
+  color: #FFD700; /* Gold */
+  font-family: "Playfair Display", serif;
+}
+
+.signInMessage {
+  text-align: center;
+  font-size: 20px;
+  color: #ff4444;
+  margin-top: 2rem;
+  font-family: "Playfair Display", serif;
+}

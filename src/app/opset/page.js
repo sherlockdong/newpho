@@ -35,11 +35,7 @@ export default function PhysicsProblem() {
     setLoading(false);
   };
   return (<>
-    <div id="start">Try this Integrated A.I!</div>
-    <button onClick={generateProblem} disabled={loading}>
-        {loading ? "Generating..." : "Generate Physics Problem"}
-      </button>
-
+    <div id="start">This page is still being developed.</div>
       <div>
         {problem && <p>{problem}</p>}
       </div>
