@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import styles from "./page.module.css";
+import styles from "../page.module.css";
 import { app } from "../../firebase"; // Named import
 
 const provider = new GoogleAuthProvider();
