@@ -47,12 +47,12 @@ export default function QuizIndexPage() {
 
   return (
     <div className="quiz-container">
-      <h1 className="quiz-title">Physics Quiz Topics</h1>
+      <h1 className="quiz-title">High School Physics Quiz Topics</h1>
       <p>Select a topic to start your quiz:</p>
       <ul className="topic-list">
         {topics.map((topic) => (
           <li key={topic.slug} className="topic-item">
-            <Link href={`/quiz/${topic.slug}`} className="topic-link">
+            <Link href={`/highschoolquiz/${topic.slug}`} className="topic-link">
               {topic.name}
             </Link>
           </li>

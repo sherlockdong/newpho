@@ -68,18 +68,21 @@ grid-template-rows: 1fr auto; /* Main content takes up available space, footer a
   animation: fadeIn 1.6s ease-in forwards; /* Fade-in animation */
   animation-delay: 0.8s;
 }
-.getStartedButton{
-  margin-top: 2.8em;
+.getStartedButton {
+  display: block;          /* makes margin:auto work */
+  margin: 2.8em auto 0;    /* top 2.8 em, auto left/right, 0 bottom */
+  color:white;
   padding: 10px 20px;
   font-size: 28px;
   font-family: 'Uchen', serif;
   background-color: transparent;
   border: 2px solid white;
-  border-radius: 10px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease; /* Smooth hover effect */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   animation: fadeIn 1.6s ease-in forwards;
 }
+
 .getStartedButton:hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
