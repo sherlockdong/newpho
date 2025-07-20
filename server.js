@@ -9,12 +9,10 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // Example: define your own custom route or middleware
   server.get('/custom-route', (req, res) => {
-    return res.send('Hello from custom route!');
+    return res.send('Ayo whats up.');
   });
-
-  // Let Next handle everything else
+  
   server.all('*', (req, res) => {
     return handle(req, res);
   });

@@ -53,16 +53,16 @@ export async function verifyFirebaseToken(req) {
 
     const token = req.headers.get("authorization")?.split("Bearer ")[1];
     if (!token) {
-      console.log("No Authorization token provided in request"); // Debug
+      console.log("No Authorization token provided in request"); 
       return new Response(JSON.stringify({ error: "No token provided" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    console.log("Verifying token:", token.slice(0, 10) + "..."); // Debug
+    console.log("Verifying token:", token.slice(0, 10) + "..."); 
     const decoded = await admin.auth().verifyIdToken(token);
-    console.log("Token verified for user:", decoded.uid); // Debug
+    console.log("Token verified for user:", decoded.uid); 
     req.user = decoded;
     return null;
   } catch (err) {

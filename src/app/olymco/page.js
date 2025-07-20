@@ -23,28 +23,28 @@ const Count = () => {
         <Grid item xs={12} sm={8} md={6}>
           <Card
             sx={{
-              maxWidth: 500, // Increase the width of the card
-              height: 360, // Adjust the height to make it larger
-              backgroundColor: '#001F70', // Deep blue for an analogous scheme
-              color: '#FFFFFF', // White text for readability
-              border: '1px solid #000020', // Golden border for a complementary pop
-              boxShadow: '0px 4px 10px rgba(0, 0, 139, 0.5)', // Subtle glow effect
+              maxWidth: 500, 
+              height: 500, 
+              backgroundColor: '#001F70', 
+              color: '#FFFFFF', 
+              border: '1px solid #000020', 
+              boxShadow: '0px 4px 10px rgba(0, 0, 139, 0.5)', 
               marginLeft: '130px',
             }}
           >
             <CardMedia
               component="img"
-              height="200" // Increased height for the image
+              height="200" 
               image="https://www.worldometers.info/img/flags/small/tn_ch-flag.gif"
               alt="Sample"
               sx={{
                 padding: '0.5rem 1rem',
                 objectFit: 'contain',
-                backgroundColor: '#000033', // Darker navy as a subtle background
-                transition: 'transform 0.3s, box-shadow 0.3s', // Smooth animation for hover
+                backgroundColor: '#000033', 
+                transition: 'transform 0.3s, box-shadow 0.3s', 
                 '&:hover': {
-                  transform: 'scale(1.05)', // Slightly enlarge the card
-                  boxShadow: '0px 8px 20px rgba(0, 0, 139, 0.5)', // Intensify the shadow
+                  transform: 'scale(1.05)',
+                  boxShadow: '0px 8px 20px rgba(0, 0, 139, 0.5)', 
                 },
               }}
             />
@@ -53,12 +53,12 @@ const Count = () => {
                China
               </Typography>
               <Typography variant="body2" sx={{ color: '#FFD700' }}>
-                chinachinachina
+                The Chinese National Team is one of the most successful teams in the history of the International Physics Olympiad, consistently winning numerous gold medals and achieving high rankings. The team is known for its rigorous training and strong emphasis on problem-solving skills.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small" sx={{ color: '#FFD700' }}>
-                Learn More
+              <Button size="small" sx={{ color: '#FFD700' }}><Link href="https://ipho-unofficial.org/countries/CHN/individual" target="_blank" style={{color: 'inherit', textDecoration: 'none'}}>
+                Learn More</Link>
               </Button>
             </CardActions>
           </Card>
@@ -68,28 +68,28 @@ const Count = () => {
         <Grid item xs={12} sm={8} md={6}>
           <Card
             sx={{
-              maxWidth: 500, // Increase the width of the card
-              height: 360, // Adjust the height to make it larger
-              backgroundColor: '#001F70', // Deep blue for an analogous scheme
-              color: '#FFFFFF', // White text for readability
-              border: '1px solid #000020', // Golden border for a complementary pop
-              boxShadow: '0px 4px 10px rgba(0, 0, 139, 0.5)', // Subtle glow effect
+              maxWidth: 500, 
+              height: 500, 
+              backgroundColor: '#001F70',
+              color: '#FFFFFF', 
+              border: '1px solid #000020',
+              boxShadow: '0px 4px 10px rgba(0, 0, 139, 0.5)', 
               marginLeft: '130px',
             }}
           >
             <CardMedia
               component="img"
-              height="200" // Increased height for the image
+              height="200" 
               image="https://www.worldometers.info/img/flags/us-flag.gif"
               alt="Sample"
               sx={{
                 padding: '0.5rem 1rem',
                 objectFit: 'contain',
-                backgroundColor: '#000033', // Darker navy as a subtle background
-                transition: 'transform 0.3s, box-shadow 0.3s', // Smooth animation for hover
+                backgroundColor: '#000033', 
+                transition: 'transform 0.3s, box-shadow 0.3s', 
                 '&:hover': {
-                  transform: 'scale(1.05)', // Slightly enlarge the card
-                  boxShadow: '0px 8px 20px rgba(0, 0, 139, 0.5)', // Intensify the shadow
+                  transform: 'scale(1.05)',
+                  boxShadow: '0px 8px 20px rgba(0, 0, 139, 0.5)',
                 },
               }}
             />
@@ -98,12 +98,12 @@ const Count = () => {
                 United States
               </Typography>
               <Typography variant="body2" sx={{ color: '#FFD700' }}>
-                usausausa
+                The national team of the United States is known for its strong performance in the International Physics Olympiad.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small" sx={{ color: '#FFD700' }}>
-                Learn More
+              <Button size="small" sx={{ color: '#FFD700' }}><Link href="https://aapt.org/physicsteam/2024/index.cfm" target="_blank" style={{color: 'inherit', textDecoration: 'none'}}>
+                Learn More</Link> 
               </Button>
             </CardActions>
           </Card>

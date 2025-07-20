@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../../firebase";
+import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
+import ReactMarkdown from "react-markdown";
 
 const auth = getAuth(app);
 
@@ -39,12 +41,20 @@ export default function RelativityQuizPage() {
   const [quizLogs, setQuizLogs] = useState([]);
   const [currentFact, setCurrentFact] = useState("");
   const [showAnswers, setShowAnswers] = useState(false);
+  const [latestAnalysis, setLatestAnalysis] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      const storedLogs = localStorage.getItem(`quizLogs_${currentUser?.uid || "guest"}`);
-      setQuizLogs(storedLogs ? JSON.parse(storedLogs) : []);
+      if (currentUser) {
+        const db = getFirestore(app);
+        const q = query(collection(db, "quizLogs"), where("userId", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(10));
+        const snapshot = await getDocs(q);
+        const logs = snapshot.docs.map(doc => doc.data());
+        setQuizLogs(logs);
+      } else {
+        setQuizLogs([]);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -126,6 +136,7 @@ export default function RelativityQuizPage() {
     setAnswers({});
     setStartTime(Date.now());
     setShowAnswers(false);
+    setLatestAnalysis(null);
 
     try {
       const contentResponse = await fetch("/api/content", {
@@ -225,24 +236,22 @@ export default function RelativityQuizPage() {
     setLoading(true);
     try {
       const timeTaken = (Date.now() - startTime) / 1000;
-         const payload = {
-     quizScores: calculateScore(answers),
-     incorrectTopics: selectedSubtopic,
-      studyLogs: `Time taken: ${timeTaken}s`,
-   };
-   // 2) Point at your Render server’s analyze endpoint:
-   const response = await fetch(
-   "https://deepseek-backend-u2i2.onrender.com/api/analyze",
-      {
+      const response = await fetch("/api/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+        body: JSON.stringify({
+          quiz: questions,
+          answers,
+          timeTaken,
+          tag: selectedSubtopic,
+          userId: user?.uid,
+        }),
+      });
       if (!response.ok) throw new Error("Failed to evaluate answers");
       const data = await response.json();
 
       const newLog = {
+        userId: user?.uid,
         quizScores: calculateScore(answers),
         incorrectTopics: selectedSubtopic,
         studyLogs: `Time taken: ${timeTaken}s`,
@@ -252,10 +261,16 @@ export default function RelativityQuizPage() {
         answers,
         difficulty: selectedDifficulty,
       };
-      const updatedLogs = [newLog, ...quizLogs].slice(0, 10);
-      setQuizLogs(updatedLogs);
-      localStorage.setItem(`quizLogs_${user?.uid || "guest"}`, JSON.stringify(updatedLogs));
+      const db = getFirestore(app);
+      await addDoc(collection(db, "quizLogs"), newLog);
 
+      // Refetch logs
+      const q = query(collection(db, "quizLogs"), where("userId", "==", user.uid), orderBy("timestamp", "desc"), limit(10));
+      const snapshot = await getDocs(q);
+      const updatedLogs = snapshot.docs.map(doc => doc.data());
+      setQuizLogs(updatedLogs);
+
+      setLatestAnalysis(data.analysis);
       setShowAnswers(true);
       setError(null);
       alert("Answers submitted and analyzed successfully!");
@@ -429,6 +444,12 @@ export default function RelativityQuizPage() {
               <p>No valid questions generated. Raw content: {quiz}</p>
             )}
           </div>
+          {showAnswers && latestAnalysis && (
+            <div className="quiz-analysis">
+              <h2 className="quiz-subtitle">Evaluation Analysis</h2>
+              <ReactMarkdown>{latestAnalysis}</ReactMarkdown>
+            </div>
+          )}
         </div>
       )}
     </div>

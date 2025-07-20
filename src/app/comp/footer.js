@@ -4,7 +4,7 @@ const Footer =()=>{
         <div id="Foot">
 <p id='cpy'>&copy; 2025 PHO-Guide. All Rights Reserved.</p>
 
-<p id='cpy'><Link href="/aboutus">a glance at the brain behind the website</Link></p>
+<p id='cpy1'><Link href="/aboutus"> Take a glance at the brain behind the website</Link></p>
 </div>
 )
 }

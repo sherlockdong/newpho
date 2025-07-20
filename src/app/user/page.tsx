@@ -1,17 +1,16 @@
-// src/app/user/page.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import SettingsModal from "../../components/SettingsModal";
-import styles from "../page.module.css"; // If you have user-specific styles
+import ReactMarkdown from 'react-markdown';
+import styles from "../page.module.css"; 
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 
 export default function UserPage() {
-  const [user, setUser] = useState<any>(null); // Replace 'any' with Firebase User type
+  const [user, setUser] = useState<any>(null); 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
-  const [quizLogs, setQuizLogs] = useState<string[]>([]); // Placeholder for quiz logs
-
-  // Firebase auth state
+  const [quizLogs, setQuizLogs] = useState<string[]>([]); 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -25,10 +24,26 @@ export default function UserPage() {
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
   }, [isDark]);
 
-  useEffect(() => {
-    setQuizLogs(["Quiz 1: Mechanics (Score: 85%)", "Quiz 2: Electromagnetism (Score: 90%)"]);
-  }, [user]);
-
+useEffect(() => {
+  if (user) {
+    console.log("Fetching quiz logs for user UID:", user.uid); 
+    const db = getFirestore();
+    const q = query(collection(db, "quizLogs"), where("userId", "==", user.uid));
+    getDocs(q)
+      .then((snapshot) => {
+        console.log("Number of docs found:", snapshot.docs.length); 
+        const logs = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log("Document data:", data); 
+          return data.analysis || "No analysis available"; 
+        });
+        setQuizLogs(logs);
+      })
+      .catch((error) => {
+        console.error("Error fetching quiz logs:", error); 
+      });
+  }
+}, [user]);
   if (!user) {
     return <div className={styles.signInMessage}>Please sign in to view this page.</div>;
   }
@@ -61,20 +76,20 @@ export default function UserPage() {
         Edit Profile
       </button>
 
-      {/* Quiz Logs */}
       <div className={styles.quizLogsSection}>
-        <h3 className="quiz-subtitle">Quiz History</h3>
-        {quizLogs.length > 0 ? (
-          <ol className="quiz-questions">
-            {quizLogs.map((log, index) => (
-              <li key={index} className="quiz-question">{log}</li>
-            ))}
-          </ol>
-        ) : (
-          <p className="quiz-error">No quiz history available.</p>
-        )}
-      </div>
-
+  <h3 className="quiz-subtitle">Quiz History</h3>
+  {quizLogs.length > 0 ? (
+    <ol className="quiz-questions">
+      {quizLogs.map((log, index) => (
+        <li key={index} className="quiz-question">
+          <ReactMarkdown>{log}</ReactMarkdown>  {/* This handles Markdown rendering */}
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p className="quiz-error">No quiz history available.</p>
+  )}
+</div>
       {/* Settings Modal */}
       <SettingsModal
         user={user}

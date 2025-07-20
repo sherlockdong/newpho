@@ -1,9 +1,9 @@
-// Example: src/components/AuthComponent.jsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { auth } from "../firebase"; // adjust path if necessary
+import { auth } from "../firebase"; 
 
 const provider = new GoogleAuthProvider();
 
