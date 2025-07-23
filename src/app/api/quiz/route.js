@@ -10,7 +10,7 @@ export async function POST(request) {
     console.log("Sending prompt:", prompt);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s to stay under 10s
+    const timeoutId = setTimeout(() => controller.abort(), 8000); 
     const response = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

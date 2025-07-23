@@ -3,7 +3,7 @@ import path from 'path';
 
 export async function POST(request) {
   try {
-    const { topic } = await request.json(); // Required: "electricity", "relativity", etc.
+    const { topic } = await request.json(); 
     if (!topic) {
       return new Response(JSON.stringify({ error: "Topic is required" }), {
         status: 400,

@@ -9,15 +9,11 @@ export async function GET(request) {
       host: process.env.WEAVIATE_URL.replace("https://", ""),
       apiKey: new weaviate.ApiKey(process.env.WEAVIATE_ADMIN_KEY),
     });
-
-    // Example: fetch data from Weaviate
     const result = await client.graphql
       .get()
       .withClassName("PhysicsContent")
       .withFields(["title", "tags", "authorNote"])
       .do();
-
-    // Return a Response object
     return new Response(JSON.stringify({ data: result.data.Get.PhysicsContent }), {
       status: 200,
       headers: {

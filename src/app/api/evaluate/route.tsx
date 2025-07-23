@@ -1,7 +1,5 @@
 // src/app/api/evaluate/route.tsx
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../firebase"; // Import Firestore
-import { doc, setDoc } from "firebase/firestore";
 
 async function fetchWithTimeout(url: string, opts: RequestInit = {}, ms = 60000) {
   const controller = new AbortController();
@@ -16,7 +14,11 @@ async function fetchWithTimeout(url: string, opts: RequestInit = {}, ms = 60000)
 async function fetchWithRetry(url: string, opts: RequestInit = {}, retries = 3, timeout = 60000) {
   for (let i = 0; i < retries; i++) {
     try {
+      console.log(`Attempt ${i + 1} to fetch ${url}`);
+      const startTime = Date.now();
       const response = await fetchWithTimeout(url, opts, timeout);
+      const duration = Date.now() - startTime;
+      console.log(`Attempt ${i + 1} took ${duration}ms, status: ${response.status}`);
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`DeepSeek attempt ${i + 1} failed with status ${response.status}: ${errorText}`);
@@ -48,7 +50,8 @@ export async function POST(request: NextRequest) {
 
     const quizSize = JSON.stringify(quiz).length;
     const answersSize = JSON.stringify(answers).length;
-    if (quizSize > 100000 || answersSize > 100000) {
+    console.log(`Quiz size: ${quizSize} bytes, Answers size: ${answersSize} bytes`);
+    if (quizSize > 150000 || answersSize > 150000) {
       throw new Error("Quiz or answers payload too large");
     }
 
@@ -69,22 +72,15 @@ export async function POST(request: NextRequest) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       },
-      3,
+      3, // 3 retries (up to ~180s)
       60000
     );
 
     const data = await completion.json();
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error("Invalid DeepSeek response: No content found");
+    }
     const analysis = data.choices[0].message.content;
-
-    // Save to Firestore
-    const logId = Date.now().toString();
-    await setDoc(doc(db, `users/${userId}/analysisLogs`, logId), {
-      title: tag || "Quiz Evaluation",
-      score: data.score || "N/A", // Adjust based on DeepSeek response
-      analysis,
-      timeTaken,
-      timestamp: new Date(),
-    });
 
     return NextResponse.json({ analysis });
   } catch (error: any) {

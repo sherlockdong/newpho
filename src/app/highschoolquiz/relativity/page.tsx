@@ -1,9 +1,9 @@
+// src/app/highschoolquiz/relativity/page.tsx
 "use client";
-
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../firebase";
-import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { app, db } from "../../../firebase";
+import { collection, query, orderBy, limit, doc, setDoc, getDocs } from "firebase/firestore"; // Added getDocs
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 import ReactMarkdown from "react-markdown";
@@ -47,11 +47,21 @@ export default function RelativityQuizPage() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const db = getFirestore(app);
-        const q = query(collection(db, "quizLogs"), where("userId", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(10));
-        const snapshot = await getDocs(q);
-        const logs = snapshot.docs.map(doc => doc.data());
-        setQuizLogs(logs);
+        try {
+          const q = query(
+            collection(db, `users/${currentUser.uid}/analysisLogs`),
+            orderBy("timestamp", "desc"),
+            limit(10)
+          );
+          const snapshot = await getDocs(q);
+          const logs = snapshot.docs.map(doc => doc.data());
+          setQuizLogs(logs);
+          console.log("Fetched quiz logs:", logs);
+        } catch (err) {
+          console.error("Error fetching quiz logs:", err);
+          setError("Failed to load quiz history. Please try again.");
+          setQuizLogs([]);
+        }
       } else {
         setQuizLogs([]);
       }
@@ -233,6 +243,12 @@ export default function RelativityQuizPage() {
   };
 
   async function handleSubmitAnswers() {
+    if (!user?.uid) {
+      setError("You must be signed in to submit answers.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const timeTaken = (Date.now() - startTime) / 1000;
@@ -244,31 +260,39 @@ export default function RelativityQuizPage() {
           answers,
           timeTaken,
           tag: selectedSubtopic,
-          userId: user?.uid,
+          userId: user.uid,
         }),
       });
-      if (!response.ok) throw new Error("Failed to evaluate answers");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to evaluate answers: ${response.status} - ${errorText}`);
+      }
       const data = await response.json();
 
       const newLog = {
-        userId: user?.uid,
-        quizScores: calculateScore(answers),
-        incorrectTopics: selectedSubtopic,
-        studyLogs: `Time taken: ${timeTaken}s`,
+        title: selectedSubtopic || "Quiz Evaluation",
+        score: calculateScore(answers),
         analysis: data.analysis,
-        timestamp: new Date().toISOString(),
+        timeTaken,
+        timestamp: new Date(),
         quiz: questions,
         answers,
         difficulty: selectedDifficulty,
       };
-      const db = getFirestore(app);
-      await addDoc(collection(db, "quizLogs"), newLog);
 
-      // Refetch logs
-      const q = query(collection(db, "quizLogs"), where("userId", "==", user.uid), orderBy("timestamp", "desc"), limit(10));
+      const logId = Date.now().toString();
+      console.log("Saving log to Firestore:", newLog);
+      await setDoc(doc(db, `users/${user.uid}/analysisLogs`, logId), newLog);
+
+      const q = query(
+        collection(db, `users/${user.uid}/analysisLogs`),
+        orderBy("timestamp", "desc"),
+        limit(10)
+      );
       const snapshot = await getDocs(q);
       const updatedLogs = snapshot.docs.map(doc => doc.data());
       setQuizLogs(updatedLogs);
+      console.log("Refetched quiz logs:", updatedLogs);
 
       setLatestAnalysis(data.analysis);
       setShowAnswers(true);
@@ -276,14 +300,15 @@ export default function RelativityQuizPage() {
       alert("Answers submitted and analyzed successfully!");
     } catch (err) {
       setError(err.message);
+      console.error("Error submitting answers:", err);
     } finally {
       setLoading(false);
     }
   }
 
   const calculateScore = (answers) => {
-    const scores = Object.values(answers).map((a) => a.confidence || 0);
-    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toString() : "0";
+    const scores = Object.values(answers).map((a: any) => a.confidence || 0);
+    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) : "0";
   };
 
   const questions = parseQuizQuestions(quiz);
@@ -436,7 +461,7 @@ export default function RelativityQuizPage() {
                     </li>
                   ))}
                 </ol>
-                <button type="submit" disabled={loading} className="quiz-button">
+                <button type="submit" disabled={loading || !user} className="quiz-button">
                   {loading ? "Submitting..." : "Submit Answers"}
                 </button>
               </form>

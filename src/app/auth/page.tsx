@@ -31,7 +31,7 @@ export default function AuthPage() {
     setIsLoading(true);
     setError("");
     try {
-      const auth = getAuth(app); // Use named export
+      const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const username = user.displayName?.toLowerCase().replace(/\s+/g, "") || user.uid;

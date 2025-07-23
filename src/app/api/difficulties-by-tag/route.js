@@ -23,7 +23,7 @@ export async function POST(request) {
     items.forEach((item, index) => {
       if (
         item.tags &&
-        item.tags.some(t => t.toLowerCase() === tag.toLowerCase()) && // Case-insensitive match
+        item.tags.some(t => t.toLowerCase() === tag.toLowerCase()) &&
         item.difficulty &&
         Array.isArray(item.difficulty) &&
         item.difficulty.length > 0
