@@ -14,6 +14,12 @@ export default function QuizIndexPage() {
   const router = useRouter();
 
   const topics = [
+        { slug: "kinematics", name: "Kinematics" },
+{ slug: "newtons-laws", name: "Newton's Laws of Motion" },
+{ slug: "work-energy-power", name: "Work, Energy, and Power" },
+{ slug: "momentum", name: "Systems of Particles and Linear Momentum" },
+{ slug: "rotation", name: "Rotation" },
+{ slug: "oscillations-gravitation", name: "Oscillations and Gravitation" },
     { slug: "electricity", name: "Electricity" },
     { slug: "induction", name: "Electromagnetic Induction" },
     { slug: "relativity", name: "Relativity" },

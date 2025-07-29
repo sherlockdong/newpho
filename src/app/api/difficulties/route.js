@@ -37,7 +37,6 @@ export async function GET() {
       const items = Array.isArray(data) ? data : [data];
       items.forEach((item, index) => {
         if (item.difficulty && Array.isArray(item.difficulty) && item.difficulty.length > 0) {
-          // Take the first difficulty from the array and normalize it
           const difficulty = item.difficulty[0];
           if (typeof difficulty === 'string') {
             console.log(`Difficulty in ${file}[${index}]:`, difficulty);
