@@ -2,9 +2,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app, db } from "../../../firebase";
+import { app, db } from "../../../firebase.js";
 import { collection, query, orderBy, limit, doc, setDoc, getDocs } from "firebase/firestore"; // Added getDocs
-import "katex/dist/katex.min.css";
+
 import { InlineMath } from "react-katex";
 import ReactMarkdown from "react-markdown";
 
@@ -171,12 +171,20 @@ export default function RelativityQuizPage() {
       **Correct Answer:** [Correct option letter]
       ---
       Do not use external knowledge beyond this content:\n\n${content}`;
-      console.log("Prompt sent to Render:", prompt);
+      console.log("Prompt sent to xAI Grok:", prompt);
 
-      const quizResponse = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
+      const quizResponse = await fetch("https://api.x.ai/v1/chat/completions", { // CHANGED: Switched to xAI endpoint
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.XAI_API_KEY}`, // CHANGED: Added xAI API key
+        },
+        body: JSON.stringify({
+          model: "grok-4", // CHANGED: Switched to Grok-4 model
+          messages: [{ role: "user", content: prompt }], // CHANGED: Switched role from implicit to "user" for Grok
+          temperature: 0.7,
+          max_tokens: 1000, // ADDED: Limits response length for quiz generation
+        }),
       });
       if (!quizResponse.ok) throw new Error(await quizResponse.text());
       const data = await quizResponse.json();

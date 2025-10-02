@@ -3,30 +3,22 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../../firebase";
-import 'katex/dist/katex.min.css';
-import { InlineMath } from 'react-katex';
+import "katex/dist/katex.min.css";
+import { InlineMath } from "react-katex";
 
 const auth = getAuth(app);
 
-const PHYSICS_FACTS = ["Electricity is the flow of electrons through a conductor",
-
-"The unit of electric current is the ampere (A)",
-
-"Ohm's Law states that voltage equals current times resistance (V = IR)",
-
-"A circuit is a closed path that allows electric current to flow",
-
-"Electric power is calculated by multiplying voltage and current (P = VI)",
-
-"The electrical potential difference between two points is measured in volts (V)",
-
-"Resistors are used in electrical circuits to limit the flow of current",
-
-"Conductors, like copper, allow electricity to flow easily",
-
-"Insulators, like rubber, resist the flow of electric current",
-
-"The speed of electric current in a conductor is close to the speed of light",
+const PHYSICS_FACTS = [
+  "Electricity is the flow of electrons through a conductor",
+  "The unit of electric current is the ampere (A)",
+  "Ohm's Law states that voltage equals current times resistance (V = IR)",
+  "A circuit is a closed path that allows electric current to flow",
+  "Electric power is calculated by multiplying voltage and current (P = VI)",
+  "The electrical potential difference between two points is measured in volts (V)",
+  "Resistors are used in electrical circuits to limit the flow of current",
+  "Conductors, like copper, allow electricity to flow easily",
+  "Insulators, like rubber, resist the flow of electric current",
+  "The speed of electric current in a conductor is close to the speed of light",
 ];
 
 export default function ElectricityQuizPage() {
@@ -133,15 +125,17 @@ export default function ElectricityQuizPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic: TOPIC, tag: selectedSubtopic, difficulty: selectedDifficulty }),
       });
-      if (!contentResponse.ok) throw new Error(await contentResponse.text());
+      if (!contentResponse.ok) {
+        const errorText = await contentResponse.text();
+        throw new Error(errorText);
+      }
       const { content } = await contentResponse.json();
       if (!content || content.includes("No content available")) {
         throw new Error(`No valid ${selectedDifficulty} content retrieved for tag: ${selectedSubtopic}`);
       }
-      console.log("Content from /api/content for", selectedSubtopic, ":", content);
 
       const prompt = `Based strictly on the following ${selectedDifficulty} content about "${selectedSubtopic}", generate ${questionCount} quiz questions in this format:
-      ### Question [number]: [Title]
+      ### Question [number]
       [Question text]
       a) [Option 1]
       b) [Option 2]
@@ -150,17 +144,27 @@ export default function ElectricityQuizPage() {
       **Correct Answer:** [Correct option letter]
       ---
       Do not use external knowledge beyond this content:\n\n${content}`;
-      console.log("Prompt sent to Render:", prompt);
+      const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
 
-      const quizResponse = await fetch("https://deepseek-backend-u2i2.onrender.com/api/quiz", {
+      const quizResponse = await fetch("https://api.x.ai/v1/chat/completions", { 
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`, 
+        },
+        body: JSON.stringify({
+          model: "grok-4",
+          messages: [{ role: "user", content: prompt }], 
+          temperature: 0.7,
+          max_tokens: 1000, 
+        }),
       });
-      if (!quizResponse.ok) throw new Error(await quizResponse.text());
+      if (!quizResponse.ok) {
+        const errorText = await quizResponse.text();
+        throw new Error(errorText);
+      }
       const data = await quizResponse.json();
       const quizContent = data.choices?.[0]?.message?.content || "";
-      console.log("Raw quiz content:", quizContent);
       if (!quizContent) throw new Error("Quiz is empty or invalid");
       setQuiz(quizContent);
     } catch (err) {
@@ -180,8 +184,8 @@ export default function ElectricityQuizPage() {
       let question = { text: "", options: [], correctAnswer: "" };
 
       lines.forEach((line, idx) => {
-        if (line.match(/^### Question \d+:/)) {
-          question.text = line.replace(/^### Question \d+:\s*/, "").trim();
+        if (line.match(/^### Question \d+/)) {
+          question.text = line.replace(/^### Question \d+\s*/, "").trim();
         } else if (line.match(/^[a-d]\)/)) {
           question.options.push(line.trim());
         } else if (line.startsWith("**Correct Answer:**")) {
@@ -196,7 +200,6 @@ export default function ElectricityQuizPage() {
       }
     });
 
-    console.log("Parsed questions:", questions);
     return questions;
   };
 
@@ -225,32 +228,44 @@ export default function ElectricityQuizPage() {
     setLoading(true);
     try {
       const timeTaken = (Date.now() - startTime) / 1000;
-         const payload = {
-     quizScores: calculateScore(answers),
-     incorrectTopics: selectedSubtopic,
-      studyLogs: `Time taken: ${timeTaken}s`,
-   };
-   // 2) Point at your Render server’s analyze endpoint:
-   const response = await fetch(
-   "https://deepseek-backend-u2i2.onrender.com/api/analyze",
-      {
+      const payload = {
+        quizScores: calculateScore(answers),
+        incorrectTopics: selectedSubtopic,
+        studyLogs: `Time taken: ${timeTaken}s`,
+      };
+      const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
+
+      const response = await fetch("https://api.x.ai/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "grok-4",
+          messages: [{
+            role: "user",
+            content: `Analyze the following student progress data and provide a detailed feedback:
+              - Quiz Scores: ${payload.quizScores}
+              - Incorrect Topics: ${payload.incorrectTopics}
+              - Study Logs: ${payload.studyLogs}
+              Return the output as a JSON object with an "analysis" field containing the feedback.`
+          }],
+          temperature: 0.7,
+          max_tokens: 500,
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Evaluate failed: ${response.status} ${text}`);
       }
-    );
-   if (!response.ok) {
-  const text = await response.text();
-  console.error("Evaluate error:", response.status, text);
-  throw new Error(`Evaluate failed: ${response.status} ${text}`);
-}
       const data = await response.json();
 
       const newLog = {
         quizScores: calculateScore(answers),
         incorrectTopics: selectedSubtopic,
         studyLogs: `Time taken: ${timeTaken}s`,
-        analysis: data.analysis,
+        analysis: data.choices?.[0]?.message?.content ? JSON.parse(data.choices[0].message.content).analysis : "No analysis available",
         timestamp: new Date().toISOString(),
         quiz: questions,
         answers,

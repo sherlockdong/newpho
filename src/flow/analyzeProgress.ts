@@ -1,11 +1,11 @@
 // src/flows/analyzeProgress.ts
-import { AnalyzeInput } from "./type";
+import { AnalyzeInput } from "./type"; // Verified with .ts extension
 import OpenAI from "openai";
 
-// Initialize the OpenAI instance with DeepSeek configuration.
+// Initialize the OpenAI instance with xAI Grok configuration.
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com/v1",
-  apiKey: process.env.DEEPSEEK_API_KEY!,
+  baseURL: "https://api.x.ai/v1", // CHANGED: Switched to xAI endpoint
+  apiKey: process.env.XAI_API_KEY!, // CHANGED: Updated to xAI API key
 });
 
 export async function analyzeStudentProgress(input: AnalyzeInput): Promise<string> {
@@ -21,8 +21,8 @@ export async function analyzeStudentProgress(input: AnalyzeInput): Promise<strin
 
   try {
     const completion = await openai.chat.completions.create({
-      messages: [{ role: "system", content: prompt }],
-      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }], 
+      model: "grok-4", 
       temperature: 0.7,
     });
 
@@ -31,7 +31,7 @@ export async function analyzeStudentProgress(input: AnalyzeInput): Promise<strin
     }
     return "No analysis available.";
   } catch (error) {
-    console.error("Error calling DeepSeek:", error);
+    console.error("Error calling xAI Grok:", error);
     throw error;
   }
 }

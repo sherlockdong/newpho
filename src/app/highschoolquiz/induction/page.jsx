@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { app } from "../../../firebase"; // Adjust path based on your project structure
+import { app } from "../../../firebase";
 
 const auth = getAuth(app);
 
@@ -14,6 +14,11 @@ export default function QuizIndexPage() {
   const router = useRouter();
 
   const topics = [
+    { slug: "kinematics", name: "Kinematics" },
+    { slug: "mechanics", name: "Mechanics" },
+    { slug: "waves", name: "Waves" },
+    { slug: "optics", name: "Optics" },
+    { slug: "thermodynamics", name: "Thermodynamics" },
     { slug: "electricity", name: "Electricity" },
     { slug: "induction", name: "Electromagnetic Induction" },
     { slug: "relativity", name: "Relativity" },
@@ -29,7 +34,7 @@ export default function QuizIndexPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/auth"); // Redirect to login/register page
+      router.push("/auth");
     }
   }, [loading, user, router]);
 

@@ -8,39 +8,39 @@ export async function POST(request) {
       throw new Error("Valid prompt string is required");
     }
 
-    if (!process.env.DEEPSEEK_API_KEY) {
-      throw new Error("DeepSeek API key is not set");
+    if (!process.env.XAI_API_KEY) {  
+      throw new Error("xAI Grok API key is not set");
     }
 
     const payload = {
-      model: "deepseek-chat",
+      model: "grok-4",  
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     };
 
-    const response = await fetch("https://api.deepseek.com/v1", {
+    const response = await fetch("https://api.x.ai/v1", {  
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+        "Authorization": `Bearer ${process.env.XAI_API_KEY}`,  // CHANGED: Uses XAI_API_KEY
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`DeepSeek API failed: ${response.status} - ${errorText}`);
+      throw new Error(`xAI Grok API failed: ${response.status} - ${errorText}`);  // CHANGED: Updated error message for clarity
     }
 
     const data = await response.json();
-    console.log("DeepSeek API response:", JSON.stringify(data, null, 2));
+    console.log("xAI Grok API response:", JSON.stringify(data, null, 2));  // CHANGED: Updated log for clarity
 
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error calling DeepSeek API:", error.message);
+    console.error("Error calling xAI Grok API:", error.message);  // CHANGED: Updated log for clarity
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
