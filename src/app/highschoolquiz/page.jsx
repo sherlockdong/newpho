@@ -48,7 +48,7 @@ export default function QuizIndexPage() {
   }
 
   if (!user) {
-    return null; // This won’t render due to redirect, but included for safety
+    return null; 
   }
 
   return (

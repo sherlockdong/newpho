@@ -40,85 +40,6 @@ export default function Home() {
 
   return (
     <div>
-      {/* header-area */}
-      <header id="home">
-        <div id="sticky-header" className="tg-header__area transparent-header">
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <div className="tgmenu__wrap">
-                  <nav className="tgmenu__nav">
-                    <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-lg-flex">
-                      <ul className="navigation">
-                        <li><Link href="#home" className="section-link">Home</Link></li>
-                        <li><Link href="#features" className="section-link">features</Link></li>
-                        <li><Link href="#token" className="section-link">token</Link></li>
-                        <li><Link href="#work" className="section-link">how it works</Link></li>
-                        <li><Link href="#roadmap" className="section-link">roadmap</Link></li>
-                        <li className="menu-item-has-children"><Link href="blog.html">blog</Link>
-                          <ul className="sub-menu">
-                            <li><Link href="blog.html">Our Blog</Link></li>
-                            <li><Link href="blog-details.html">Blog Details</Link></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="tgmenu__action">
-                      <ul className="list-wrap">
-                        <li className="header-btn">
-<div >
-        {user ? (     <Link href="/user">
-          <span>{user.displayName}</span>
-          </Link> ) : (
-          <Link href="/auth">
-            <button style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>Login / Register</button>
-          </Link>
-        )}
-      </div>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="mobile-nav-toggler"><i className="tg-flaticon-menu-1"></i></div>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className="tgmobile__menu">
-          <nav className="tgmobile__menu-box">
-            <div className="close-btn"><i className="tg-flaticon-close-1"></i></div>
-            <div className="nav-logo">
-              <Link href="/"><img src="/assets/img/logo/logo.svg" alt="Logo" /></Link>
-            </div>
-            <div className="tgmobile__search">
-              <form action="#">
-                <input type="text" placeholder="Search here..." />
-                <button><i className="fas fa-search"></i></button>
-              </form>
-            </div>
-            <div className="tgmobile__menu-outer">
-              {/* Menu will be inserted via JS */}
-            </div>
-            <div className="social-links">
-              <ul className="list-wrap">
-                <li><Link href="#"><i className="fab fa-facebook-f"></i></Link></li>
-                <li><Link href="#"><i className="fab fa-twitter"></i></Link></li>
-                <li><Link href="#"><i className="fab fa-instagram"></i></Link></li>
-                <li><Link href="#"><i className="fab fa-linkedin-in"></i></Link></li>
-                <li><Link href="#"><i className="fab fa-youtube"></i></Link></li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <div className="tgmobile__menu-backdrop"></div>
-        {/* End Mobile Menu */}
-
-      </header>
-      {/* header-area-end */}
-
       {/* main-area */}
       <main className="main-area fix">
 
@@ -182,39 +103,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-4">
-                <div className="features__item features__item-two">
-                  <div className="features__icon">
-                    <img src="/assets/img/icon/features_icon03.png" alt="icon" />
-                  </div>
-                  <div className="features__content">
-                    <h4 className="title">Real-time <span>data</span></h4>
-                    <p>Global reach with content available in multiple</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4">
-                <div className="features__item features__item-two">
-                  <div className="features__icon">
-                    <img src="/assets/img/icon/features_icon04.png" alt="icon" />
-                  </div>
-                  <div className="features__content">
-                    <h4 className="title">Advanced <span>trading</span></h4>
-                    <p>Visual dashboards for trade performance</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4">
-                <div className="features__item features__item-two">
-                  <div className="features__icon">
-                    <img src="/assets/img/icon/features_icon05.png" alt="icon" />
-                  </div>
-                  <div className="features__content">
-                    <h4 className="title">Blockchain <span>compliance</span></h4>
-                    <p>Exportable reports for tax and accounting purposes</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div className="features__shape">
@@ -227,8 +115,7 @@ export default function Home() {
         <section className="marquee__area section-pt-120">
           <div className="slider__marquee clearfix marquee-wrap">
             <div className="marquee_mode marquee__group">
-              <h6 className="marquee__item">You will hold the way you love Webzo</h6>
-              <h6 className="marquee__item">You will hold the way you love Webzo</h6>
+              <h6 className="marquee__item">Moving Forward with the force of AI</h6>
             </div>
           </div>
         </section>
@@ -551,139 +438,6 @@ export default function Home() {
           </div>
         </section>
         {/* roadmap-area-end */}
-
-        {/* team-area */}
-        <section className="team__area section-py-120">
-          <div className="container">
-            <div className="row">
-              <div className="col-xl-6 col-lg-5">
-                <div className="team__content-wrap">
-                  <div className="section__title mb-40">
-                    <span className="sub-title">our avengers</span>
-                    <h2 className="title">Meet with <span>our</span> avengers!</h2>
-                  </div>
-                  <p>Webzi brings our love for cryptocurrency into Web3! Like a frog’s leap, the chart can jump at any moment. Boom!</p>
-                  <div className="team__social-wrap">
-                    <h6 className="title">Follow us</h6>
-                    <ul className="list-wrap">
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/facebook.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/twitter.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/telegram.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/discord.svg" alt="icon" className="icon" />
-                      </Link></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-xl-6 col-lg-7">
-                <div className="team__item-wrap">
-                  <div className="row gutter-y-30">
-                    <div className="col-md-6">
-                      <div className="team__item">
-                        <div className="team__thumb">
-                          <img src="/assets/img/team/team_img01.png" alt="img" />
-                        </div>
-                        <div className="team__content">
-                          <span>founder</span>
-                          <h3 className="title">Rosalina William</h3>
-                        </div>
-                        <div className="social__icon">
-                          <Link href="#!">
-                            <div className="shape">
-                              <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                            </div>
-                            <img src="/assets/img/icon/facebook.svg" alt="icon" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="team__item">
-                        <div className="team__thumb">
-                          <img src="/assets/img/team/team_img02.png" alt="img" />
-                        </div>
-                        <div className="team__content">
-                          <span>ceo</span>
-                          <h3 className="title">Alonso Dowson</h3>
-                        </div>
-                        <div className="social__icon">
-                          <Link href="#!">
-                            <div className="shape">
-                              <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                            </div>
-                            <img src="/assets/img/icon/telegram.svg" alt="icon" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="team__item">
-                        <div className="team__thumb">
-                          <img src="/assets/img/team/team_img03.png" alt="img" />
-                        </div>
-                        <div className="team__content">
-                          <span>Designer</span>
-                          <h3 className="title">Elson Nelzoon</h3>
-                        </div>
-                        <div className="social__icon">
-                          <Link href="#!">
-                            <div className="shape">
-                              <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                            </div>
-                            <img src="/assets/img/icon/twitter.svg" alt="icon" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="team__item">
-                        <div className="team__thumb">
-                          <img src="/assets/img/team/team_img04.png" alt="img" />
-                        </div>
-                        <div className="team__content">
-                          <span>developer</span>
-                          <h3 className="title">Miranda Halim</h3>
-                        </div>
-                        <div className="social__icon">
-                          <Link href="#!">
-                            <div className="shape">
-                              <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                            </div>
-                            <img src="/assets/img/icon/telegram.svg" alt="icon" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="team__shape">
-            <img src="/assets/img/images/features_shape.png" alt="shape" />
-          </div>
-        </section>
-        {/* team-area-end */}
-
       </main>
       {/* main-area-end */}
 
@@ -732,9 +486,6 @@ export default function Home() {
             </div>
           </div>
           <div className="footer__bottom">
-            <div className="copyright-text">
-              <p>Copyright & design by <Link href="https://themeforest.net/user/themeadapt" target="_blank">@ThemeAdapt</Link> - 2025</p>
-            </div>
           </div>
         </div>
         <div className="footer__shape">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Header from "./comp/header";
 // @ts-ignore
 import "../../public/assets/css/main.css";
 
@@ -17,7 +18,8 @@ interface LayoutProps {
 export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">    
-      <body>{children}</body>
+
+      <body> <Header /><main>{children}</main></body>
     </html>
   );
 }
