@@ -421,17 +421,6 @@ export default function KinematicsQuizPage() {
                           placeholder="Explain your reasoning..."
                         />
                       </div>
-                      <div>
-                        <label>Confidence (0-100):</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={answers[index]?.confidence || ""}
-                          onChange={(e) => handleConfidenceChange(index, parseInt(e.target.value) || 0)}
-                          className="quiz-input"
-                        />
-                      </div>
                     </li>
                   ))}
                 </ol>

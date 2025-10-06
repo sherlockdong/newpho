@@ -24,10 +24,41 @@
   --tg-fw-regular: 400;
   --tg-fw-light: 300;
 }
-
-/*=============================
-	Typography css start
-===============================*/
+.quiz-controls{
+display: grid;
+max-width: 40%;
+margin-left: 30%;
+}
+.quiz-select{
+  margin: 20px 0;
+  padding: 10px;
+  font-size: var(--tg-body-font-size);
+  border: 1px solid var(--tg-border-1);
+  border-radius: 4px;
+  background-color: var(--tg-secondary-color);
+  color: var(--tg-body-font-color);
+  margin-right: 20px;
+}
+.quiz-input{
+  margin: 20px 0;
+  padding: 10px;
+  font-size: var(--tg-body-font-size);
+  border: 1px solid var(--tg-border-1);
+  border-radius: 4px;
+  background-color: var(--tg-secondary-color);
+  color: var(--tg-body-font-color);
+  width: 10%;
+  box-sizing: border-box;
+}
+.quiz-button{
+  background-color: var(--tg-primary-color);
+  color: var(--tg-color-dark);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--tg-body-font-size);
+}
 body {
   font-family: var(--tg-body-font-family);
   font-size: var(--tg-body-font-size);

@@ -59,7 +59,15 @@ export default function Header() {
                   <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-lg-flex">
                     <ul className="navigation">
                       <li><Link href="/" className="section-link">PHO  - Guide</Link></li>
-                      <li><Link href="../highschoolquiz" className="section-link">High School Physics</Link></li>
+                      <li className="menu-item-has-children">
+                        <Link href="../highschoolquiz">Highschool Quiz</Link>
+                        <ul className="sub-menu">
+                          <li><Link href="../highschoolquiz/kinematics">Kinematics</Link></li>
+                          <li><Link href="../highschoolquiz/induction">Induction</Link></li>
+                          <li><Link href="../highschoolquiz/electricity">Electricity</Link></li>
+                          <li><Link href="../highschoolquiz/relativity">Relativity</Link></li>
+                        </ul>
+                      </li>
                       <li><Link href="#token" className="section-link">token</Link></li>
                       <li><Link href="#work" className="section-link">how it works</Link></li>
                       <li><Link href="#roadmap" className="section-link">roadmap</Link></li>
