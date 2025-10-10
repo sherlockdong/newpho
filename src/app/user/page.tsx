@@ -49,7 +49,7 @@ useEffect(() => {
   }
 
   return (
-    <div className={styles.userContainer}>
+   <div className ="quiz-container"> <div className={styles.userContainer}>
       <h1 className="quiz-title">User Profile</h1>
 
       {/* Profile Picture and Name */}
@@ -96,6 +96,6 @@ useEffect(() => {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
-    </div>
+    </div></div>
   );
 }

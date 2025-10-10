@@ -132,7 +132,7 @@ export default function Home() {
                     <h2 className="title">Learning<span>platform</span> of the future!</h2>
                   </div>
                   <p>Use AI to make physics learning easier. </p>
-                  <Link href="#!" className="tg-btn tg-btn-two">purchase now</Link>
+                  <Link href="./rout" className="tg-btn tg-btn-two">start now</Link>
                 </div>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function Home() {
               <div className="col-lg-6">
                 <div className="section__title text-center mb-80">
                   <span className="sub-title">how it works?</span>
-                  <h2 className="title">Core asset of the <span>crypto</span> marketplace</h2>
+                  <h2 className="title"> Strong combination between <span>Artificial Intelligence</span> & modern educational theories</h2>
                 </div>
               </div>
             </div>
@@ -170,25 +170,25 @@ export default function Home() {
                 <div className="col-lg-6" data-aos="fade-right" data-aos-delay="0">
                   <div className="work__item">
                     <h1 className="number">01</h1>
-                    <h4 className="title">Currency <span>conversion</span></h4>
-                    <p>Exportable reports for tax and accounting purposes.</p>
+                    <h4 className="title">Quiz <span>creation</span></h4>
+                    <p>Personalized quizzes created by advanced AI models</p>
                   </div>
                   <div className="work__item mb-0">
                     <h1 className="number">02</h1>
-                    <h4 className="title">Data <span>encryption</span></h4>
-                    <p>Visual dashboards for trade performance.</p>
+                    <h4 className="title">Data <span>collection</span></h4>
+                    <p>Logs of quizzes stored within your personal profile</p>
                   </div>
                 </div>
                 <div className="col-lg-6" data-aos="fade-left" data-aos-delay="0">
                   <div className="work__item work__item-right">
                     <h1 className="number">03</h1>
-                    <h4 className="title">Cold wallet <span>storage</span></h4>
-                    <p>Regular updates on crypto trends and platform features.</p>
+                    <h4 className="title">Review & <span>improve</span></h4>
+                    <p>Regular reviews provided to help you learn</p>
                   </div>
                   <div className="work__item work__item-right mb-0">
                     <h1 className="number">04</h1>
-                    <h4 className="title">Transfer crypto <span>& data</span></h4>
-                    <p>Guides for beginners on crypto basics and trading.</p>
+                    <h4 className="title">Moving <span>forward</span></h4>
+                    <p>Study plans mapped out to guide you onwards. </p>
                   </div>
                 </div>
               </div>
@@ -199,34 +199,6 @@ export default function Home() {
           </div>
         </section>
         {/* work-area-end */}
-
-        {/* exchange-area */}
-        <section className="exchange__area section-pb-120" data-aos="fade-up" data-aos-delay="0">
-          <div className="container">
-            <div className="exchange__inner-wrap">
-              <div className="exchange__content">
-                <div className="icon">
-                  <img src="/assets/img/images/exchange_img.png" alt="img" />
-                </div>
-                <div className="content">
-                  <h4 className="title">Exchange <span>availability</span></h4>
-                  <p>AI-powered tools to detect and prevent fraudulent activities.</p>
-                </div>
-              </div>
-              <div className="exchange__icons">
-                <ul className="list-wrap">
-                  <li><img src="/assets/img/icon/exchange_icon01.svg" alt="icon" /></li>
-                  <li><img src="/assets/img/icon/exchange_icon02.svg" alt="icon" /></li>
-                  <li><img src="/assets/img/icon/exchange_icon03.svg" alt="icon" /></li>
-                  <li><img src="/assets/img/icon/exchange_icon04.svg" alt="icon" /></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* exchange-area-end */}
-
-        {/* crypto-area */}
         <section className="crypto__area section-py-120">
           <div className="container">
             <div className="row justify-content-center">
@@ -417,59 +389,6 @@ export default function Home() {
       </main>
       {/* main-area-end */}
 
-      {/* footer-area */}
-      <footer className="footer__area">
-        <div className="container">
-          <div className="footer__top">
-            <div className="row justify-content-center">
-              <div className="col-lg-8">
-                <div className="footer__content">
-                  <div className="footer__logo">
-                    <Link href="/"><img src="/assets/img/logo/logo.svg" alt="logo" /></Link>
-                  </div>
-                  <span className="sub-title">Built on web3. Powered by You</span>
-                  <h2 className="title">Join with our <span>future</span> of Webzo currency</h2>
-                  <div className="team__social-wrap">
-                    <ul className="list-wrap">
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/facebook.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/twitter.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/telegram.svg" alt="icon" className="icon" />
-                      </Link></li>
-                      <li><Link href="#!">
-                        <div className="shape">
-                          <img src="/assets/img/icon/icons_bg.svg" alt="shape" />
-                        </div>
-                        <img src="/assets/img/icon/discord.svg" alt="icon" className="icon" />
-                      </Link></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="footer__bottom">
-          </div>
-        </div>
-        <div className="footer__shape">
-          <img src="/assets/img/images/footer_shape01.png" alt="shape" className="alltuchtopdown" />
-          <img src="/assets/img/images/footer_shape02.png" alt="shape" className="alltuchtopdown" />
-        </div>
-      </footer>
-      {/* footer-area-end */}
     </div>
   );
 }

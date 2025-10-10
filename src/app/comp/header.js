@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../firebase"; // adjust path if needed
+import { app } from "../../firebase"; 
 
 const auth = getAuth(app);
 
@@ -18,12 +18,9 @@ export default function Header() {
     const unsub = onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
     return () => unsub();
   }, []);
-
-  // hide/show on scroll
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      // hide when scrolling down past 50px, show when scrolling up
       if (y > lastScrollY && y > 50) setShowHeader(false);
       else setShowHeader(true);
       setLastScrollY(y);
@@ -31,8 +28,6 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [lastScrollY]);
-
-  // set CSS var to actual header height
   useEffect(() => {
     const setHeightVar = () => {
       if (headerRef.current) {
@@ -68,13 +63,13 @@ export default function Header() {
                           <li><Link href="../highschoolquiz/relativity">Relativity</Link></li>
                         </ul>
                       </li>
-                      <li><Link href="#token" className="section-link">token</Link></li>
-                      <li><Link href="#work" className="section-link">how it works</Link></li>
+                      <li><Link href="#token" className="section-link">Logs</Link></li>
+                      <li><Link href="#work" className="section-link">Plans</Link></li>
                       <li><Link href="#roadmap" className="section-link">roadmap</Link></li>
                       <li className="menu-item-has-children">
-                        <Link href="blog.html">blog</Link>
+                        <Link href="../aboutus">About Us</Link>
                         <ul className="sub-menu">
-                          <li><Link href="blog.html">Our Blog</Link></li>
+                          <li><Link href="../aboutus">Meet the Team</Link></li>
                           <li><Link href="blog-details.html">Blog Details</Link></li>
                         </ul>
                       </li>
