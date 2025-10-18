@@ -1,10 +1,9 @@
-// src/app/auth/page.tsx
 "use client";
 import { useState } from "react";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
-import { app } from "../../firebase"; // Named import
+import { app } from "../../firebase"; 
 
 const provider = new GoogleAuthProvider();
 
@@ -45,7 +44,7 @@ export default function AuthPage() {
     }
   };
 
-  return (
+  return (<div className="quiz-container">
     <div className={styles.authContainer}>
       <h1 className="quiz-title">Sign In</h1>
       {error && <p className="quiz-error">{error}</p>}
@@ -56,6 +55,6 @@ export default function AuthPage() {
       >
         {isLoading ? "Signing In..." : "Sign In with Google"}
       </button>
-    </div>
+    </div></div>
   );
 }

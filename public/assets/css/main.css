@@ -265,11 +265,9 @@ textarea {
 .fix {
   overflow: hidden;
 }
-
 .clear {
   clear: both;
 }
-
 /*=============================
     - Bootstrap Custom
 =============================*/
@@ -2824,6 +2822,7 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   display: inline-block;
 }
 .crypto__icon img {
+  max-width: 200px;
   -webkit-transition: all 0.5s ease-out 0s;
   -moz-transition: all 0.5s ease-out 0s;
   -ms-transition: all 0.5s ease-out 0s;
@@ -3116,5 +3115,18 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   margin-bottom: 0;
   font-size: 14px;
 }
-
-/*# sourceMappingURL=main.css.map */
+.section__title{
+  text-align: center;
+  margin-bottom: 80px;
+}
+.row{
+  row-gap: 30px;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 100px;
+}
+.collg4{
+  justify-content: center;
+  align-self: center;
+  margin-bottom: 95px;
+}

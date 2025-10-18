@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Header from "./comp/header";
-// @ts-ignore
+import { Analytics } from "@vercel/analytics/next";
 import "../../public/assets/css/main.css";
 
 export const metadata: Metadata = {
@@ -19,7 +19,8 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">    
 
-      <body> <Header /><main>{children}</main></body>
+      <body> <Header /><main>{children}</main>
+           <Analytics /></body>
     </html>
   );
 }

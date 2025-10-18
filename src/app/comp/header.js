@@ -84,6 +84,7 @@ export default function Header() {
                             <Link href="/user">
                               <span>{user.displayName}</span>
                             </Link>
+                            
                           ) : (
                             <Link href="/auth">
                               <button style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>
@@ -92,6 +93,7 @@ export default function Header() {
                             </Link>
                           )}
                         </div>
+                        
                       </li>
                     </ul>
                   </div>

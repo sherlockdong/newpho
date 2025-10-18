@@ -204,24 +204,24 @@ export default function Home() {
             <div className="row justify-content-center">
               <div className="col-lg-7">
                 <div className="section__title text-center mb-80">
-                  <span className="sub-title">crypto direction</span>
-                  <h2 className="title">Goods & assets <span>according</span> <br /> to users interests.</h2>
+                  <span className="sub-title">Developments</span>
+                  <h2 className="title">Integration of <span>Artificial Intelligence</span> <br /> and Human Brain</h2>
                 </div>
               </div>
             </div>
             <div className="row gutter-y-30 justify-content-center">
-              <div className="col-lg-4 col-md-6">
+              <div className="collg4">
                 <div className="crypto__item">
                   <div className="crypto__icon">
-                    <img src="/assets/img/icon/crypto_icon01.svg" alt="icon" />
+                    <img src="/assets/img/icon/GitHub_Logo_White.png" alt="icon" />
                   </div>
                   <div className="crypto__content">
-                    <h2 className="title">Read our <span>white paper</span></h2>
-                    <Link href="#!" className="tg-btn tg-btn-two">open whitepaper</Link>
+                    <h2 className="title">Check out our <span>source code</span></h2>
+                    <Link target="_blank" href="https://github.com/sherlockdong/newpho" className="tg-btn tg-btn-two">Github repository</Link>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-4 col-md-6">
+              <div className="collg4">
                 <div className="crypto__item">
                   <div className="crypto__icon">
                     <img src="/assets/img/icon/crypto_icon02.svg" alt="icon" />
@@ -232,7 +232,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-4 col-md-6">
+              <div className="collg4">
                 <div className="crypto__item">
                   <div className="crypto__icon">
                     <img src="/assets/img/icon/crypto_icon03.svg" alt="icon" />
