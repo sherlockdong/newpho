@@ -1,29 +1,28 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../firebase";
-import "katex/dist/katex.min.css";
+import { app, db } from "../../../firebase.js";
+import { collection, query, orderBy, limit, doc, setDoc, getDocs } from "firebase/firestore"; // Added getDocs
+
 import { InlineMath } from "react-katex";
+import ReactMarkdown from "react-markdown";
 
 const auth = getAuth(app);
 
 const PHYSICS_FACTS = [
-  "Faraday's Law: A changing magnetic field through a coil induces an electromotive force (EMF) — this is the core principle of electromagnetic induction.",
-  "Lenz's Law: The induced current always flows in a direction that opposes the change in magnetic flux — nature’s way of conserving energy.",
-  "Electric generators work by rotating coils in a magnetic field, using electromagnetic induction to produce electricity",
-  "Transformers change voltage levels in AC circuits using two coils — primary and secondary — through mutual induction.",
-  "Faster motion or faster magnetic field changes result in greater induced voltage.",
-  "The direction of induced current in a wire loop can be predicted using the right-hand rule (point thumb in motion direction, fingers in magnetic field direction — palm shows current).",
-  "Changing magnetic fields in conductors induce swirling currents called eddy currents, which cause energy losses but can also be harnessed for braking.",
-  "Magnetic flux (Φ) is calculated using magnetic field strength (B), area (A), and angle (θ) between the field and normal to the loop — only the perpendicular component counts.",
-  "In alternating current (AC) systems, maximum EMF occurs when magnetic flux changes most rapidly — typically at 0° and 180° in a sine wave.",
-  "Inductive charging uses electromagnetic induction between two coils — in the charger and the device — to transfer energy without wires.",
-
+  "When you take a turn, your tires exert an inward frictional force on the road — that’s the centripetal force keeping you in circular motion. Without it, you’d keep going straight!",
+  "Newton realized the Moon is in free fall — it’s constantly being pulled by Earth’s gravity, but its sideways motion makes it miss the Earth every time. That’s why it orbits instead of crashing.",
+  "When you feel like you’re “pushed outward” on a merry-go-round, that’s actually your inertia resisting the inward centripetal pull. In physics terms, the “centrifugal force” is a fictitious force — but your stomach doesn’t care.",
+  "Newton proved that if gravity follows an inverse-square law, then the natural orbits it creates are ellipses, parabolas, or hyperbolas — just as Kepler observed centuries before calculus existed!",
+  "Doubling your circular speed quadruples the required centripetal force. That’s why a race car on a curve needs insane tire grip — and why planets can only spin so fast before they fly apart.",
+  "Right now, as Earth spins, you’re moving in a circular path — and gravity is the centripetal force holding you down. Without it, you’d shoot off into space tangentially at about 1,000 mph at the equator.",
+  "The gravitational constant is so small that your attraction to your chair is technically measurable — about 10⁻⁷ newtons — but only if you’re extremely patient (and nerdy).",
+  "Astronauts in orbit aren’t “beyond gravity” — they’re actually falling with their spacecraft. Since everything around them falls together, they feel weightless even though gravity is still acting on them.",
+  "Every planet, moon, or satellite moving in a circle is perfectly balancing two ideas: Inertia (trying to go straight) and Gravity (pulling inward)",
 ];
 
-export default function ElectricityQuizPage() {
-  const TOPIC = "electricity";
+export default function CircularmotionQuizPage() {
+  const TOPIC = "circular";
   const [selectedSubtopic, setSelectedSubtopic] = useState("");
   const [availableSubtopics, setAvailableSubtopics] = useState([]);
   const [subtopicsLoading, setSubtopicsLoading] = useState(true);
@@ -40,12 +39,30 @@ export default function ElectricityQuizPage() {
   const [quizLogs, setQuizLogs] = useState([]);
   const [currentFact, setCurrentFact] = useState("");
   const [showAnswers, setShowAnswers] = useState(false);
+  const [latestAnalysis, setLatestAnalysis] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      const storedLogs = localStorage.getItem(`quizLogs_${currentUser?.uid || "guest"}`);
-      setQuizLogs(storedLogs ? JSON.parse(storedLogs) : []);
+      if (currentUser) {
+        try {
+          const q = query(
+            collection(db, `users/${currentUser.uid}/analysisLogs`),
+            orderBy("timestamp", "desc"),
+            limit(10)
+          );
+          const snapshot = await getDocs(q);
+          const logs = snapshot.docs.map(doc => doc.data());
+          setQuizLogs(logs);
+          console.log("Fetched quiz logs:", logs);
+        } catch (err) {
+          console.error("Error fetching quiz logs:", err);
+          setError("Failed to load quiz history. Please try again.");
+          setQuizLogs([]);
+        }
+      } else {
+        setQuizLogs([]);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -81,19 +98,27 @@ export default function ElectricityQuizPage() {
       setDifficultiesLoading(true);
       setSelectedDifficulty("");
       try {
+        console.log("Fetching difficulties for:", { topic: TOPIC, tag: selectedSubtopic });
         const response = await fetch("/api/difficulties-by-tag", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ topic: TOPIC, tag: selectedSubtopic }),
         });
-        if (!response.ok) throw new Error(`Failed to fetch difficulties: ${response.statusText}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch difficulties: ${response.status} - ${errorText}`);
+        }
         const data = await response.json();
+        console.log("Difficulties response:", data);
         setAvailableDifficulties(data.difficulties || []);
         if (data.difficulties && data.difficulties.length > 0) {
           setSelectedDifficulty(data.difficulties[0].value);
+        } else {
+          setError("No difficulties available for this subtopic.");
         }
       } catch (err) {
         setError(err.message);
+        console.error("Error fetching difficulties:", err);
       } finally {
         setDifficultiesLoading(false);
       }
@@ -119,6 +144,7 @@ export default function ElectricityQuizPage() {
     setAnswers({});
     setStartTime(Date.now());
     setShowAnswers(false);
+    setLatestAnalysis(null);
 
     try {
       const contentResponse = await fetch("/api/content", {
@@ -126,17 +152,15 @@ export default function ElectricityQuizPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic: TOPIC, tag: selectedSubtopic, difficulty: selectedDifficulty }),
       });
-      if (!contentResponse.ok) {
-        const errorText = await contentResponse.text();
-        throw new Error(errorText);
-      }
+      if (!contentResponse.ok) throw new Error(await contentResponse.text());
       const { content } = await contentResponse.json();
       if (!content || content.includes("No content available")) {
         throw new Error(`No valid ${selectedDifficulty} content retrieved for tag: ${selectedSubtopic}`);
       }
+      console.log("Content from /api/content for", selectedSubtopic, ":", content);
 
       const prompt = `Based strictly on the following ${selectedDifficulty} content about "${selectedSubtopic}", generate ${questionCount} quiz questions in this format:
-      ### Question [number]
+      ### Question [number]: [Title]
       [Question text]
       a) [Option 1]
       b) [Option 2]
@@ -145,27 +169,25 @@ export default function ElectricityQuizPage() {
       **Correct Answer:** [Correct option letter]
       ---
       Do not use external knowledge beyond this content:\n\n${content}`;
-      const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
+      console.log("Prompt sent to xAI Grok:", prompt);
 
       const quizResponse = await fetch("https://api.x.ai/v1/chat/completions", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`, 
+         "Authorization": `Bearer ${process.env.NEXT_PUBLIC_XAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "grok-4",
-          messages: [{ role: "user", content: prompt }], 
+          messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
           max_tokens: 1000, 
         }),
       });
-      if (!quizResponse.ok) {
-        const errorText = await quizResponse.text();
-        throw new Error(errorText);
-      }
+      if (!quizResponse.ok) throw new Error(await quizResponse.text());
       const data = await quizResponse.json();
       const quizContent = data.choices?.[0]?.message?.content || "";
+      console.log("Raw quiz content:", quizContent);
       if (!quizContent) throw new Error("Quiz is empty or invalid");
       setQuiz(quizContent);
     } catch (err) {
@@ -178,15 +200,15 @@ export default function ElectricityQuizPage() {
   const parseQuizQuestions = (quizString) => {
     if (!quizString || typeof quizString !== "string") return [];
     const questions = [];
-    const sections = quizString.split("---").map(section => section.trim()).filter(Boolean);
+    const sections = quizString.split("---").map((section) => section.trim()).filter(Boolean);
 
-    sections.forEach(section => {
-      const lines = section.split("\n").map(line => line.trim()).filter(Boolean);
+    sections.forEach((section) => {
+      const lines = section.split("\n").map((line) => line.trim()).filter(Boolean);
       let question = { text: "", options: [], correctAnswer: "" };
 
       lines.forEach((line, idx) => {
-        if (line.match(/^### Question \d+/)) {
-          question.text = line.replace(/^### Question \d+\s*/, "").trim();
+        if (line.match(/^### Question \d+:/)) {
+          question.text = line.replace(/^### Question \d+:\s*/, "").trim();
         } else if (line.match(/^[a-d]\)/)) {
           question.options.push(line.trim());
         } else if (line.startsWith("**Correct Answer:**")) {
@@ -201,6 +223,7 @@ export default function ElectricityQuizPage() {
       }
     });
 
+    console.log("Parsed questions:", questions);
     return questions;
   };
 
@@ -226,87 +249,90 @@ export default function ElectricityQuizPage() {
   };
 
   async function handleSubmitAnswers() {
+    if (!user?.uid) {
+      setError("You must be signed in to submit answers.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const timeTaken = (Date.now() - startTime) / 1000;
-      const payload = {
-        quizScores: calculateScore(answers),
-        incorrectTopics: selectedSubtopic,
-        studyLogs: `Time taken: ${timeTaken}s`,
-      };
-      const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
-
-      const response = await fetch("https://api.x.ai/v1/chat/completions", {
+      const response = await fetch("/api/evaluate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "grok-4",
-          messages: [{
-            role: "user",
-            content: `Analyze the following student progress data and provide a detailed feedback:
-              - Quiz Scores: ${payload.quizScores}
-              - Incorrect Topics: ${payload.incorrectTopics}
-              - Study Logs: ${payload.studyLogs}
-              Return the output as a JSON object with an "analysis" field containing the feedback.`
-          }],
-          temperature: 0.7,
-          max_tokens: 500,
+          quiz: questions,
+          answers,
+          timeTaken,
+          tag: selectedSubtopic,
+          userId: user.uid,
         }),
       });
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Evaluate failed: ${response.status} ${text}`);
+        const errorText = await response.text();
+        throw new Error(`Failed to evaluate answers: ${response.status} - ${errorText}`);
       }
       const data = await response.json();
 
       const newLog = {
-        quizScores: calculateScore(answers),
-        incorrectTopics: selectedSubtopic,
-        studyLogs: `Time taken: ${timeTaken}s`,
-        analysis: data.choices?.[0]?.message?.content ? JSON.parse(data.choices[0].message.content).analysis : "No analysis available",
-        timestamp: new Date().toISOString(),
+        title: selectedSubtopic || "Quiz Evaluation",
+        score: calculateScore(answers),
+        analysis: data.analysis,
+        timeTaken,
+        timestamp: new Date(),
         quiz: questions,
         answers,
         difficulty: selectedDifficulty,
       };
-      const updatedLogs = [newLog, ...quizLogs].slice(0, 10);
-      setQuizLogs(updatedLogs);
-      localStorage.setItem(`quizLogs_${user?.uid || "guest"}`, JSON.stringify(updatedLogs));
 
+      const logId = Date.now().toString();
+      console.log("Saving log to Firestore:", newLog);
+      await setDoc(doc(db, `users/${user.uid}/analysisLogs`, logId), newLog);
+
+      const q = query(
+        collection(db, `users/${user.uid}/analysisLogs`),
+        orderBy("timestamp", "desc"),
+        limit(10)
+      );
+      const snapshot = await getDocs(q);
+      const updatedLogs = snapshot.docs.map(doc => doc.data());
+      setQuizLogs(updatedLogs);
+      console.log("Refetched quiz logs:", updatedLogs);
+
+      setLatestAnalysis(data.analysis);
       setShowAnswers(true);
       setError(null);
       alert("Answers submitted and analyzed successfully!");
     } catch (err) {
       setError(err.message);
+      console.error("Error submitting answers:", err);
     } finally {
       setLoading(false);
     }
   }
 
   const calculateScore = (answers) => {
-    const scores = Object.values(answers).map((a) => a.confidence || 0);
-    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toString() : "0";
+    const scores = Object.values(answers).map((a: any) => a.confidence || 0);
+    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) : "0";
   };
 
   const questions = parseQuizQuestions(quiz);
 
   const renderMathText = (text) => {
     const parts = text.split(/(\$.*?\$)/);
-    return parts.map((part, idx) => (
+    return parts.map((part, idx) =>
       part.startsWith("$") && part.endsWith("$") ? (
         <InlineMath key={idx} math={part.slice(1, -1)} />
       ) : (
         <span key={idx}>{part}</span>
       )
-    ));
+    );
   };
 
   return (
     <div className="quiz-container">
-      <h1 className="quiz-title">Electricity Quiz</h1>
+      <h1 className="quiz-title">Circular Motion Quiz</h1>
       <div className="quiz-controls">
         <label htmlFor="subtopic-select">Select Subtopic:</label>
         <select
@@ -382,12 +408,17 @@ export default function ElectricityQuizPage() {
       {quiz && !loading && (
         <div className="quiz-content">
           <h2 className="quiz-subtitle">
-            Your {availableSubtopics.find(sub => sub.value === selectedSubtopic)?.label || selectedSubtopic} Quiz (
-            {availableDifficulties.find(diff => diff.value === selectedDifficulty)?.label || selectedDifficulty})
+            Your {availableSubtopics.find((sub) => sub.value === selectedSubtopic)?.label || selectedSubtopic} Quiz (
+            {availableDifficulties.find((diff) => diff.value === selectedDifficulty)?.label || selectedDifficulty})
           </h2>
           <div className="quiz-questions">
             {questions.length > 0 ? (
-              <form onSubmit={(e) => { e.preventDefault(); handleSubmitAnswers(); }}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmitAnswers();
+                }}
+              >
                 <ol>
                   {questions.map((question, index) => (
                     <li key={index} className="quiz-question">
@@ -436,7 +467,7 @@ export default function ElectricityQuizPage() {
                     </li>
                   ))}
                 </ol>
-                <button type="submit" disabled={loading} className="quiz-button">
+                <button type="submit" disabled={loading || !user} className="quiz-button">
                   {loading ? "Submitting..." : "Submit Answers"}
                 </button>
               </form>
@@ -444,6 +475,12 @@ export default function ElectricityQuizPage() {
               <p>No valid questions generated. Raw content: {quiz}</p>
             )}
           </div>
+          {showAnswers && latestAnalysis && (
+            <div className="quiz-analysis">
+              <h2 className="quiz-subtitle">Evaluation Analysis</h2>
+              <ReactMarkdown>{latestAnalysis}</ReactMarkdown>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -58,7 +58,7 @@ export default function Header() {
                         <Link href="../highschoolquiz">Highschool Quiz</Link>
                         <ul className="sub-menu">
                           <li><Link href="../highschoolquiz/kinematics">Kinematics</Link></li>
-                          <li><Link href="../highschoolquiz/induction">Induction</Link></li>
+                          <li><Link href="../highschoolquiz/circular">Circular Motion</Link></li>
                           <li><Link href="../highschoolquiz/electricity">Electricity</Link></li>
                           <li><Link href="../highschoolquiz/relativity">Relativity</Link></li>
                         </ul>

@@ -71,7 +71,6 @@ export default function Home() {
             <div className="row justify-content-center">
               <div className="col-lg-6">
                 <div className="section__title text-center mb-80">
-                  <span className="sub-title">accessible for everyone</span>
                   <h2 className="title">About us</h2>
                 </div>
               </div>
@@ -221,32 +220,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="collg4">
-                <div className="crypto__item">
-                  <div className="crypto__icon">
-                    <img src="/assets/img/icon/crypto_icon02.svg" alt="icon" />
-                  </div>
-                  <div className="crypto__content">
-                    <h2 className="title">1 CRN token price <span>0.00014 BTC</span></h2>
-                    <Link href="#!" className="tg-btn tg-btn-two">Buy tokens <span>(-25%)</span></Link>
-                  </div>
-                </div>
-              </div>
-              <div className="collg4">
-                <div className="crypto__item">
-                  <div className="crypto__icon">
-                    <img src="/assets/img/icon/crypto_icon03.svg" alt="icon" />
-                  </div>
-                  <div className="crypto__content">
-                    <h2 className="title">ICO Participants <span>370,000+</span></h2>
-                    <Link href="#!" className="tg-btn tg-btn-two">join our telegram</Link>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-          <div className="crypto__shape">
-            <img src="/assets/img/images/features_shape.png" alt="shape" />
           </div>
         </section>
         {/* crypto-area-end */}
@@ -256,9 +230,6 @@ export default function Home() {
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-6">
-                <div className="faq__img" data-aos="fade-right" data-aos-delay="0">
-                  <img src="/assets/img/images/faq_img.png" alt="img" />
-                </div>
               </div>
               <div className="col-lg-6">
                 <div className="faq__content" data-aos="fade-left" data-aos-delay="0">
@@ -271,36 +242,24 @@ export default function Home() {
                       <div className="accordion-item">
                         <h2 className="accordion-header">
                           <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Main purpose of a cryptocurrency
+                            Main purpose of PHO-Guide?
                           </button>
                         </h2>
                         <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                           <div className="accordion-body">
-                            <p>The private key, stored securely in the wallet, allows you to sign transactions and prove ownership of the funds cryptocurrency wallet.</p>
+                            <p>We strive to provide a private, personalized physics- learning experience for high school or even college students with the power of Artificial Intelligence. </p>
                           </div>
                         </div>
                       </div>
                       <div className="accordion-item">
                         <h2 className="accordion-header">
                           <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            How can I make refund?
+                            What AI models are used?
                           </button>
                         </h2>
                         <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                           <div className="accordion-body">
-                            <p>The private key, stored securely in the wallet, allows you to sign transactions and prove ownership of the funds cryptocurrency wallet.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="accordion-item">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            How do they operate on blockchain?
-                          </button>
-                        </h2>
-                        <div id="collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                          <div className="accordion-body">
-                            <p>The private key, stored securely in the wallet, allows you to sign transactions and prove ownership of the funds cryptocurrency wallet.</p>
+                            <p>As of right now, we use Grok 4 0709. It is a fast, accurate model that is very much capable of analyzing your studying pattern and provide you with more practice problems. </p>
                           </div>
                         </div>
                       </div>
@@ -311,84 +270,8 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* faq-area-end */}
-
-        {/* section-divider */}
-        <div className="section-divider">
-          <div className="container">
-            <span></span>
-          </div>
-        </div>
         {/* section-divider-end */}
-
-        {/* roadmap-area */}
-        <section id="roadmap" className="roadmap__area section-py-120">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-6">
-                <div className="section__title text-center mb-80" data-aos="fade-up" data-aos-delay="0">
-                  <span className="sub-title">roadmap</span>
-                  <h2 className="title">Our <span>strategy</span> & Planning</h2>
-                </div>
-              </div>
-            </div>
-            <div className="roadmap__item-wrap" data-aos="fade-up" data-aos-delay="300">
-              <div className="row gutter-y-40">
-                <div className="col-lg-3 col-md-6">
-                  <div className="roadmap__item">
-                    <div className="roadmap__icon">
-                      <img src="/assets/img/icon/roadmap_icon01.png" alt="icon" />
-                    </div>
-                    <div className="roadmap__content">
-                      <h3 className="title">2014</h3>
-                      <p>Definitions of key terms in cryptocurrency</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-3 col-md-6">
-                  <div className="roadmap__item">
-                    <div className="roadmap__icon">
-                      <img src="/assets/img/icon/roadmap_icon02.png" alt="icon" />
-                    </div>
-                    <div className="roadmap__content">
-                      <h3 className="title">2017</h3>
-                      <p>Automated tools for executing strategies</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-3 col-md-6">
-                  <div className="roadmap__item">
-                    <div className="roadmap__icon">
-                      <img src="/assets/img/icon/roadmap_icon03.png" alt="icon" />
-                    </div>
-                    <div className="roadmap__content">
-                      <h3 className="title">2022</h3>
-                      <p>APIs for developers to build custom tools</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-3 col-md-6">
-                  <div className="roadmap__item">
-                    <div className="roadmap__icon">
-                      <img src="/assets/img/icon/roadmap_icon04.png" alt="icon" />
-                    </div>
-                    <div className="roadmap__content">
-                      <h3 className="title">2025</h3>
-                      <p>A space for users to discuss trends</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="roadmap__shape">
-            <img src="/assets/img/images/features_shape.png" alt="shape" />
-          </div>
-        </section>
-        {/* roadmap-area-end */}
-      </main>
-      {/* main-area-end */}
-
+</main>
     </div>
   );
 }

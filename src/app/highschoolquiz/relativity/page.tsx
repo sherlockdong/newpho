@@ -1,4 +1,3 @@
-// src/app/highschoolquiz/relativity/page.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
