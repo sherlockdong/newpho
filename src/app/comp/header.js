@@ -1,9 +1,10 @@
+// app/components/Header.tsx
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../firebase"; 
+import { app } from "../../firebase";
 
 const auth = getAuth(app);
 
@@ -13,96 +14,127 @@ export default function Header() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const headerRef = useRef(null);
 
-  // auth state
+  // Auth state listener
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
-    return () => unsub();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
+
+  // Hide/show header on scroll
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > lastScrollY && y > 50) setShowHeader(false);
-      else setShowHeader(true);
-      setLastScrollY(y);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setShowHeader(false); // Scrolling down
+      } else if (currentScrollY < lastScrollY) {
+        setShowHeader(true); // Scrolling up
+      }
+
+      setLastScrollY(currentScrollY);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  // Set --header-h CSS variable dynamically
   useEffect(() => {
-    const setHeightVar = () => {
+    const updateHeight = () => {
       if (headerRef.current) {
-        const h = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty("--header-h", `${h}px`);
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty("--header-h", `${height}px`);
       }
     };
-    setHeightVar();
-    window.addEventListener("resize", setHeightVar);
-    return () => window.removeEventListener("resize", setHeightVar);
-  }, []);
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [showHeader]); // Re-run if visibility affects height
 
   return (
-    <header id="home" ref={headerRef}>
-      <div
-        id="sticky-header"
-        className={`tg-header__area transparent-header ${showHeader ? "sticky-visible" : "sticky-hidden"}`}
-      >
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="tgmenu__wrap">
-                <nav className="tgmenu__nav">
-                  <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-lg-flex">
-                    <ul className="navigation">
-                      <li><Link href="/" className="section-link">PHO  - Guide</Link></li>
-                      <li className="menu-item-has-children">
-                        <Link href="../highschoolquiz">Highschool Quiz</Link>
-                        <ul className="sub-menu">
-                          <li><Link href="../highschoolquiz/kinematics">Kinematics</Link></li>
-                          <li><Link href="../highschoolquiz/circular">Circular Motion</Link></li>
-                          <li><Link href="../highschoolquiz/electricity">Electricity</Link></li>
-                          <li><Link href="../highschoolquiz/relativity">Relativity</Link></li>
-                        </ul>
-                      </li>
-                      <li><Link href="#token" className="section-link">Logs</Link></li>
-                      <li><Link href="#work" className="section-link">Plans</Link></li>
-                      <li><Link href="#roadmap" className="section-link">roadmap</Link></li>
-                      <li className="menu-item-has-children">
-                        <Link href="../aboutus">About Us</Link>
-                        <ul className="sub-menu">
-                          <li><Link href="../aboutus">Meet the Team</Link></li>
-                          <li><Link href="blog-details.html">Blog Details</Link></li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </div>
+    <header
+      ref={headerRef}
+      className={`tg-header__area transparent-header fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <div className="tgmenu__wrap">
+              <nav className="tgmenu__nav">
+                {/* Logo / Brand */}
+                <div className="logo">
+                  <Link href="/" className="text-2xl font-bold text-white">
+                    PHO-Guide
+                  </Link>
+                </div>
 
-                  <div className="tgmenu__action">
-                    <ul className="list-wrap">
-                      <li className="header-btn">
-                        <div>
-                          {user ? (
-                            <Link href="/user">
-                              <span>{user.displayName}</span>
-                            </Link>
-                            
+                {/* Desktop Navigation */}
+                <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-lg-flex">
+                  <ul className="navigation">
+                    <li>
+                      <Link href="/highschoolquiz" className="section-link">
+                        Highschool Quiz
+                      </Link>
+                      <ul className="sub-menu">
+                        <li><Link href="/highschoolquiz/kinematics">Kinematics</Link></li>
+                        <li><Link href="/highschoolquiz/circular">Circular Motion</Link></li>
+                        <li><Link href="/highschoolquiz/electricity">Electricity</Link></li>
+                        <li><Link href="/highschoolquiz/relativity">Relativity</Link></li>
+                      </ul>
+                    </li>
+                    <li><Link href="/quiz-history" className="section-link">Logs</Link></li>
+                    <li><Link href="/study-plan" className="section-link">Plans</Link></li>
+                    <li><Link href="#roadmap" className="section-link">Roadmap</Link></li>
+                    <li>
+                      <Link href="/aboutus">About Us</Link>
+                      <ul className="sub-menu">
+                        <li><Link href="/aboutus">Meet the Team</Link></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Auth & Actions */}
+                <div className="tgmenu__action">
+                  <ul className="list-wrap">
+                    <li className="header-btn">
+                      {user ? (
+                        <Link
+                          href="/user"
+                          className="flex items-center gap-3 text-white hover:text-primary transition"
+                        >
+                          {user.photoURL ? (
+                            <img
+                              src={user.photoURL}
+                              alt="Profile"
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
                           ) : (
-                            <Link href="/auth">
-                              <button style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>
-                                Login / Register
-                              </button>
-                            </Link>
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-dark font-bold">
+                              {user.displayName?.[0]?.toUpperCase() || "U"}
+                            </div>
                           )}
-                        </div>
-                        
-                      </li>
-                    </ul>
-                  </div>
+                          <span>{user.displayName || "User"}</span>
+                        </Link>
+                      ) : (
+                        <Link href="/auth">
+                          <button className="tg-btn">Login / Register</button>
+                        </Link>
+                      )}
+                    </li>
+                  </ul>
+                </div>
 
-                  <div className="mobile-nav-toggler">
-                    <i className="tg-flaticon-menu-1" />
-                  </div>
-                </nav>
-              </div>
+                {/* Mobile Menu Toggle */}
+                <div className="mobile-nav-toggler d-lg-none">
+                  <i className="tg-flaticon-menu-1" />
+                </div>
+              </nav>
             </div>
           </div>
         </div>

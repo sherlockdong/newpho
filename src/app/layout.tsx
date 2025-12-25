@@ -1,26 +1,24 @@
+// app/layout.tsx
 import type { Metadata } from "next";
-import Header from "./comp/header";
-import { Analytics } from "@vercel/analytics/next";
-import "../../public/assets/css/main.css";
+import "../../public/assets/css/main.css"; // or your main.css path
+import Header from "./comp/header"; // Create this component next
 
 export const metadata: Metadata = {
-  title: "PHO-GUIDE",
-  description: "A physics olympiad tutoring website, designed by current high school students.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Physics Olympiad Guide",
+  description: "AI-powered physics learning platform",
 };
 
-interface LayoutProps {
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: LayoutProps) {
+}) {
   return (
-    <html lang="en">    
-
-      <body> <Header /><main>{children}</main>
-           <Analytics /></body>
+    <html lang="en">
+      <body>
+        <Header />  {/* Fixed header here */}
+        <main>{children}</main>  {/* All page content starts below header */}
+      </body>
     </html>
   );
 }
