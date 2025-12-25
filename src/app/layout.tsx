@@ -1,7 +1,9 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import "../../public/assets/css/main.css"; // or your main.css path
-import Header from "./comp/header"; // Create this component next
+import "../../public/assets/css/main.css";
+import Header from "./comp/header";
+import 'katex/dist/katex.min.css';
+
 
 export const metadata: Metadata = {
   title: "Physics Olympiad Guide",

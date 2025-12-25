@@ -88,7 +88,7 @@ export default function Header() {
                       </ul>
                     </li>
                     <li><Link href="/quiz-history" className="section-link">Logs</Link></li>
-                    <li><Link href="/study-plan" className="section-link">Plans</Link></li>
+                    <li><Link href="./insights" className="section-link">Insights</Link></li>
                     <li><Link href="#roadmap" className="section-link">Roadmap</Link></li>
                     <li>
                       <Link href="/aboutus">About Us</Link>

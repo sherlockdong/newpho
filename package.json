@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -16,7 +17,9 @@
     "@langchain/core": "^0.3.42",
     "@langchain/openai": "^0.4.4",
     "@langchain/weaviate": "^0.1.1",
+    "@mdx-js/loader": "^3.1.1",
     "@mui/material": "^6.1.8",
+    "@next/mdx": "^16.1.1",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.7.8",
     "classnames": "^2.5.1",
@@ -25,7 +28,7 @@
     "firebase": "^11.4.0",
     "firebase-admin": "^12.7.0",
     "genkit": "^1.2.0",
-    "katex": "^0.16.21",
+    "katex": "^0.16.27",
     "langchain": "^0.3.19",
     "next": "^16.1.1",
     "openai": "^4.89.0",
@@ -34,9 +37,12 @@
     "react-katex": "^3.0.1",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.0.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "weaviate-client": "^3.4.1"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "typescript": "5.8.2"
   }
 }
