@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
+import Script from "next/script";
 import "../../public/assets/css/main.css";
 import Header from "./comp/header";
 import 'katex/dist/katex.min.css';
