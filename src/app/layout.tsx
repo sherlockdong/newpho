@@ -17,6 +17,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-TF3TR8PXK2"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-TF3TR8PXK2');
+          `}
+        </Script></head>
       <body>
         <Header />  {/* Fixed header here */}
         <main>{children}</main>  {/* All page content starts below header */}
