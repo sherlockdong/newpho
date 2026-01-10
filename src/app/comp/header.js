@@ -89,11 +89,12 @@ export default function Header() {
                     </li>
                     <li><Link href="/quiz-history" className="section-link">Logs</Link></li>
                     <li><Link href="./insights" className="section-link">Insights</Link></li>
-                    <li><Link href="#roadmap" className="section-link">Roadmap</Link></li>
+                    <li><Link href="./roadmap" className="section-link">Roadmap</Link></li>
                     <li>
                       <Link href="/aboutus">About Us</Link>
                       <ul className="sub-menu">
                         <li><Link href="/aboutus">Meet the Team</Link></li>
+                        <li><Link href="/contact">Contact Us</Link></li>
                       </ul>
                     </li>
                   </ul>
