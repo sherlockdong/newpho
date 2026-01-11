@@ -2,7 +2,7 @@
 
 export default function RoadmapPage() {
   return (
-    <div>
+    <div className="quiz-container">
         <h1>A glimpse of the future development of this website</h1>
 
 

@@ -78,13 +78,13 @@ export default function Header() {
                   <ul className="navigation">
                     <li>
                       <Link href="/highschoolquiz" className="section-link">
-                        Highschool Quiz
+                        Sections
                       </Link>
                       <ul className="sub-menu">
-                        <li><Link href="/highschoolquiz/kinematics">Kinematics</Link></li>
-                        <li><Link href="/highschoolquiz/circular">Circular Motion</Link></li>
-                        <li><Link href="/highschoolquiz/electricity">Electricity</Link></li>
-                        <li><Link href="/highschoolquiz/relativity">Relativity</Link></li>
+                      <li><Link href="/highschoolquiz">High School Physics(regular, IB, AP, etc.)</Link></li>
+                        <li><Link href="/fmapb">F=ma / Physics Bowl Preparation</Link></li>
+                        <li><Link href="/usapho">USAPhO</Link></li>
+                        <li><Link href="/olymco">IPhO</Link></li>
                       </ul>
                     </li>
                     <li><Link href="/quiz-history" className="section-link">Logs</Link></li>

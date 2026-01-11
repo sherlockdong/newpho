@@ -52,6 +52,9 @@ export default function Home() {
                   <h2 className="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1s">Physics Olympiad Guide</h2>
                   <p className="wow fadeInUp" data-wow-delay=".6s" data-wow-duration="1s">An AI-Human hybrid-powered database to improve your physics to the Olympics level.</p>
                   <Link href="/rout" className="tg-btn wow fadeInUp" data-wow-delay=".8s" data-wow-duration="1s">Get Started</Link>
+                  <br />
+                  <br />
+                  <Link href="https://docs.google.com/forms/d/e/1FAIpQLSflTs0ozLAA9kpegXVZtVitpatSoHpGaI2Gqe6AFgxUvCeErg/viewform?usp=dialog" className="tg-btn wow fadeInUp"  target="_blank" data-wow-delay=".8s" data-wow-duration="1s">We need your contribution! Apply now</Link>
                 </div>
               </div>
             </div>
