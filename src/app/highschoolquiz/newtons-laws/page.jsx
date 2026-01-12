@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../firebase";
 import { 
-  getFirestore,         
-  collection,            
-  addDoc,                
-  Timestamp              
+  getFirestore, 
+  collection, 
+  addDoc, 
+  Timestamp 
 } from "firebase/firestore";
+import { app } from "../../../firebase";
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
+
+// Static import of difficulty examples (adjust path as needed)
+import difficultyExamples from '../../../data/difficultyExamples.json';
+
 const PHYSICS_FACTS = [
   "Displacement can be negative, but distance is always non-negative.",
   "Velocity is the derivative of position with respect to time; acceleration is the derivative of velocity.",
@@ -24,9 +28,10 @@ const PHYSICS_FACTS = [
   "In circular motion, tangential velocity changes direction, not magnitude, unless there's tangential acceleration.",
 ];
 
-export default function KinematicsQuizPage() {
+export default function NewtonsQuizPage() {
   const auth = getAuth(app);
-  const TOPIC = "kinematics";
+  const TOPIC = "newton";
+
   const [selectedSubtopic, setSelectedSubtopic] = useState("");
   const [availableSubtopics, setAvailableSubtopics] = useState([]);
   const [subtopicsLoading, setSubtopicsLoading] = useState(true);
@@ -66,7 +71,7 @@ export default function KinematicsQuizPage() {
         if (!response.ok) throw new Error(`Failed to fetch subtopics: ${response.statusText}`);
         const data = await response.json();
         setAvailableSubtopics(data.tags || []);
-        if (data.tags && data.tags.length > 0) {
+        if (data.tags?.length > 0) {
           setSelectedSubtopic(data.tags[0].value);
         }
       } catch (err) {
@@ -93,7 +98,7 @@ export default function KinematicsQuizPage() {
         if (!response.ok) throw new Error(`Failed to fetch difficulties: ${response.statusText}`);
         const data = await response.json();
         setAvailableDifficulties(data.difficulties || []);
-        if (data.difficulties && data.difficulties.length > 0) {
+        if (data.difficulties?.length > 0) {
           setSelectedDifficulty(data.difficulties[0].value);
         }
       } catch (err) {
@@ -123,60 +128,84 @@ export default function KinematicsQuizPage() {
     setAnswers({});
     setStartTime(Date.now());
     setShowAnswers(false);
+    setHasActiveQuiz(false);
 
     try {
-      const contentResponse = await fetch("/api/content", {
+      const response = await fetch("/api/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: TOPIC, tag: selectedSubtopic, difficulty: selectedDifficulty }),
+        body: JSON.stringify({
+          topic: TOPIC,
+          tag: selectedSubtopic,
+          difficulty: selectedDifficulty,
+        }),
       });
-      if (!contentResponse.ok) {
-        const errorText = await contentResponse.text();
-        throw new Error(errorText);
-      }
-      const { content } = await contentResponse.json();
-      if (!content || content.includes("No content available")) {
-        throw new Error(`No valid ${selectedDifficulty} content retrieved for tag: ${selectedSubtopic}`);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Content fetch failed: ${errorText}`);
       }
 
-      const prompt = `Based strictly on the following ${selectedDifficulty} content about "${selectedSubtopic}", generate ${questionCount} quiz questions in this format:
-      ### Question [number]
-      [Question text]
-      a) [Option 1]
-      b) [Option 2]
-      c) [Option 3]
-      d) [Option 4]
-      **Correct Answer:** [Correct option letter]
-      ---
-      Do not use external knowledge beyond this content:\n\n${content}`;
+      const { content } = await response.json();
+      const baseContent = content?.trim() || "";
+
+      // Get difficulty guidelines from imported JSON
+      const difficultyGuidelines = difficultyExamples[selectedDifficulty?.toLowerCase()?.trim()] || "";
+
+      const prompt = `
+You are an expert physics educator specializing in Newton's laws.
+
+Base content (use this as strict reference material, do NOT copy verbatim):
+${baseContent}
+
+Difficulty guidelines for ${selectedDifficulty}:
+${difficultyGuidelines}
+
+Generate ${questionCount} multiple-choice quiz questions in this exact format:
+### Question [number]
+[Question text]
+a) [Option 1]
+b) [Option 2]
+c) [Option 3]
+d) [Option 4]
+**Correct Answer:** [Correct option letter]
+---
+
+Base all questions strictly on the provided base content.
+Adjust complexity and style according to the difficulty guidelines.
+Do not use external knowledge beyond the given content.
+`.trim();
+
       const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
 
-      const quizResponse = await fetch("https://api.x.ai/v1/chat/completions", { 
+      const quizResponse = await fetch("https://api.x.ai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`, 
+          "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
           model: "grok-4",
-          messages: [{ role: "user", content: prompt }], 
+          messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
-          max_tokens: 1000, 
+          max_tokens: 1000,
         }),
       });
+
       if (!quizResponse.ok) {
         const errorText = await quizResponse.text();
         throw new Error(errorText);
       }
+
       const data = await quizResponse.json();
       const quizContent = data.choices?.[0]?.message?.content || "";
       if (!quizContent) throw new Error("Quiz is empty or invalid");
+
       setQuiz(quizContent);
       setHasActiveQuiz(true);
-      
-    } 
-    catch (err) {
-      setError(err.message);
+    } catch (err) {
+      console.error("Quiz generation error:", err);
+      setError(err.message || "Failed to generate quiz");
     } finally {
       setLoading(false);
     }
@@ -185,50 +214,73 @@ export default function KinematicsQuizPage() {
   const parseQuizQuestions = (quizString) => {
     if (!quizString || typeof quizString !== "string") return [];
     const questions = [];
-    const sections = quizString.split("---").map(section => section.trim()).filter(Boolean);
 
-    sections.forEach(section => {
-      const lines = section.split("\n").map(line => line.trim()).filter(Boolean);
+    // Split on ### Question markers
+    const rawSections = quizString.split(/### Question \d+/i).filter(Boolean);
+
+    for (let i = 1; i < rawSections.length; i++) {
+      const section = rawSections[i].trim();
+      if (!section) continue;
+
+      const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
       let question = { text: "", options: [], correctAnswer: "" };
 
-      lines.forEach((line, idx) => {
-        if (line.match(/^### Question \d+/)) {
-          question.text = line.replace(/^### Question \d+\s*/, "").trim();
-        } else if (line.match(/^[a-d]\)/)) {
-          question.options.push(line.trim());
+      lines.forEach((line) => {
+        if (/^[a-d]\)/i.test(line)) {
+          question.options.push(line);
         } else if (line.startsWith("**Correct Answer:**")) {
           question.correctAnswer = line.replace("**Correct Answer:**", "").trim();
-        } else if (idx > 0 && !question.options.length) {
-          question.text += " " + line;
+        } else if (!question.options.length) {
+          question.text += (question.text ? " " : "") + line;
         }
       });
 
-      if (question.text && question.options.length) {
+      if (question.text && question.options.length >= 2) {
         questions.push(question);
       }
-    });
+    }
+
+    // Fallback for single-question or malformed output
+    if (questions.length === 0 && quizString.includes("**Correct Answer:**")) {
+      const lines = quizString.split("\n").map(l => l.trim()).filter(Boolean);
+      let question = { text: "", options: [], correctAnswer: "" };
+
+      lines.forEach((line) => {
+        if (/^[a-d]\)/i.test(line)) {
+          question.options.push(line);
+        } else if (line.startsWith("**Correct Answer:**")) {
+          question.correctAnswer = line.replace("**Correct Answer:**", "").trim();
+        } else if (!question.options.length) {
+          question.text += (question.text ? " " : "") + line;
+        }
+      });
+
+      if (question.text && question.options.length >= 2) {
+        questions.push(question);
+      }
+    }
 
     return questions;
   };
 
   const handleAnswerChange = (index, value) => {
-    setAnswers((prev) => ({
+    setAnswers(prev => ({
       ...prev,
-      [index]: { answer: value, reasoning: prev[index]?.reasoning || "", confidence: prev[index]?.confidence || 0 },
+      [index]: { ...prev[index], answer: value },
     }));
   };
 
   const handleReasoningChange = (index, value) => {
-    setAnswers((prev) => ({
+    setAnswers(prev => ({
       ...prev,
-      [index]: { answer: prev[index]?.answer || "", reasoning: value, confidence: prev[index]?.confidence || 0 },
+      [index]: { ...prev[index], reasoning: value },
     }));
   };
 
   const handleConfidenceChange = (index, value) => {
-    setAnswers((prev) => ({
+    setAnswers(prev => ({
       ...prev,
-      [index]: { answer: prev[index]?.answer || "", reasoning: prev[index]?.reasoning || "", confidence: value },
+      [index]: { ...prev[index], confidence: Number(value) || 0 },
     }));
   };
 
@@ -241,6 +293,7 @@ export default function KinematicsQuizPage() {
         incorrectTopics: selectedSubtopic,
         studyLogs: `Time taken: ${timeTaken}s`,
       };
+
       const apiKey = process.env.NEXT_PUBLIC_XAI_API_KEY;
 
       const response = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -253,45 +306,63 @@ export default function KinematicsQuizPage() {
           model: "grok-4",
           messages: [{
             role: "user",
-            content: `Analyze the following student progress data and provide a detailed feedback:
-              - Quiz Scores: ${payload.quizScores}
-              - Incorrect Topics: ${payload.incorrectTopics}
-              - Study Logs: ${payload.studyLogs}
-              Return the output as a JSON object with an "analysis" field containing the feedback.`
+            content: `Analyze the following student progress data and provide detailed feedback:
+- Quiz Scores: ${payload.quizScores}
+- Incorrect Topics: ${payload.incorrectTopics}
+- Study Logs: ${payload.studyLogs}
+Return the output as a JSON object with an "analysis" field containing the feedback.`
           }],
           temperature: 0.7,
           max_tokens: 500,
         }),
       });
+
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(`Evaluate failed: ${response.status} ${text}`);
+        throw new Error(`Evaluation failed: ${response.status} ${text}`);
       }
+
       const data = await response.json();
+
+      const analysisContent = data.choices?.[0]?.message?.content || "";
+      let analysisText = "No analysis available";
+
+      try {
+        const cleaned = analysisContent.replace(/```json\s*|\s*```/g, '').trim();
+        const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          analysisText = parsed.analysis || analysisText;
+        } else {
+          analysisText = cleaned;
+        }
+      } catch (e) {
+        console.warn("Failed to parse analysis JSON:", e);
+        analysisText = analysisContent;
+      }
 
       const newLog = {
         quizScores: calculateScore(answers),
         incorrectTopics: selectedSubtopic,
         studyLogs: `Time taken: ${timeTaken}s`,
-        analysis: data.choices?.[0]?.message?.content ? JSON.parse(data.choices[0].message.content).analysis : "No analysis available",
+        analysis: analysisText,
         timestamp: new Date().toISOString(),
-        quiz: questions,
-        answers,
         difficulty: selectedDifficulty,
       };
+
       try {
         const db = getFirestore(app);
         const logWithUser = {
           ...newLog,
-          userId: user?.uid, 
-          timestamp: Timestamp.fromDate(new Date()), 
+          userId: user?.uid,
+          timestamp: Timestamp.fromDate(new Date()),
         };
-      
         await addDoc(collection(db, "quizLogs"), logWithUser);
-        console.log("Log uploaded to Firestore!"); 
+        console.log("Quiz log saved to Firestore");
       } catch (firestoreErr) {
-        console.error("Firestore upload failed:", firestoreErr);
+        console.error("Firestore save failed:", firestoreErr);
       }
+
       const updatedLogs = [newLog, ...quizLogs].slice(0, 10);
       setQuizLogs(updatedLogs);
       localStorage.setItem(`quizLogs_${user?.uid || "guest"}`, JSON.stringify(updatedLogs));
@@ -299,37 +370,40 @@ export default function KinematicsQuizPage() {
       setShowAnswers(true);
       setError(null);
       alert("Answers submitted and analyzed successfully!");
-      setHasActiveQuiz(false);    // ← Add this
-    setQuiz(null);             // clear current quiz to start fresh
-setAnswers({});
+
+      setHasActiveQuiz(false);
+      setQuiz(null);
+      setAnswers({});
     } catch (err) {
-      setError(err.message);
+      console.error("Submission error:", err);
+      setError(err.message || "Failed to submit answers");
     } finally {
       setLoading(false);
     }
   }
 
   const calculateScore = (answers) => {
-    const scores = Object.values(answers).map((a) => a.confidence || 0);
-    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toString() : "0";
+    const scores = Object.values(answers).map(a => a.confidence || 0);
+    return scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : "0.0";
   };
 
   const questions = parseQuizQuestions(quiz);
 
   const renderMathText = (text) => {
     const parts = text.split(/(\$.*?\$)/);
-    return parts.map((part, idx) => (
+    return parts.map((part, idx) =>
       part.startsWith("$") && part.endsWith("$") ? (
         <InlineMath key={idx} math={part.slice(1, -1)} />
       ) : (
         <span key={idx}>{part}</span>
       )
-    ));
+    );
   };
 
   return (
     <div className="quiz-container">
-      <h1 className="quiz-title">Kinematics Quiz</h1>
+      <h1 className="quiz-title">Newton's Laws Quiz</h1>
+
       <div className="quiz-controls">
         <label htmlFor="subtopic-select">Select Subtopic:</label>
         <select
@@ -340,15 +414,15 @@ setAnswers({});
           className="quiz-select"
         >
           {subtopicsLoading ? (
-            <option value="">Loading subtopics...</option>
+            <option>Loading subtopics...</option>
           ) : availableSubtopics.length > 0 ? (
-            availableSubtopics.map((subtopic) => (
-              <option key={subtopic.value} value={subtopic.value}>
-                {subtopic.label}
+            availableSubtopics.map((sub) => (
+              <option key={sub.value} value={sub.value}>
+                {sub.label}
               </option>
             ))
           ) : (
-            <option value="">No subtopics available</option>
+            <option>No subtopics available</option>
           )}
         </select>
 
@@ -361,15 +435,15 @@ setAnswers({});
           className="quiz-select"
         >
           {difficultiesLoading ? (
-            <option value="">Loading difficulties...</option>
+            <option>Loading difficulties...</option>
           ) : availableDifficulties.length > 0 ? (
-            availableDifficulties.map((diff) => (
-              <option key={diff.value} value={diff.value}>
-                {diff.label}
+            availableDifficulties.map((d) => (
+              <option key={d.value} value={d.value}>
+                {d.label}
               </option>
             ))
           ) : (
-            <option value="">No difficulties available</option>
+            <option>No difficulties available</option>
           )}
         </select>
 
@@ -384,17 +458,18 @@ setAnswers({});
           disabled={loading}
           className="quiz-input"
         />
-<button
-  onClick={hasActiveQuiz ? () => {} : handleGenerateQuiz}  // disable click if quiz active
-  disabled={loading || subtopicsLoading || difficultiesLoading || !selectedSubtopic || !selectedDifficulty || hasActiveQuiz}
-  className="quiz-button"
->
-  {loading 
-    ? "Generating Quiz..." 
-    : hasActiveQuiz 
-      ? "Quiz Ready – Scroll Down to Answer" 
-      : "Generate Quiz"}
-</button>
+
+        <button
+          onClick={handleGenerateQuiz}
+          disabled={loading || subtopicsLoading || difficultiesLoading || !selectedSubtopic || !selectedDifficulty}
+          className="quiz-button"
+        >
+          {loading
+            ? "Generating Quiz..."
+            : hasActiveQuiz
+              ? "Generate New Quiz"
+              : "Generate Quiz"}
+        </button>
       </div>
 
       {loading && (
@@ -405,58 +480,76 @@ setAnswers({});
       )}
 
       {error && <p className="quiz-error">Error: {error}</p>}
+
       {quiz && !loading && (
         <div className="quiz-content">
           <h2 className="quiz-subtitle">
-            Your {availableSubtopics.find(sub => sub.value === selectedSubtopic)?.label || selectedSubtopic} Quiz (
-            {availableDifficulties.find(diff => diff.value === selectedDifficulty)?.label || selectedDifficulty})
+            Your {availableSubtopics.find(s => s.value === selectedSubtopic)?.label || selectedSubtopic} Quiz (
+            {availableDifficulties.find(d => d.value === selectedDifficulty)?.label || selectedDifficulty})
           </h2>
+
           <div className="quiz-questions">
             {questions.length > 0 ? (
               <form onSubmit={(e) => { e.preventDefault(); handleSubmitAnswers(); }}>
                 <ol>
-                  {questions.map((question, index) => (
-                    <li key={index} className="quiz-question">
-                      <h3>{renderMathText(question.text)}</h3>
+                  {questions.map((q, idx) => (
+                    <li key={idx} className="quiz-question">
+                      <h3>{renderMathText(q.text)}</h3>
                       <ul className="quiz-options">
-                        {question.options.map((option, optIdx) => (
-                          <li key={optIdx}>
+                        {q.options.map((opt, i) => (
+                          <li key={i}>
                             <label>
                               <input
                                 type="radio"
-                                name={`question-${index}`}
-                                value={option.charAt(0)}
-                                checked={answers[index]?.answer === option.charAt(0)}
-                                onChange={(e) => handleAnswerChange(index, e.target.value)}
+                                name={`question-${idx}`}
+                                value={opt.charAt(0)}
+                                checked={answers[idx]?.answer === opt.charAt(0)}
+                                onChange={(e) => handleAnswerChange(idx, e.target.value)}
                               />
-                              {renderMathText(option)}
+                              {renderMathText(opt)}
                             </label>
                           </li>
                         ))}
                       </ul>
+
                       {showAnswers && (
                         <p className="correct-answer">
-                          Correct Answer: {renderMathText(question.correctAnswer)}
+                          Correct Answer: {renderMathText(q.correctAnswer)}
                         </p>
                       )}
+
                       <div>
                         <label>Reasoning (optional):</label>
                         <textarea
-                          value={answers[index]?.reasoning || ""}
-                          onChange={(e) => handleReasoningChange(index, e.target.value)}
+                          value={answers[idx]?.reasoning || ""}
+                          onChange={(e) => handleReasoningChange(idx, e.target.value)}
                           className="quiz-input"
                           placeholder="Explain your reasoning..."
+                        />
+                      </div>
+
+                      <div>
+                        <label>Confidence (0–10):</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={answers[idx]?.confidence ?? ""}
+                          onChange={(e) => handleConfidenceChange(idx, e.target.value)}
+                          className="quiz-input"
+                          style={{ width: "80px" }}
                         />
                       </div>
                     </li>
                   ))}
                 </ol>
+
                 <button type="submit" disabled={loading} className="quiz-button">
                   {loading ? "Submitting..." : "Submit Answers"}
                 </button>
               </form>
             ) : (
-              <p>No valid questions generated. Raw content: {quiz}</p>
+              <p>No valid questions generated. Raw output: {quiz}</p>
             )}
           </div>
         </div>
