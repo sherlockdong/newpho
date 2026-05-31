@@ -1,26 +1,40 @@
+// app/layout.tsx
 import type { Metadata } from "next";
-import Header from "./comp/header";
-import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 import "../../public/assets/css/main.css";
+import Header from "./comp/header";
+import 'katex/dist/katex.min.css';
+
 
 export const metadata: Metadata = {
-  title: "PHO-GUIDE",
-  description: "A physics olympiad tutoring website, designed by current high school students.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Physics Olympiad Guide",
+  description: "AI-powered physics learning platform",
 };
 
-interface LayoutProps {
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: LayoutProps) {
+}) {
   return (
-    <html lang="en">    
-
-      <body> <Header /><main>{children}</main>
-           <Analytics /></body>
+    <html lang="en">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-TF3TR8PXK2"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-TF3TR8PXK2');
+          `}
+        </Script></head>
+      <body>
+        <Header />  {/* Fixed header here */}
+        <main>{children}</main>  {/* All page content starts below header */}
+      </body>
     </html>
   );
 }

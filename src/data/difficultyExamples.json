@@ -1,0 +1,31 @@
+{
+    "High school physics": [
+      {
+        "type": "multiple-choice",
+        "question": "A small block of mass m is placed on a large wedge of mass M that can slide without friction on a horizontal surface. The wedge has an inclination angle θ and the small block is initially at rest relative to the wedge. The system is released from rest in a uniform gravitational field g. There is no friction between the block and the wedge either.\n\nWhich of the following statements is correct concerning the horizontal component of the acceleration of the small block relative to the ground?",
+        "options": [
+          "a) It is g sin θ cos θ / (1 + (m/M) cos² θ) directed to the right",
+          "b) It is g sin θ / (1 + (m/M) cos² θ) directed to the right",
+          "c) It is g sin θ cos θ / (1 + (m/M) sin² θ) directed to the left",
+          "d) It is g sin θ / (1 + (M/m) cos² θ) directed to the left",
+          "e) It is zero because the center of mass of the system does not accelerate horizontally"
+        ],
+        "correct": "a) It is g sin θ cos θ / (1 + (m/M) cos² θ) directed to the right"
+      }
+    ],
+    "medium": [
+      {
+        "type": "calculation",
+        "question": "A 2 kg object moves at 5 m/s. Calculate its momentum.",
+        "answer": "10 kg·m/s"
+      }
+    ],
+    "hard": [
+      {
+        "type": "open-ended",
+        "question": "Explain how Newton's cradle demonstrates conservation of momentum and discuss whether kinetic energy is conserved in the process.",
+        "expectedAnswer": "Detailed explanation with reasoning..."
+      }
+    ],
+    "generate problems": []
+  }
