@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase"; 
+import { app } from "../../firebase"; 
 
 // @ts-ignore
-import "../../public/assets/css/main.css";
+import "../../../public/assets/css/main.css";
 
 const auth = getAuth(app); 
 export default function Home() {
