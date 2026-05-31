@@ -3,36 +3,33 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
- "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "next lint",
-  "prepare": "husky",
-  "test": "echo \"No tests specified yet\" && exit 0"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prepare": "husky",
+    "test": "echo \"No tests specified yet\" && exit 0"
+  },
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
-    "@langchain/community": "^0.3.36",
-    "@langchain/core": "^0.3.42",
-    "@langchain/openai": "^0.4.4",
-    "@langchain/weaviate": "^0.1.1",
     "@mdx-js/loader": "^3.1.1",
     "@mui/material": "^6.1.8",
     "@next/mdx": "^16.1.1",
+    "@supabase/supabase-js": "^2.105.4",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.7.8",
     "classnames": "^2.5.1",
     "eslint-config-next": "^16.1.1",
     "express": "^4.21.2",
     "firebase": "^11.4.0",
-    "firebase-admin": "^12.7.0",
-    "genkit": "^1.2.0",
-    "katex": "^0.16.27",
-    "langchain": "^0.3.19",
-    "next": "^16.1.1",
+    "firebase-admin": "^13.10.0",
+    "katex": "^0.16.47",
+    "matter-js": "^0.20.0",
+    "next": "^16.2.6",
     "openai": "^4.89.0",
+    "postcss": "^8.5.14",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-katex": "^3.0.1",
@@ -45,5 +42,12 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "typescript": "5.8.2"
-  }
+  },"overrides": {
+  "next": {
+    "postcss": "8.5.14"
+  },
+  "@tootallnate/once": "3.0.1"
+}
+
+  
 }
