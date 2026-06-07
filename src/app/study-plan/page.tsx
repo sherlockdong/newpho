@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ReactMarkdown from "react-markdown";
-import styles from "../page.module.css";
 
 export default function StudyPlanPage() {
   const [user, setUser] = useState<any>(null);
