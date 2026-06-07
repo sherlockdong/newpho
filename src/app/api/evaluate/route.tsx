@@ -7,37 +7,35 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const { quiz, answers, timeTaken, tag, userId } = await request.json();
+    // Notice we now receive the pre-graded results and score
+    const { userId, score, total, gradedResults } = await request.json();
 
     if (!userId) {
       throw new Error("User ID is required");
     }
 
-    const quizSize = JSON.stringify(quiz).length;
-    const answersSize = JSON.stringify(answers).length;
-    console.log(`Quiz size: ${quizSize} bytes, Answers size: ${answersSize} bytes`);
-    if (quizSize > 150000 || answersSize > 150000) {
-      throw new Error("Quiz or answers payload too large");
+    const payloadSize = JSON.stringify(gradedResults).length;
+    if (payloadSize > 150000) {
+      throw new Error("Payload too large");
     }
 
-    const prompt = `Evaluate the following quiz answers based on the questions provided:\n\nQuestions:\n${JSON.stringify(
-      quiz,
-      null,
-      2
-    )}\n\nUser Answers:\n${JSON.stringify(
-      answers,
-      null,
-      2
-    )}\n\nProvide a detailed analysis of correctness for each answer, including reasoning and feedback. Return the output as a JSON object with a "results" array, where each element contains "questionIndex", "correct", "userAnswer", "correctAnswer", and "feedback" fields.`;
+    // New, highly optimized prompt
+    const prompt = `You are an expert tutor analyzing a student's recent quiz performance. 
+    The student scored ${score} out of ${total}.
 
-    console.log("Sending prompt:", prompt);
+    Here is the breakdown of the questions and whether the student got them correct or incorrect:
+    ${JSON.stringify(gradedResults, null, 2)}
+
+    Based on the specific questions they got wrong, provide 2 to 3 sentences of targeted, encouraging feedback. Identify their weak areas and suggest what overarching concepts they should review next. Do not list out individual question feedback.
+    
+    Return the output strictly as a JSON object with a single "feedbackSummary" string field.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 1000,
-      response_format: { type: "json_object" }, // guarantees valid JSON back
+      max_tokens: 300, // Reduced max_tokens since we only want 2-3 sentences
+      response_format: { type: "json_object" }, 
     });
 
     const analysisText = completion.choices[0]?.message?.content;

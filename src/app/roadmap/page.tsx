@@ -42,7 +42,6 @@ export default function RoadmapPage() {
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-[#a78bfa] bg-[#a78bfa]/10 border border-[#a78bfa]/20 rounded-full">
-            SYS_//_ROADMAP_ACTIVE
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white font-heading tracking-tight mb-4">
             Curriculum <span className="text-[#a78bfa]">Node Tree</span>
