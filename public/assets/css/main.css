@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap");
 :root {
   --tg-body-font-family: 'Parkinsans', sans-serif;
   --tg-heading-font-family: 'Parkinsans', sans-serif;
@@ -79,7 +79,6 @@ body {
 }
 main { padding-top: var(--header-h); }
 
-/* nice: anchors like #features won't be hidden under the header */
 html { scroll-padding-top: var(--header-h); }
 img,
 .img {
@@ -238,9 +237,6 @@ input[type=color] {
   text-shadow: none;
 }
 
-/*=============================
-    - Input Placeholder
-===============================*/
 input,
 textarea {
   color: var(--tg-body-font-color);
@@ -258,18 +254,13 @@ textarea {
   opacity: 1;
 }
 
-/*=============================
-    - Common Classes
-===============================*/
 .fix {
   overflow: hidden;
 }
 .clear {
   clear: both;
 }
-/*=============================
-    - Bootstrap Custom
-=============================*/
+
 .container {
   padding-left: 15px;
   padding-right: 15px;
@@ -283,7 +274,8 @@ textarea {
   align-items: center;
   flex: 0 0 auto;
   width: 90%;
-   flex: 0 0 calc(50% - 10px); /* adjust for gap */
+   flex: 0 0 calc(50% - 10px); 
+
 }
 .gutter-y-30 {
   --bs-gutter-y: 30px;
@@ -339,10 +331,6 @@ textarea {
   background-size: cover;
   background-repeat: no-repeat;
 }
-
-/*=============================
-	 Button style
-===============================*/
 .tg-btn {
   user-select: none;
   -moz-user-select: none;
@@ -401,10 +389,6 @@ textarea {
 .tg-btn-two:hover span {
   color: var(--tg-color-dark);
 }
-
-/*=============================
-    00. Preloader
-===============================*/
 #preloader {
   background-color: var(--tg-color-dark);
   height: 100%;
@@ -448,9 +432,7 @@ textarea {
     box-shadow: 19px -19px 0 0px, 38px -19px 0 5px, 57px -19px 0 0px, 19px 0 0 0px, 38px 0 0 5px, 57px 0 0 0px, 19px 19px 0 5px, 38px 19px 0 0px, 57px 19px 0 0px;
   }
 }
-/*=============================
-    - Background color
-===============================*/
+
 .grey-bg {
   background: var(--tg-color-gray-4);
 }
@@ -471,9 +453,6 @@ textarea {
   background: var(--tg-common-color-black);
 }
 
-/*=========================
-      Breadcrumb
-===========================*/
 .breadcrumb__bg {
   background-size: cover;
   background-position: bottom center;
@@ -510,9 +489,6 @@ textarea {
   z-index: -1;
 }
 
-/*=============================
-    00. Scroll Top
-===============================*/
 .scroll__top {
   width: 50px;
   height: 50px;
@@ -580,10 +556,6 @@ textarea {
   background: var(--tg-color-white-default);
   color: var(--tg-secondary-color);
 }
-
-/*=============================
-	00. Section Title
-===============================*/
 .section__title .sub-title {
   font-weight: 600;
   font-size: 14px;
@@ -658,10 +630,6 @@ textarea {
     margin-bottom: 40px;
   }
 }
-
-/*=============================
-	    Mobile Menu
-===============================*/
 .tgmobile__search {
   padding: 0 20px 25px 25px;
 }
@@ -1018,10 +986,6 @@ textarea {
   -o-transform: rotate(360deg);
   transform: rotate(360deg);
 }
-
-/*=============================
-    00. Keyframe Animation
-===============================*/
 @-webkit-keyframes hoverShine {
   100% {
     left: 125%;
@@ -1262,9 +1226,6 @@ textarea {
   animation: hoverShine 1.2s;
 }
 
-/*=============================
-    	02. Header
-===============================*/
 .transparent-header {
   position: absolute;
   left: 0;
@@ -1850,10 +1811,6 @@ box-sizing: border-box;
   display: block;
   height: 90px;
 }
-
-/*=============================
-    	03. Banner
-===============================*/
 .main-area {
   margin-top: -400px;
 }
@@ -2130,9 +2087,6 @@ box-sizing: border-box;
   }
 }
 
-/*=============================
-    	04. Brand
-===============================*/
 .brand__area {
   padding: 200px 0 0;
 }
@@ -2177,10 +2131,6 @@ box-sizing: border-box;
   z-index: 2;
   pointer-events: none;
 }
-
-/*=============================
-    	05. Features
-===============================*/
 .features__area {
   position: relative;
   z-index: 1;
@@ -2250,7 +2200,7 @@ box-sizing: border-box;
   flex-wrap: wrap;
 margin-right: calc(var(--bs-gutter-x) * -0.5);
 margin-left: calc(var(--bs-gutter-x) * -0.5);
-margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
+margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters 
 
   padding: 20px;
 }
@@ -2296,9 +2246,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   }
 }
 
-/*=============================
-    	06. Marquee
-===============================*/
 .marquee__item {
   margin-right: 20px;
   display: inline;
@@ -2324,9 +2271,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   }
 }
 
-/*=============================
-    	07. Token
-===============================*/
 .token__area {
   position: relative;
   z-index: 1;
@@ -2549,9 +2493,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   }
 }
 
-/*=============================
-    	08. Work
-===============================*/
 .work__area {
   position: relative;
   z-index: 1;
@@ -2671,9 +2612,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   z-index: -1;
 }
 
-/*=============================
-    	09. exchange
-===============================*/
 .exchange__inner-wrap {
   background: linear-gradient(140deg, #222325 0%, rgba(21, 21, 21, 0) 100%);
   border: 1px solid var(--tg-border-1);
@@ -2790,9 +2728,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   }
 }
 
-/*=============================
-    	10. Crypto
-===============================*/
 .crypto__area {
   position: relative;
   z-index: 1;
@@ -2853,9 +2788,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   z-index: -1;
 }
 
-/*=============================
-    	11. FAQ
-===============================*/
 @media (max-width: 991.98px) {
   .faq__img {
     text-align: center;
@@ -2916,9 +2848,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   font-size: 20px;
 }
 
-/*=============================
-    	12. RoadMap
-===============================*/
 .roadmap__area {
   position: relative;
   z-index: 1;
@@ -2986,11 +2915,6 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   top: -21%;
   z-index: -2;
 }
-
-
-/*=============================
-    	14. Footer
-===============================*/
 .footer__area {
   position: relative;
   z-index: 1;
@@ -3171,3 +3095,4 @@ margin-top: calc(var(--bs-gutter-y) * -1); /* For vertical gutters */
   transform: translateY(-2px);
 }
 
+*/

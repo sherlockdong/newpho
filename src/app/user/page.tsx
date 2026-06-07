@@ -1,277 +1,154 @@
 'use client';
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase"; 
-
-// @ts-ignore
-import "../../../public/assets/css/main.css";
+import { motion } from "framer-motion";
 
 const auth = getAuth(app); 
-export default function Home() {
-   const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollPosition, setLastScrollPosition] = useState(0);
-  const [user, setUser] = useState(null);
+
+export default function UserDashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  // Header hide/show on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollPosition = window.scrollY;
-      if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-      setLastScrollPosition(currentScrollPosition);
-    };
+  // Loading State
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#4f8ef7] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollPosition]);
+  // Unauthenticated State
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center bg-[#0A0A18] border border-zinc-800 p-10 rounded-3xl max-w-md shadow-2xl"
+        >
+          <h2 className="text-2xl font-bold text-white font-heading mb-4">Access Denied</h2>
+          <p className="text-zinc-400 mb-8">You must be logged in to access the researcher dashboard.</p>
+          <Link href="/auth">
+            <button className="tg-btn w-full">Authenticate Now</button>
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
-
+  // Authenticated Dashboard Layout
   return (
-    <div>
-      {/* main-area */}
-      <main className="main-area fix">
+    <div className="min-h-screen pt-32 pb-20 px-6">
+      <main className="max-w-[1000px] mx-auto">
+        
+        {/* =========================================
+            USER PROFILE HEADER
+            ========================================= */}
+   <motion.section 
+  initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+  className="user-profile-header bg-[#0A0A18] border border-zinc-800 rounded-3xl shadow-2xl relative overflow-hidden"
+>
+          {/* Schematic visual accent */}
+          <div className="absolute top-0 right-0 p-4 font-mono text-xs text-zinc-700 select-none">
+            USR_OP_ID // {user.uid.substring(0, 8)}
+          </div>
 
-        {/* banner-area */}
-        <section className="banner__area banner__bg" style={{ backgroundImage: "url(/assets/img/banner/hero_bg.svg)" }}>
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-xl-7 col-lg-8 col-md-10">
-                <div className="banner__content">
-                  <h2 className="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1s">Physics Olympiad Guide</h2>
-                  <p className="wow fadeInUp" data-wow-delay=".6s" data-wow-duration="1s">An AI-Human hybrid-powered database to improve your physics to the Olympics level.</p>
-                  <Link href="/rout" className="tg-btn wow fadeInUp" data-wow-delay=".8s" data-wow-duration="1s">Get Started</Link>
-                </div>
+          <div className="flex-shrink-0">
+            {user.photoURL ? (
+              <img src={user.photoURL} alt="User Avatar" className="w-24 h-24 rounded-full border-2 border-[#4f8ef7] object-cover shadow-[0_0_20px_rgba(79,142,247,0.3)]" />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-[#4f8ef7]/10 border-2 border-[#4f8ef7] flex items-center justify-center text-4xl font-bold text-[#4f8ef7] shadow-[0_0_20px_rgba(79,142,247,0.3)]">
+                {user.displayName?.[0]?.toUpperCase() || "U"}
               </div>
-            </div>
+            )}
           </div>
-          <div className="banner__shape">
-            <img src="/assets/img/banner/hero_img01.png" alt="shape" className="alltuchtopdown" />
-            <img src="/assets/img/banner/hero_img02.png" alt="shape" className="rotateme" />
-            <img src="/assets/img/banner/hero_img03.png" alt="shape" className="alltuchtopdown" />
-            <img src="/assets/img/banner/hero_bg_shape.svg" alt="shape" className="banner__bg-shape" />
-          </div>
-        </section>
-        {/* banner-area-end */}
 
-        {/* features-area */}
-        <section id="features" className="features__area section-pt-120">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-6">
-                <div className="section__title text-center mb-80">
-                  <h2 className="title">About us</h2>
-                </div>
-              </div>
-            </div>
-            <div className="row gutter-y-40">
-              <div className="col-lg-6">
-                <div className="features__item">
-                  <div className="features__icon">
-                    <img src="/assets/img/icon/features_icon01.png" alt="icon" />
-                  </div>
-                  <div className="features__content">
-                    <h4 className="title">Who are "we"?</h4>
-                    <p>We are current highschool students who share a passion in physics, and hopes to share our knowledge to those who want to do better in this amazing subject.
-                      The more people we have, the more fun it is ! If you are interested in joining and building this project together, please contact us and let us know. 
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="features__item">
-                  <div className="features__icon">
-                    <img src="/assets/img/icon/features_icon02.png" alt="icon" />
-                  </div>
-                  <div className="features__content">
-                    <h4 className="title">How is PHO-Guide special?</h4>
-                    <p>This website includes information from physics Olympiad in different countries, to specific categories to problems that might appear in a competitive contest. 
-                      There is also some basic physics knowledge for highschool and middle school students to pave their road to become a physicist. 
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="text-center md:text-left flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-white font-heading tracking-tight mb-2">
+              Welcome back, <span className="text-[#4f8ef7]">{user.displayName || "Researcher"}</span>
+            </h1>
+            <p className="text-zinc-400 text-lg">
+              {user.email}
+            </p>
           </div>
-          <div className="features__shape">
-            <img src="/assets/img/images/features_shape.png" alt="shape" />
-          </div>
-        </section>
-        {/* features-area-end */}
 
-        {/* marquee-area */}
-        <section className="marquee__area section-pt-120">
-          <div className="slider__marquee clearfix marquee-wrap">
-            <div className="marquee_mode marquee__group">
-              <h6 className="marquee__item">Moving Forward with the force of AI</h6>
-            </div>
+          <div className="flex-shrink-0">
+            <button 
+              onClick={() => auth.signOut()} 
+              className="text-sm font-medium text-zinc-400 hover:text-[#ff6b9d] border border-zinc-800 hover:border-[#ff6b9d]/50 px-6 py-2 rounded-full transition-all duration-300"
+            >
+              Sign Out
+            </button>
           </div>
-        </section>
-        {/* marquee-area-end */}
+        </motion.section>
 
-        {/* token-area */}
-        <section id="token" className="token__area section-py-120">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-6">
-                <div className="token__content" data-aos="fade-right" data-aos-delay="0">
-                  <div className="section__title mb-40">
-                    <span className="sub-title">accessible for everyone</span>
-                    <h2 className="title">Learning<span>platform</span> of the future!</h2>
-                  </div>
-                  <p>Use AI to make physics learning easier. </p>
-                  <Link href="./rout" className="tg-btn tg-btn-two">start now</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="token__shape">
-            <img src="/assets/img/images/features_shape.png" alt="" />
-          </div>
-        </section>
-        {/* token-area-end */}
+        {/* =========================================
+            DASHBOARD METRICS GRID
+            ========================================= */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-[#4f8ef7]/50 transition-colors"
+          >
+            <h3 className="text-zinc-500 text-sm uppercase tracking-widest font-semibold mb-2">Total Quizzes</h3>
+            <div className="text-5xl font-black text-white font-heading">0</div>
+            <p className="text-[#4f8ef7] text-sm mt-4 cursor-pointer group-hover:underline">View History →</p>
+          </motion.div>
 
-        {/* section-divider */}
-        <div className="section-divider">
-          <div className="container">
-            <span></span>
-          </div>
-        </div>
-        {/* section-divider-end */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-[#a78bfa]/50 transition-colors"
+          >
+            <h3 className="text-zinc-500 text-sm uppercase tracking-widest font-semibold mb-2">Average Score</h3>
+            <div className="text-5xl font-black text-white font-heading">--%</div>
+            <p className="text-[#a78bfa] text-sm mt-4 cursor-pointer group-hover:underline">Analytics Matrix →</p>
+          </motion.div>
 
-        {/* work-area */}
-        <section id="work" className="work__area section-py-120">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-6">
-                <div className="section__title text-center mb-80">
-                  <span className="sub-title">how it works?</span>
-                  <h2 className="title"> Strong combination between <span>Artificial Intelligence</span> & modern educational theories</h2>
-                </div>
-              </div>
-            </div>
-            <div className="work__item-wrap">
-              <div className="work__img">
-                <img src="/assets/img/images/work_img.png" alt="img" className="alltuchtopdown" />
-              </div>
-              <div className="row">
-                <div className="col-lg-6" data-aos="fade-right" data-aos-delay="0">
-                  <div className="work__item">
-                    <h1 className="number">01</h1>
-                    <h4 className="title">Quiz <span>creation</span></h4>
-                    <p>Personalized quizzes created by advanced AI models</p>
-                  </div>
-                  <div className="work__item mb-0">
-                    <h1 className="number">02</h1>
-                    <h4 className="title">Data <span>collection</span></h4>
-                    <p>Logs of quizzes stored within your personal profile</p>
-                  </div>
-                </div>
-                <div className="col-lg-6" data-aos="fade-left" data-aos-delay="0">
-                  <div className="work__item work__item-right">
-                    <h1 className="number">03</h1>
-                    <h4 className="title">Review & <span>improve</span></h4>
-                    <p>Regular reviews provided to help you learn</p>
-                  </div>
-                  <div className="work__item work__item-right mb-0">
-                    <h1 className="number">04</h1>
-                    <h4 className="title">Moving <span>forward</span></h4>
-                    <p>Study plans mapped out to guide you onwards. </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="work__shape">
-            <img src="/assets/img/images/features_shape.png" alt="shape" />
-          </div>
-        </section>
-        {/* work-area-end */}
-        <section className="crypto__area section-py-120">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-7">
-                <div className="section__title text-center mb-80">
-                  <span className="sub-title">Developments</span>
-                  <h2 className="title">Integration of <span>Artificial Intelligence</span> <br /> and Human Brain</h2>
-                </div>
-              </div>
-            </div>
-            <div className="row gutter-y-30 justify-content-center">
-              <div className="collg4">
-                <div className="crypto__item">
-                  <div className="crypto__icon">
-                    <img src="/assets/img/icon/GitHub_Logo_White.png" alt="icon" />
-                  </div>
-                  <div className="crypto__content">
-                    <h2 className="title">Check out our <span>source code</span></h2>
-                    <Link target="_blank" href="https://github.com/sherlockdong/newpho" className="tg-btn tg-btn-two">Github repository</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* crypto-area-end */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-emerald-500/50 transition-colors"
+          >
+            <h3 className="text-zinc-500 text-sm uppercase tracking-widest font-semibold mb-2">Current Vector</h3>
+            <div className="text-2xl font-bold text-white font-heading mt-2">Kinematics</div>
+            <p className="text-emerald-500 text-sm mt-6 cursor-pointer group-hover:underline">Resume Module →</p>
+          </motion.div>
 
-        {/* faq-area */}
-        <section className="faq__area section-py-120">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-6">
-              </div>
-              <div className="col-lg-6">
-                <div className="faq__content" data-aos="fade-left" data-aos-delay="0">
-                  <div className="section__title mb-60">
-                    <span className="sub-title">faq & ans</span>
-                    <h2 className="title">Get every <span>single</span> <br /> answer</h2>
-                  </div>
-                  <div className="faq__wrap">
-                    <div className="accordion" id="accordionExample">
-                      <div className="accordion-item">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Main purpose of PHO-Guide?
-                          </button>
-                        </h2>
-                        <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                          <div className="accordion-body">
-                            <p>We strive to provide a private, personalized physics- learning experience for high school or even college students with the power of Artificial Intelligence. </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="accordion-item">
-                        <h2 className="accordion-header">
-                          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            What AI models are used?
-                          </button>
-                        </h2>
-                        <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                          <div className="accordion-body">
-                            <p>As of right now, we use Grok 4 0709. It is a fast, accurate model that is very much capable of analyzing your studying pattern and provide you with more practice problems. </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
-        {/* section-divider-end */}
-</main>
+
+        {/* =========================================
+            RECENT ACTIVITY PLACEHOLDER
+            ========================================= */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
+          className="bg-[#0A0A18] border border-zinc-800 p-10 rounded-3xl shadow-xl"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-white font-heading">Recent Activity</h2>
+            <Link href="/quiz-history" className="text-sm text-zinc-400 hover:text-white transition-colors">View All</Link>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-zinc-800 rounded-xl">
+            <p className="text-zinc-500">No telemetry data recorded yet.</p>
+            <Link href="/highschoolquiz">
+              <button className="tg-btn mt-6 text-sm">Start Your First Quiz</button>
+            </Link>
+          </div>
+        </motion.section>
+
+      </main>
     </div>
   );
 }
