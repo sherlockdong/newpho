@@ -16,14 +16,13 @@ export default function QuizIndexPage() {
 
   // Enriched topics array with "system codes" for that CERN/NASA aesthetic
   const topics = [
-    { slug: "mechanics", name: "Mechanics", code: "MCH-01" },
-    { slug: "work-energy-power", name: "Work, Energy, and Power", code: "MCH-03" },
-    { slug: "momentum", name: "Systems of Particles & Linear Momentum", code: "MCH-04" },
-    { slug: "rotation", name: "Rotation", code: "MCH-05" },
-    { slug: "oscillations-gravitation", name: "Oscillations & Gravitation", code: "MCH-06" },
-    { slug: "electricity", name: "Electricity", code: "ELM-01" },
-    { slug: "induction", name: "Electromagnetic Induction", code: "ELM-02" },
-    { slug: "relativity", name: "Relativity", code: "MOD-01" }
+    { slug: "mechanics", name: "Mechanics", code: "MCH-00" },
+    { slug: "propertiesomatter", name: "Properties of Matter", code: "prm-00" },
+    { slug: "heat", name: "Heat", code: "HEA-00" },
+    { slug: "sound", name: "Sound", code: "SND-00" },
+     { slug: "light", name: "Light", code: "LGT-00" },
+    { slug: "electricity", name: "Electricity and Magnetism", code: "ELM-00" },
+    { slug: "relativity", name: "Relativity", code: "REL-00" }
   ];
 
   // Framer Motion variants for a staggered grid reveal
