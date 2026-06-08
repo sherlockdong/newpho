@@ -79,10 +79,10 @@ export default function MechanicsDirectoryPage() {
         <div className={styles.header}>
           <div className={styles.badge}>SYS_// DIRECTORY_MECHANICS</div>
           <h1 className={styles.title}>
-            Mechanics <span className={styles.titleAccent}>Protocols</span>
+            Mechanics <span className={styles.titleAccent}>Section</span>
           </h1>
           <p className={styles.subtitle}>
-            Select a specific sub-discipline below to calibrate the GPT-4o diagnostic engine and begin your evaluation.
+            Select a specific subtopic below to calibrate the GPT-4o diagnostic engine and begin your evaluation.
           </p>
         </div>
 

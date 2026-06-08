@@ -29,7 +29,7 @@ export default function Rout() {
             <span className="status-text">AI ENGINE: ACTIVE // GPT-4o PROTOCOL</span>
           </div>
           <div className="status-item">
-            <span className="status-text">TOTAL DIAGNOSTICS LOGGED: <span className="text-white font-mono">1,402</span></span>
+            <span className="status-text">TOTAL DIAGNOSTICS LOGGED: <span className="text-white font-mono">0</span></span>
           </div>
           <div className="status-item">
             <span className="status-text">CURRENT FOCUS VECTOR: <span className="text-[#4f8ef7] font-mono">STANDBY</span></span>

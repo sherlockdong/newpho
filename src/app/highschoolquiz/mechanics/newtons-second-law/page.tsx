@@ -18,29 +18,30 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Newtos Laws Lesson One",
-    desc: "A highly readable conceptual breakdown of mass, inertia, and state of motion.",
-    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-1/Newton-s-First-Law",
-    type: "Article",
+    title: "The Physics Classroom: Lesson Three",
+    desc: "A highly readable conceptual breakdown of all type of Newton's Second Law",
+    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-3/Newton-s-Second-Law",
+    type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy: Unit One",
+    title: "Khan Academy: Newton's Second Law",
     desc: "Step-by-step video lecture explaining balanced forces and reference frames.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_first_law",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_second_law",
     type: "Video",
   },
   {
     id: "REF_03",
-    title: "Flipping Physics: First Law Demos",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.flippingphysics.com/first-law.html",
-    type: "Demonstration",
-  },  {
-    id: "REF_04",
+    title: "Flipping Physics: Introduction to Newton's Second Law",
+    desc: "A demo video illustrating the relationship between net force, mass, and acceleration with real-world examples.",
+    url: "https://www.flippingphysics.com/second-law.html",
+    type: "Demo",
+  }, 
+   {
+    id: "REF_05",
     title: "Organic Chemistry Tutor",
     desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.youtube.com/watch?v=Fr5EMXZaujc&pp=ygUQbmV3dG9uIGZpcnN0IGxhdw%3D%3D",
+    url: "https://www.youtube.com/watch?v=Ee6CHn0MRKE&pp=ygUSTmV3dG9ucyBzZWNvbmQgbGF30gcJCTgLAYcqIYzv",
     type: "Video",
   },
 ];
@@ -52,11 +53,11 @@ const PHYSICS_FACTS = [
   "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
 
-export default function NewtonsFirstLawPage() {
+export default function NewtonsSecondLawPage() {
   const auth = getAuth(app);
 
   const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's First Law of Motion — Inertia";
+  const SUBTOPIC_NAME = "Newton's Second Law";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -103,7 +104,7 @@ export default function NewtonsFirstLawPage() {
     try {
       const prompt = `You are an expert physics professor generating a diagnostic quiz. 
 Generate exactly ${questionCount} multiple-choice questions specifically focusing on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of inertia and balanced forces.\n"}
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of Newton's Second Law.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
@@ -231,7 +232,6 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        {/* Breadcrumb */}
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
 <svg 
   className={styles.breadcrumbIcon} 
@@ -247,16 +247,22 @@ d) [Option 4]
           Return to Mechanics Directory
         </Link>
 
-        {/* Header */}
         <div className={styles.header}>
-          <div className={styles.badge}>SYS_// MECH_01</div>
+          <div className={styles.badge}>SYS_:: MECH_02</div>
           <h1 className={styles.title}>{SUBTOPIC_NAME}</h1>
           <p className={styles.subtitle}>
             Review the study protocols below to calibrate your theoretical knowledge, then initialize the diagnostic terminal to test your mastery.
           </p>
         </div>
 
-        {/* Study Protocols */}
+        <div style={{ backgroundColor: 'rgba(79, 142, 247, 0.1)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid #4f8ef7', marginBottom: '24px', color: '#e2e8f0', lineHeight: '1.6' }}>
+          <strong style={{ color: '#4f8ef7' }}>Editor's Note:</strong> Newton's Second Law, while basic, is a relatively complicated topic compared to the two other Newton's Laws, as it involves mathematical calculations and a deeper conceptual understanding
+          of motions. For more information, pleae visit <Link href="/roadmap" className={styles.breadcrumb}>the roadmap</Link>. <br/>
+
+          As a fundamental equation in physics, Newton's Second Law cannot be mathematically proven, but can be derived, as shown in <Link target="_blank" href="https://byjus.com/physics/newtons-second-law-of-motion-and-momentum/" className={styles.breadcrumb}>this page</Link>. Check
+          it out if you are interested!
+        </div>
+
         <div className={styles.protocolsSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Before taking the quiz...</h2>
@@ -299,7 +305,6 @@ d) [Option 4]
           </div>
         </div>
 
-        {/* Diagnostic Terminal */}
         <div id="diagnostic-terminal" className={styles.terminalSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Diagnostic Terminal</h2>
@@ -311,15 +316,14 @@ d) [Option 4]
             animate={{ opacity: 1, y: 0 }}
             className={styles.terminal}
           >
-            {/* Left panel */}
             <div className={styles.terminalLeft}>
               <div>
                 <div className={styles.terminalStatusRow}>
                   <div className={styles.terminalDot} />
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
-                <h3 className={styles.terminalId}>MECH_01</h3>
-                <p className={styles.terminalSubtitle}>Inertia & Balanced Forces</p>
+                <h3 className={styles.terminalId}>MECH_02</h3>
+                <p className={styles.terminalSubtitle}>Newton's Second Law</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -346,7 +350,6 @@ d) [Option 4]
               </div>
             </div>
 
-            {/* Right panel */}
             <div className={styles.terminalRight}>
               <div>
                 <label className={styles.terminalLabel}>
@@ -374,7 +377,6 @@ d) [Option 4]
           </motion.div>
         </div>
 
-        {/* Loading */}
         {(isGenerating || isEvaluating) && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
             <div className={styles.spinner} />
@@ -385,10 +387,8 @@ d) [Option 4]
           </motion.div>
         )}
 
-        {/* Error */}
         {error && <div className={styles.errorBox}>System Error: {error}</div>}
 
-        {/* Results */}
         <div id="quiz-anchor" />
         {showAnswers && (
           <motion.div
@@ -407,7 +407,6 @@ d) [Option 4]
           </motion.div>
         )}
 
-        {/* Quiz */}
         {quiz && !isGenerating && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

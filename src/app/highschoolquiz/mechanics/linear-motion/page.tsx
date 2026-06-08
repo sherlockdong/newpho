@@ -18,29 +18,36 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Newtos Laws Lesson One",
-    desc: "A highly readable conceptual breakdown of mass, inertia, and state of motion.",
-    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-1/Newton-s-First-Law",
-    type: "Article",
+    title: "The Physics Classroom: 1-D Kinematics",
+    desc: "A highly readable conceptual breakdown of all type of linear motions.",
+    url: "https://www.physicsclassroom.com/Physics-Tutorial/1-D-Kinematics",
+    type: "Articles",
   },
   {
     id: "REF_02",
     title: "Khan Academy: Unit One",
     desc: "Step-by-step video lecture explaining balanced forces and reference frames.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_first_law",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:describing-motion/v/position_velocity_speed",
     type: "Video",
   },
   {
     id: "REF_03",
-    title: "Flipping Physics: First Law Demos",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.flippingphysics.com/first-law.html",
-    type: "Demonstration",
+    title: "Flipping Physics: Displacement, Speed and Velocity",
+    desc: "Complete, detailed, professional lecture notes",
+    url: "https://www.flippingphysics.com/uploads/2/1/1/0/21103672/02-01_lecture_notes_compilation_-_displacement_speed_and_velocity.pdf",
+    type: "Lecture Note",
   },  {
     id: "REF_04",
+    title: "Flipping Physics: One Dimensional Motion Demos",
+    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
+    url: "https://www.youtube.com/playlist?list=PLPyapQSxH6mbXWoeU5ZqSwQiJmn6NqRGN",
+    type: "Video",
+  },
+   {
+    id: "REF_05",
     title: "Organic Chemistry Tutor",
     desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.youtube.com/watch?v=Fr5EMXZaujc&pp=ygUQbmV3dG9uIGZpcnN0IGxhdw%3D%3D",
+    url: "https://www.youtube.com/watch?v=RDRDoBqYT7s&pp=ygUNbGluZWFyIG1vdGlvbg%3D%3D",
     type: "Video",
   },
 ];
@@ -52,11 +59,11 @@ const PHYSICS_FACTS = [
   "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
 
-export default function NewtonsFirstLawPage() {
+export default function LinearMotionPage() {
   const auth = getAuth(app);
 
   const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's First Law of Motion — Inertia";
+  const SUBTOPIC_NAME = "Linear Motion";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -103,7 +110,7 @@ export default function NewtonsFirstLawPage() {
     try {
       const prompt = `You are an expert physics professor generating a diagnostic quiz. 
 Generate exactly ${questionCount} multiple-choice questions specifically focusing on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of inertia and balanced forces.\n"}
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of linear motion.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
@@ -249,7 +256,7 @@ d) [Option 4]
 
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.badge}>SYS_// MECH_01</div>
+          <div className={styles.badge}>SYS_// MECH_02</div>
           <h1 className={styles.title}>{SUBTOPIC_NAME}</h1>
           <p className={styles.subtitle}>
             Review the study protocols below to calibrate your theoretical knowledge, then initialize the diagnostic terminal to test your mastery.
@@ -318,8 +325,8 @@ d) [Option 4]
                   <div className={styles.terminalDot} />
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
-                <h3 className={styles.terminalId}>MECH_01</h3>
-                <p className={styles.terminalSubtitle}>Inertia & Balanced Forces</p>
+                <h3 className={styles.terminalId}>MECH_02</h3>
+                <p className={styles.terminalSubtitle}>Linear Motion</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
