@@ -9,6 +9,9 @@ import {
   collection,
   addDoc,
   Timestamp,
+  doc,
+  getDoc,
+  setDoc
 } from "firebase/firestore";
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
@@ -52,6 +55,28 @@ const PHYSICS_FACTS = [
   "An object moving at a constant 100 m/s in a straight line has a net force of zero acting upon it.",
   "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
+
+const NODE_ID = 'MCH-03';
+
+const UNLOCKS_MAP: Record<string, string[]> = {
+  'MCH-01': ['MCH-03', 'MCH-04'],
+  'MCH-02': ['MCH-03', 'MCH-07'],
+  'MCH-03': ['MCH-05', 'MCH-06', 'MCH-08'],
+  'MCH-04': ['MCH-05'],
+  'MCH-05': ['MCH-08'],
+  'MCH-06': ['MCH-09'],
+  'MCH-07': ['MCH-09'],
+};
+
+const PREREQUISITES_MAP: Record<string, string[]> = {
+  'MCH-03': ['MCH-01', 'MCH-02'],
+  'MCH-04': ['MCH-01'],
+  'MCH-05': ['MCH-03', 'MCH-04'],
+  'MCH-06': ['MCH-03'],
+  'MCH-07': ['MCH-02'],
+  'MCH-08': ['MCH-03', 'MCH-05'],
+  'MCH-09': ['MCH-06', 'MCH-07'],
+};
 
 export default function NewtonsSecondLawPage() {
   const auth = getAuth(app);
@@ -173,6 +198,32 @@ d) [Option 4]
 
   const questions = parseQuizQuestions(quiz || "");
 
+  async function updateProgress(correctCount: number) {
+    if (!user?.uid) return;
+    const db = getFirestore(app);
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+
+    const snap = await getDoc(progressRef);
+    const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
+
+    const updates: Record<string, string> = { ...current };
+
+    if (correctCount >= 5) {
+      updates[NODE_ID] = 'mastered';
+
+      const candidates = UNLOCKS_MAP[NODE_ID] ?? [];
+      for (const candidateId of candidates) {
+        const prereqs = PREREQUISITES_MAP[candidateId] ?? [];
+        const allMet = prereqs.every(p => updates[p] === 'mastered');
+        if (allMet && updates[candidateId] !== 'mastered') {
+          updates[candidateId] = 'unlocked';
+        }
+      }
+    }
+
+    await setDoc(progressRef, updates, { merge: true });
+  }
+
   async function handleSubmitAnswers() {
     setIsEvaluating(true);
     setError(null);
@@ -210,6 +261,8 @@ d) [Option 4]
         timestamp: Timestamp.fromDate(new Date()),
         userId: user?.uid,
       });
+
+      await updateProgress(correctCount);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -248,19 +301,11 @@ d) [Option 4]
         </Link>
 
         <div className={styles.header}>
-          <div className={styles.badge}>SYS_:: MECH_02</div>
+          <div className={styles.badge}>SYS_// {NODE_ID}</div>
           <h1 className={styles.title}>{SUBTOPIC_NAME}</h1>
           <p className={styles.subtitle}>
             Review the study protocols below to calibrate your theoretical knowledge, then initialize the diagnostic terminal to test your mastery.
           </p>
-        </div>
-
-        <div style={{ backgroundColor: 'rgba(79, 142, 247, 0.1)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid #4f8ef7', marginBottom: '24px', color: '#e2e8f0', lineHeight: '1.6' }}>
-          <strong style={{ color: '#4f8ef7' }}>Editor's Note:</strong> Newton's Second Law, while basic, is a relatively complicated topic compared to the two other Newton's Laws, as it involves mathematical calculations and a deeper conceptual understanding
-          of motions. For more information, pleae visit <Link href="/roadmap" className={styles.breadcrumb}>the roadmap</Link>. <br/>
-
-          As a fundamental equation in physics, Newton's Second Law cannot be mathematically proven, but can be derived, as shown in <Link target="_blank" href="https://byjus.com/physics/newtons-second-law-of-motion-and-momentum/" className={styles.breadcrumb}>this page</Link>. Check
-          it out if you are interested!
         </div>
 
         <div className={styles.protocolsSection}>
@@ -322,7 +367,7 @@ d) [Option 4]
                   <div className={styles.terminalDot} />
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
-                <h3 className={styles.terminalId}>MECH_02</h3>
+                <h3 className={styles.terminalId}>{NODE_ID}</h3>
                 <p className={styles.terminalSubtitle}>Newton's Second Law</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>

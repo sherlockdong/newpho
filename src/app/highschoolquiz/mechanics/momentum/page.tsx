@@ -21,41 +21,48 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Newtos Laws Lesson One",
-    desc: "A highly readable conceptual breakdown of mass, inertia, and state of motion.",
-    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-1/Newton-s-First-Law",
-    type: "Article",
+    title: "The Physics Classroom: Momentum and Its Conservation",
+    desc: "A Three-Lesson Unit that teaches you basically everything in Pre-College momentum, as well as the Law of Conservation of Momentum.",
+    url: "https://www.physicsclassroom.com/class/momentum",
+    type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy: Unit One",
-    desc: "Step-by-step video lecture explaining balanced forces and reference frames.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_first_law",
+    title: "Khan Academy: Unit Two Lesson Two",
+    desc: "Step-by-step video lecture explaining momentum and the conservation of momentum.",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:force-pairs-and-momentum/x6679aa2c65c01e53:momentum/v/momentum",
     type: "Video",
   },
   {
     id: "REF_03",
-    title: "Flipping Physics: First Law Demos",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.flippingphysics.com/first-law.html",
-    type: "Demonstration",
+    title: "Flipping Physics: Unit 4, Unit 5a, Unit 6",
+    desc: "A introduction of Linear, Rotational and Angular Momentum.",
+    url: "https://www.flippingphysics.com/ap-physics-1-unit-4-review.html",
+    type: "Lectures",
   },  {
     id: "REF_04",
-    title: "Organic Chemistry Tutor",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.youtube.com/watch?v=Fr5EMXZaujc&pp=ygUQbmV3dG9uIGZpcnN0IGxhdw%3D%3D",
+    title: "Organic Chemistry Tutor: Linear Momentum ",
+    desc: "A set of 18 videos that introduces linear momentum.",
+    url: "https://www.youtube.com/playlist?list=PLPyapQSxH6mbXWoeU5ZqSwQiJmn6NqRGN",
+    type: "Video",
+  },
+   {
+    id: "REF_05",
+    title: "Organic Chemistry Tutor: Angular Momentum",
+    desc: "Basic introduction to angular momentum.",
+    url: "https://www.youtube.com/watch?v=WzjIMuf-yuo&pp=ygUob3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgYW5ndWxhciBtb21lbnR1bdIHCQk5CwGHKiGM7w%3D%3D",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
-  "If the net force on an object is zero, its velocity must be constant.",
-  "Inertia is not a force; it is a property of matter directly related to its mass.",
-  "An object moving at a constant 100 m/s in a straight line has a net force of zero acting upon it.",
-  "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
+  "If the net external force on a system is zero, its total linear momentum must be constant.",
+ "Momentum is not a force; it is a quantity of motion directly related to an object's mass and velocity.",
+"An object maintaining a constant linear momentum of 100 kg·m/s in a straight line has a net external force of zero acting upon it.",
+"You feel a massive pressure against your chest during a sudden car crash because a huge force is rapidly stopping your body's forward linear momentum.",
 ];
 
-const NODE_ID = 'MCH-01';
+const NODE_ID = 'MCH-05';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -77,11 +84,11 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function NewtonsFirstLawPage() {
+export default function MomentumPage() {
   const auth = getAuth(app);
 
   const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's First Law of Motion — Inertia";
+  const SUBTOPIC_NAME = "Momentum";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -126,8 +133,8 @@ export default function NewtonsFirstLawPage() {
     setAiFeedback(null);
 
     try {
-const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of linear motion.\n"}
+      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of momentum.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
@@ -367,7 +374,7 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Inertia & Balanced Forces</p>
+                <p className={styles.terminalSubtitle}>Momentum</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -529,6 +536,6 @@ d) [Option 4]
         )}
 
       </div>
-    </main> 
+    </main>
   );
 }

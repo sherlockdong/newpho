@@ -4,13 +4,16 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase";
+import { motion, useScroll, useMotionValueEvent } from "motion/react";
 
 const auth = getAuth(app);
 
 export default function Header() {
   const [user, setUser] = useState<any>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
 
+  // Handle Firebase Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -18,23 +21,39 @@ export default function Header() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    let rafId: number;
+  // Handle Scroll Direction using Motion
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
 
-    const checkScroll = () => {
-      setIsScrolled(window.scrollY > 100);
-      rafId = requestAnimationFrame(checkScroll);
-    };
+    // If we are near the top of the page, always show the header
+    if (latest <= 50) {
+      setHidden(false);
+      return;
+    }
 
-    rafId = requestAnimationFrame(checkScroll);
-    return () => cancelAnimationFrame(rafId);
-  }, []);
+    // Compare current scroll position to previous to determine direction
+    if (latest > previous) {
+      setHidden(true); // Scrolling down
+    } else {
+      setHidden(false); // Scrolling up
+    }
+  });
+
   return (
-    <header className="fixed left-1/2 -translate-x-1/2 z-50 w-max site-header-floating">
-      {/* FIX 1: Removed 'justify-between' and added 'gap-10'. 
-        This forces exactly 2.5rem of space between the 3 main blocks. 
-        Added px-8 and h-14 here to manage the pill size uniformly.
-      */}
+    <motion.header
+      /* Notice we removed Tailwind's '-translate-x-1/2' from here and added top-4.
+        Instead, we handle the X translation in the style prop so Motion doesn't 
+        accidentally overwrite it when animating the Y axis!
+      */
+      className="fixed left-1/2 top-4 z-50 w-max site-header-floating"
+      style={{ x: "-50%" }}
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: -150 }, // Pushes the header exactly 150px up and out of frame
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       <div className="flex items-center gap-8 md:gap-12 px-8 h-14 rounded-full bg-[#0A0A18]/80 backdrop-blur-md border border-zinc-800 shadow-2xl nav-pill-container">
         
         {/* 1. BRAND / LOGO (Left Side) */}
@@ -69,7 +88,6 @@ export default function Header() {
         </nav>
 
         {/* 3. AUTH / USER PROFILE (Right Side) */}
-        {/* FIX 2: Added pl-6 border-l border-zinc-700 to match your Brand side! */}
         <div className="nav-auth-container flex items-center pl-6 border-l border-zinc-700">
           {user ? (
             <Link href="/user" className="flex items-center text-zinc-300 hover:text-white transition-colors user-profile-link">
@@ -77,10 +95,10 @@ export default function Header() {
                 <img
                   src={user.photoURL}
                   alt="Profile"
-                  className="rounded-full object-cover border border-[#4f8ef7]/50 user-avatar"
+                  className="rounded-full object-cover border border-[#4f8ef7]/50 user-avatar h-8 w-8"
                 />
               ) : (
-                <div className="rounded-full bg-[#4f8ef7]/20 border border-[#4f8ef7]/50 flex items-center justify-center text-[#4f8ef7] font-bold user-avatar-placeholder">
+                <div className="rounded-full h-8 w-8 bg-[#4f8ef7]/20 border border-[#4f8ef7]/50 flex items-center justify-center text-[#4f8ef7] font-bold user-avatar-placeholder">
                   {user.displayName?.[0]?.toUpperCase() || "U"}
                 </div>
               )}
@@ -93,6 +111,6 @@ export default function Header() {
         </div>
 
       </div>
-    </header>
+    </motion.header>
   );
 }

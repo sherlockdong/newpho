@@ -14,18 +14,17 @@ export default function QuizIndexPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Enriched topics array with "system codes" for that CERN/NASA aesthetic
   const topics = [
     { slug: "mechanics", name: "Mechanics", code: "MCH-00" },
-    { slug: "propertiesomatter", name: "Properties of Matter", code: "prm-00" },
+  ];
+  /*  { slug: "propertiesomatter", name: "Properties of Matter", code: "prm-00" },
     { slug: "heat", name: "Heat", code: "HEA-00" },
     { slug: "sound", name: "Sound", code: "SND-00" },
      { slug: "light", name: "Light", code: "LGT-00" },
     { slug: "electricity", name: "Electricity and Magnetism", code: "ELM-00" },
     { slug: "relativity", name: "Relativity", code: "REL-00" }
-  ];
 
-  // Framer Motion variants for a staggered grid reveal
+    */
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {

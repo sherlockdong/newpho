@@ -18,6 +18,7 @@ interface TreeNode {
   status: Status;
   desc: string;
   url: string;
+  prerequisites: string[];
 }
 
 interface Tier {
@@ -28,21 +29,72 @@ interface Tier {
 }
 
 const TREE_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
-  { id: 'MCH-01', title: ["Newton's First Law"], defaultStatus: 'unlocked', desc: 'Projectiles & reference frames.',      url: '/highschoolquiz/mechanics/linear-motion' },
-  { id: 'MCH-02', title: ["Linear Motion"], defaultStatus: 'unlocked', desc: 'Equilibrium & Atwood constraints.', url: '/highschoolquiz/mechanics/newtons-second-law' },
-  { id: 'DYN-02', title: ["Newton's", '3rd Law'],        defaultStatus: 'locked', desc: 'System boundaries & recoil.',       url: '/highschoolquiz/mechanics/newtons-third-law' },
-  { id: 'CON-01', title: ['Work &', 'Energy'],           defaultStatus: 'locked', desc: 'Potential wells & theorem.',        url: '/highschoolquiz/mechanics/work-energy' },
-  { id: 'CON-02', title: ['Linear', 'Momentum'],         defaultStatus: 'locked', desc: 'Ballistics & center of mass.',      url: '/highschoolquiz/mechanics/linear-momentum' },
-  { id: 'ADV-01', title: ['Rotational', 'Motion'],       defaultStatus: 'locked', desc: 'Torque & angular momentum.',        url: '/highschoolquiz/mechanics/rotational-motion' },
-  { id: 'ADV-02', title: ['Orbital', 'Mechanics'],       defaultStatus: 'locked', desc: "Kepler's laws & tidal forces.",     url: '/highschoolquiz/mechanics/orbital-mechanics' },
+  { id: 'MCH-01', title: ["Newton's First Law"], defaultStatus: 'unlocked', desc: 'Projectiles & reference frames.',      url: '/highschoolquiz/mechanics/newtons-first-law' ,prerequisites: [] },
+  { id: 'MCH-02', title: ["Linear Motion"], defaultStatus: 'unlocked', desc: 'Equilibrium & Atwood constraints.', url: '/highschoolquiz/mechanics/linear-motion', prerequisites: []  },
+ { 
+    id: 'MCH-03', 
+    title: ["Newton's Second Law"], 
+    defaultStatus: 'locked', 
+    desc: 'F = ma, free-body diagrams, friction, and coupled systems.', 
+    url: '/highschoolquiz/mechanics/newtons-second-law',
+    prerequisites: ['MCH-01', 'MCH-02'] 
+  },
+  { 
+    id: 'MCH-04', 
+    title: ["Newton's Third Law"], 
+    defaultStatus: 'locked', 
+    desc: 'System boundaries, action-reaction pairs, and recoil.', 
+    url: '/highschoolquiz/mechanics/newtons-third-law',
+    prerequisites: ['MCH-01'] 
+  },
+  { 
+    id: 'MCH-05', 
+    title: ['Linear', 'Momentum'], 
+    defaultStatus: 'locked', 
+    desc: 'Ballistics, impulse, and center of mass.', 
+    url: '/highschoolquiz/mechanics/linear-momentum',
+    prerequisites: ['MCH-03', 'MCH-04'] 
+  },
+  { 
+    id: 'MCH-06', 
+    title: ['Work &', 'Energy'], 
+    defaultStatus: 'locked', 
+    desc: 'Potential wells, work-energy theorem, and conservation.', 
+    url: '/highschoolquiz/mechanics/work-energy',
+    prerequisites: ['MCH-03'] 
+  },
+  { 
+    id: 'MCH-07', 
+    title: ['Projectile', 'Motion'], 
+    defaultStatus: 'locked', 
+    desc: 'Two-dimensional kinematics and independent horizontal/vertical components.', 
+    url: '/highschoolquiz/mechanics/projectile-motion',
+    prerequisites: ['MCH-02'] 
+  },
+  { 
+    id: 'MCH-08', 
+    title: ['Rotational', 'Motion'], 
+    defaultStatus: 'locked', 
+    desc: 'Torque, moment of inertia, and angular momentum.', 
+    url: '/highschoolquiz/mechanics/rotational-motion',
+    prerequisites: ['MCH-03', 'MCH-05'] 
+  },
+  { 
+    id: 'MCH-09', 
+    title: ['Orbital', 'Mechanics'], 
+    defaultStatus: 'locked', 
+    desc: "Kepler's laws, universal gravitation, and escape velocity.", 
+    url: '/highschoolquiz/mechanics/orbital-mechanics',
+    prerequisites: ['MCH-06', 'MCH-07'] 
+  }
 ];
 
 // Tier layout — just IDs and column positions, nodes are injected at render
 const TIER_LAYOUT = [
   { label: 'Tier I',   sub: 'Baseline Vectors',  cx: 100, ids: ['MCH-01', 'MCH-02'] },
-  { label: 'Tier II',  sub: 'Dynamic Systems',   cx: 280, ids: ['DYN-02'] },
-  { label: 'Tier III', sub: 'Conservation Laws', cx: 460, ids: ['CON-01', 'CON-02'] },
-  { label: 'Tier IV',  sub: 'Advanced Mechanics',cx: 640, ids: ['ADV-01', 'ADV-02'] },
+  { label: 'Tier II',  sub: 'Dynamic Systems',   cx: 280, ids: ['MCH-03', 'MCH-04'] },
+  { label: 'Tier III', sub: 'Conservation Laws', cx: 460, ids: ['MCH-05', 'MCH-06', 'MCH-09'] },
+  { label: 'Tier IV',  sub: 'Advanced Mechanics',cx: 640, ids: ['MCH-07', 'MCH-08'] },
 ];
 
 // Merge static template + live progress into the TREE shape the SVG expects
@@ -62,11 +114,12 @@ function buildTree(progress: ProgressMap): Tier[] {
   }));
 }
 
-// ─── Layout helpers ───────────────────────────────────────────────────────────
 
 function nodeY(_ti: number, ni: number, total: number): number {
   if (total === 1) return 210;
-  return ni === 0 ? 140 : 280;
+  if (total === 2) return ni === 0 ? 140 : 280;
+  // total === 3
+  return ni === 0 ? 100 : ni === 1 ? 210 : 320;
 }
 
 // ─── HexNode ──────────────────────────────────────────────────────────────────

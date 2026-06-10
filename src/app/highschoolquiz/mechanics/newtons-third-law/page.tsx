@@ -21,29 +21,30 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Newtos Laws Lesson One",
-    desc: "A highly readable conceptual breakdown of mass, inertia, and state of motion.",
-    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-1/Newton-s-First-Law",
-    type: "Article",
+    title: "The Physics Classroom: Unit 4",
+    desc: "A well-written interactive article that introduces the Newton's Third Law to you.",
+    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-4/Newton-s-Third-Law",
+    type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy: Unit One",
-    desc: "Step-by-step video lecture explaining balanced forces and reference frames.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_first_law",
+    title: "Khan Academy: Unit Two Lesson One",
+    desc: "Step-by-step video lecture explaining Newton's Third Law.",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:force-pairs-and-momentum/x6679aa2c65c01e53:newtons-third-law/v/newtons_third_law",
     type: "Video",
   },
   {
     id: "REF_03",
-    title: "Flipping Physics: First Law Demos",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.flippingphysics.com/first-law.html",
-    type: "Demonstration",
-  },  {
+    title: "Flipping Physics: 12:24 of the Video",
+    desc: "A brief video review on Newton's Third Law.",
+    url: "https://www.flippingphysics.com/ap-physics-1-unit-2a-review.html",
+    type: "Video",
+  }, 
+  {
     id: "REF_04",
     title: "Organic Chemistry Tutor",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.youtube.com/watch?v=Fr5EMXZaujc&pp=ygUQbmV3dG9uIGZpcnN0IGxhdw%3D%3D",
+    desc: "Compared to the video in Flipping Physics and Khan Academy, this one is more comprehensive and direct.",
+    url: "https://www.youtube.com/watch?v=TxhESW6YtOg&pp=ygUpb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgbmV3dG9ucyB0aGlyZCBsYXc%3D",
     type: "Video",
   },
 ];
@@ -55,7 +56,7 @@ const PHYSICS_FACTS = [
   "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
 
-const NODE_ID = 'MCH-01';
+const NODE_ID = 'MCH-04';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -77,11 +78,11 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function NewtonsFirstLawPage() {
+export default function NewtonsThirdLawPage() {
   const auth = getAuth(app);
 
   const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's First Law of Motion — Inertia";
+  const SUBTOPIC_NAME = "Newton's Third Law";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -126,8 +127,8 @@ export default function NewtonsFirstLawPage() {
     setAiFeedback(null);
 
     try {
-const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of linear motion.\n"}
+      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of Newton's Third Law.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
@@ -367,7 +368,7 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Inertia & Balanced Forces</p>
+                <p className={styles.terminalSubtitle}>Newton's Third Law</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -529,6 +530,6 @@ d) [Option 4]
         )}
 
       </div>
-    </main> 
+    </main>
   );
 }

@@ -9,6 +9,9 @@ import {
   collection,
   addDoc,
   Timestamp,
+  doc,
+  getDoc,
+  setDoc
 } from "firebase/firestore";
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
@@ -36,14 +39,15 @@ const STUDY_RESOURCES = [
     desc: "Complete, detailed, professional lecture notes",
     url: "https://www.flippingphysics.com/uploads/2/1/1/0/21103672/02-01_lecture_notes_compilation_-_displacement_speed_and_velocity.pdf",
     type: "Lecture Note",
-  },  {
+  },  
+  {
     id: "REF_04",
     title: "Flipping Physics: One Dimensional Motion Demos",
     desc: "Real-world visual demonstrations of objects resisting changes in motion.",
     url: "https://www.youtube.com/playlist?list=PLPyapQSxH6mbXWoeU5ZqSwQiJmn6NqRGN",
     type: "Video",
   },
-   {
+  {
     id: "REF_05",
     title: "Organic Chemistry Tutor",
     desc: "Real-world visual demonstrations of objects resisting changes in motion.",
@@ -58,6 +62,32 @@ const PHYSICS_FACTS = [
   "An object moving at a constant 100 m/s in a straight line has a net force of zero acting upon it.",
   "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
+
+// 2. ADDED CONSTANTS FOR PROGRESS TRACKING
+// Map each quiz page to its node ID
+const NODE_ID = 'MCH-02'; // Correct ID for linear-motion
+
+// Which nodes does mastering this one unlock?
+const UNLOCKS_MAP: Record<string, string[]> = {
+  'MCH-01': ['MCH-03', 'MCH-04'],
+  'MCH-02': ['MCH-03', 'MCH-07'],
+  'MCH-03': ['MCH-05', 'MCH-06', 'MCH-08'],
+  'MCH-04': ['MCH-05'],
+  'MCH-05': ['MCH-08'],
+  'MCH-06': ['MCH-09'],
+  'MCH-07': ['MCH-09'],
+};
+
+// Prerequisites that must ALL be mastered before a node unlocks
+const PREREQUISITES_MAP: Record<string, string[]> = {
+  'MCH-03': ['MCH-01', 'MCH-02'],
+  'MCH-04': ['MCH-01'],
+  'MCH-05': ['MCH-03', 'MCH-04'],
+  'MCH-06': ['MCH-03'],
+  'MCH-07': ['MCH-02'],
+  'MCH-08': ['MCH-03', 'MCH-05'],
+  'MCH-09': ['MCH-06', 'MCH-07'],
+};
 
 export default function LinearMotionPage() {
   const auth = getAuth(app);
@@ -108,14 +138,14 @@ export default function LinearMotionPage() {
     setAiFeedback(null);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz. 
-Generate exactly ${questionCount} multiple-choice questions specifically focusing on: "${SUBTOPIC_NAME}".
+      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
 ${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of linear motion.\n"}
 
 CRITICAL INSTRUCTIONS:
-1. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-2. Output ONLY the quiz. Do not include any introductory text.
-3. You may use standard physics constants.
+1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
+2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
+3. Output ONLY the quiz. Do not include any introductory text.
+4. You may use standard physics constants.
 
 Strictly follow this exact format for every question:
 ### Question [number]
@@ -178,6 +208,35 @@ d) [Option 4]
   };
 
   const questions = parseQuizQuestions(quiz || "");
+  async function updateProgress(correctCount: number) {
+    if (!user?.uid) return;
+    const db = getFirestore(app);
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+
+    // Read current progress
+    const snap = await getDoc(progressRef);
+    const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
+
+    const updates: Record<string, string> = { ...current };
+
+    // Mark this node mastered if score >= 5
+    if (correctCount >= 5) {
+      updates[NODE_ID] = 'mastered';
+
+      // Check each node this unlock might affect
+      const candidates = UNLOCKS_MAP[NODE_ID] ?? [];
+      for (const candidateId of candidates) {
+        const prereqs = PREREQUISITES_MAP[candidateId] ?? [];
+        const allMet = prereqs.every(p => updates[p] === 'mastered');
+        // Only promote locked → unlocked, never downgrade mastered
+        if (allMet && updates[candidateId] !== 'mastered') {
+          updates[candidateId] = 'unlocked';
+        }
+      }
+    }
+
+    await setDoc(progressRef, updates, { merge: true });
+  }
 
   async function handleSubmitAnswers() {
     setIsEvaluating(true);
@@ -206,6 +265,7 @@ d) [Option 4]
       const data = await response.json();
       setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
 
+      // 4. UPDATED FIRESTORE LOGIC TO INCLUDE updateProgress()
       const db = getFirestore(app);
       await addDoc(collection(db, "quizLogs"), {
         score: correctCount,
@@ -216,6 +276,9 @@ d) [Option 4]
         timestamp: Timestamp.fromDate(new Date()),
         userId: user?.uid,
       });
+
+      await updateProgress(correctCount); // Trigger roadmap progress logic
+      
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -344,10 +407,10 @@ d) [Option 4]
       fontFamily: 'monospace'
     }}
   >
-    <option value={1}>1 Variable</option>
-    <option value={3}>3 Variables</option>
-    <option value={5}>5 Variables</option>
-    <option value={10}>10 Variables</option>
+<option value={3}>3 Questions</option>
+<option value={5}>5 Questions</option>
+<option value={10}>10 Questions</option>
+<option value={15}>15 Questions</option>
   </select>
 </div>
               </div>
