@@ -21,38 +21,47 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Work, Energy and Power",
-    desc: "Two comprehensive lessons that will you have a basic understanding of the topic.",
-    url: "https://www.physicsclassroom.com/class/energy",
+    title: "The Physics Classroom: Circular Motion and Satellite Motion",
+    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
+    url: "https://www.physicsclassroom.com/class/circles",
     type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy: Unit Five",
-    desc: "Step-by-step video lecture explaining energy and its conservation.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:energy",
+    title: "Khan Academy(AP Physics 1): Circular Motion",
+    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
+    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
     type: "Video",
   },
-  {
+
+    {
     id: "REF_03",
-    title: "Flipping Physics: Unit 3",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.flippingphysics.com/ap-physics-1-unit-3-review.html",
-    type: "Lectures",
-  },  {
+    title: "Khan Academy(AP Physics 1): Motion in 2D",
+    desc: "Step-by-step video lecture explaining motion in two dimensions.",
+    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
+    type: "Video",
+  },
+
+  {
     id: "REF_04",
-    title: "Organic Chemistry Tutor: Work and Energy",
-    desc: "A set of 17 videos that introduces Work and Energy",
-    url: "https://www.youtube.com/watch?v=DyaVgHGssos&list=PLj-UXqz9Ig3SPLt-3iW5g_zd17MJmqNpR&pp=0gcJCUUDOCosWNin",
+    title: "Flipping Physics: Circular Motion",
+    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
+    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
+    type: "Lecture Demo",
+  },  {
+    id: "REF_05",
+    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
+    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
+    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
- "If the net heat and work exchange of an isolated system is zero, its total energy must be constant.",
- "Kinetic energy is not a force; it is a capacity to do work directly related to an object's mass and the square of its velocity.",
- "A system maintaining a constant internal energy of 100 Joules in a steady state has a net thermal and mechanical energy transfer of zero acting upon it.",
- "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
+ "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
+ "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
+ "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
+ "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
 ];
 
 const NODE_ID = 'MCH-09';

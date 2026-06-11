@@ -21,38 +21,31 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Work, Energy and Power",
-    desc: "Two comprehensive lessons that will you have a basic understanding of the topic.",
-    url: "https://www.physicsclassroom.com/class/energy",
-    type: "Articles",
-  },
-  {
-    id: "REF_02",
-    title: "Khan Academy: Unit Five",
-    desc: "Step-by-step video lecture explaining energy and its conservation.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:energy",
+    title: "Khan Academy: Unit Three",
+    desc: "Step-by-step video lecture explaining gravitational forces and their effects.",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:gravitation",
     type: "Video",
   },
   {
-    id: "REF_03",
-    title: "Flipping Physics: Unit 3",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.flippingphysics.com/ap-physics-1-unit-3-review.html",
-    type: "Lectures",
+    id: "REF_02",
+    title: "Flipping Physics: Unit 2b",
+    desc: "Several videoes and a Kahoot that help you understand this topic faster.",
+    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
+    type: "Video",
   },  {
-    id: "REF_04",
-    title: "Organic Chemistry Tutor: Work and Energy",
-    desc: "A set of 17 videos that introduces Work and Energy",
-    url: "https://www.youtube.com/watch?v=DyaVgHGssos&list=PLj-UXqz9Ig3SPLt-3iW5g_zd17MJmqNpR&pp=0gcJCUUDOCosWNin",
+    id: "REF_03",
+    title: "Organic Chemistry Tutor: Gravity",
+    desc: "A set of 17 videos that introduces gravitational concepts.",
+    url: "https://www.youtube.com/watch?v=Ep1jIhHdf2A&pp=ygUib3JnYW5pYyBjaGVtaXRyeSBndWlkZSBncmF2aXRhdGlvbg%3D%3D",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
- "If the net heat and work exchange of an isolated system is zero, its total energy must be constant.",
- "Kinetic energy is not a force; it is a capacity to do work directly related to an object's mass and the square of its velocity.",
- "A system maintaining a constant internal energy of 100 Joules in a steady state has a net thermal and mechanical energy transfer of zero acting upon it.",
- "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
+ "The gravitational force between two masses is mutually attractive and depends entirely on the product of their masses and the inverse square of the distance between their centers.",
+"An astronaut in orbit experiences weightlessness not because there is no gravity in space, but because they are in a constant state of free fall toward the Earth alongside their spacecraft.",
+	"The acceleration due to gravity on the surface of a planet depends only on the planet's mass and radius, meaning objects of different weights will fall at the exact same rate in a vacuum.",
+"A satellite moving in a perfectly circular orbit maintains a constant speed because the gravitational pull of the host planet acts perpendicular to the satellite’s direction of motion, doing no work on it."
 ];
 
 const NODE_ID = 'MCH-08';

@@ -21,38 +21,45 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Work, Energy and Power",
-    desc: "Two comprehensive lessons that will you have a basic understanding of the topic.",
-    url: "https://www.physicsclassroom.com/class/energy",
+    title: "The Physics Classroom: Balance and Rotation",
+    desc: "A four-lesson course that teaches about rotational kinematics, dynamics, and angular momentum.",
+    url: "https://www.physicsclassroom.com/class/Balance-and-Rotation",
     type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy: Unit Five",
-    desc: "Step-by-step video lecture explaining energy and its conservation.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:energy",
+    title: "Khan Academy(AP Physics 1): Unit 5",
+    desc: "Step-by-step video lecture explaining torque and rotational dynamics.",
+    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:torque-and-rotational-dynamics",
+    type: "Video",
+  },
+    {
+    id: "REF_02",
+    title: "Khan Academy(AP Physics 1): Unit 6",
+    desc: "Step-by-step video lecture explaining energy and momentum of rotating systems.",
+    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:energy-and-momentum-of-rotating-systems",
     type: "Video",
   },
   {
     id: "REF_03",
-    title: "Flipping Physics: Unit 3",
+    title: "Flipping Physics: Unit 5a",
     desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.flippingphysics.com/ap-physics-1-unit-3-review.html",
-    type: "Lectures",
+    url: "https://www.flippingphysics.com/ap-physics-1-unit-5a-review.html",
+    type: "Lectures and Demonstrations",
   },  {
     id: "REF_04",
     title: "Organic Chemistry Tutor: Work and Energy",
-    desc: "A set of 17 videos that introduces Work and Energy",
-    url: "https://www.youtube.com/watch?v=DyaVgHGssos&list=PLj-UXqz9Ig3SPLt-3iW5g_zd17MJmqNpR&pp=0gcJCUUDOCosWNin",
+    desc: "A set of 17 videos that introduces everything about rotational motion",
+    url: "https://www.youtube.com/watch?v=WQ9AH2S8B6Y&list=PLj-UXqz9Ig3S2PSrW2mu8UE1A7DXH3Fqs",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
- "If the net heat and work exchange of an isolated system is zero, its total energy must be constant.",
- "Kinetic energy is not a force; it is a capacity to do work directly related to an object's mass and the square of its velocity.",
- "A system maintaining a constant internal energy of 100 Joules in a steady state has a net thermal and mechanical energy transfer of zero acting upon it.",
- "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
+"An object moving in a circular path at a constant speed is steadily accelerating because the direction of its velocity vector is continuously changing toward the center of the loop.",
+"The total angular momentum of a spinning system remains perfectly constant as long as there are no external net torques acting upon it.",
+	"An object's resistance to changes in its rotational speed depends not only on its total mass, but also on how far that mass is distributed from the axis of rotation.",
+"When a rigid object rotates around a fixed point, every part of it shares the exact same angular velocity, but parts farther from the center travel at a higher linear speed.",
 ];
 
 const NODE_ID = 'MCH-07';
