@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ReactMarkdown from "react-markdown";
-import styles from "../page.module.css";
 
 export default function StudyPlanPage() {
   const [user, setUser] = useState<any>(null);
@@ -42,9 +41,9 @@ Keep up the great work! 🚀
   if (!user) return <div>Please sign in to view your study plan.</div>;
 
   return (
-    <div className={styles.userContainer}>
+    <div>
       <h1 className="quiz-title">My Study Plan</h1>
-      <div className={styles.studyPlanContent}>
+      <div>
         <ReactMarkdown>{studyPlan}</ReactMarkdown>
       </div>
     </div>
