@@ -16,6 +16,7 @@ export default function QuizIndexPage() {
 
   const topics = [
     { slug: "mechanics", name: "Mechanics", code: "MCH-00" },
+     { slug: "electricity", name: "Electricity and Magnetism", code: "ELM-00" },
   ];
   /*  { slug: "propertiesomatter", name: "Properties of Matter", code: "prm-00" },
     { slug: "heat", name: "Heat", code: "HEA-00" },

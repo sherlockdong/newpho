@@ -28,10 +28,12 @@ interface Tier {
   cx: number;
 }
 
-const TREE_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
+// ─── Mechanics Layout Data ───────────────────────────────────────────────────
+
+const MECHANICS_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
   { id: 'MCH-01', title: ["Newton's First Law"], defaultStatus: 'unlocked', desc: 'Projectiles & reference frames.',      url: '/highschoolquiz/mechanics/newtons-first-law' ,prerequisites: [] },
   { id: 'MCH-02', title: ["Linear Motion"], defaultStatus: 'unlocked', desc: 'Equilibrium & Atwood constraints.', url: '/highschoolquiz/mechanics/linear-motion', prerequisites: []  },
- { 
+  { 
     id: 'MCH-03', 
     title: ["Newton's Second Law"], 
     defaultStatus: 'locked', 
@@ -89,21 +91,65 @@ const TREE_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = 
   }
 ];
 
-// Tier layout — just IDs and column positions, nodes are injected at render
-const TIER_LAYOUT = [
+const MECHANICS_LAYOUT = [
   { label: 'Tier I',   sub: 'Baseline Vectors',  cx: 100, ids: ['MCH-01', 'MCH-02'] },
   { label: 'Tier II',  sub: 'Dynamic Systems',   cx: 280, ids: ['MCH-03', 'MCH-04'] },
   { label: 'Tier III', sub: 'Conservation Laws', cx: 460, ids: ['MCH-05', 'MCH-06', 'MCH-09'] },
   { label: 'Tier IV',  sub: 'Advanced Mechanics',cx: 640, ids: ['MCH-07', 'MCH-08'] },
 ];
 
-// Merge static template + live progress into the TREE shape the SVG expects
-function buildTree(progress: ProgressMap): Tier[] {
+// ─── Electricity & Magnetism Data ───────────────────────────────────────────
+
+const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
+  { 
+    id: 'ENM-01', 
+    title: ["Electrostatics"], 
+    defaultStatus: 'unlocked', 
+    desc: "Coulomb's law, electric fields, and electric potential.", 
+    url: '/highschoolquiz/electricity-magnetism/electrostatics', 
+    prerequisites: [] 
+  },
+  { 
+    id: 'ENM-02', 
+    title: ["Electric Current", "& Circuits"], 
+    defaultStatus: 'locked', 
+    desc: "Ohm's law, Kirchhoff's laws, and circuit analysis.", 
+    url: '/highschoolquiz/electricity-magnetism/currentcircuits', 
+    prerequisites: ['ENM-01'] 
+  },
+  { 
+    id: 'ENM-03', 
+    title: ["Magnetism"], 
+    defaultStatus: 'locked', 
+    desc: "Magnetic field lines, fields on moving charges, and materials.", 
+    url: '/highschoolquiz/electricity-magnetism/magnetism', 
+    prerequisites: ['ENM-02'] 
+  },
+  { 
+    id: 'ENM-04', 
+    title: ["Electromagnetic", "Induction"], 
+    defaultStatus: 'locked', 
+    desc: "Faraday's law, Lenz's law, and applied induction.", 
+    url: '/highschoolquiz/electricity-magnetism/induction', 
+    prerequisites: ['ENM-03'] 
+  },
+];
+
+const ENM_LAYOUT = [
+  { label: 'Tier I',   sub: 'Static Charges',       cx: 100, ids: ['ENM-01'] },
+  { label: 'Tier II',  sub: 'Dynamic Currents',     cx: 280, ids: ['ENM-02'] },
+  { label: 'Tier III', sub: 'Magnetic Fields',      cx: 460, ids: ['ENM-03'] },
+  { label: 'Tier IV',  sub: 'Electrodynamics',      cx: 640, ids: ['ENM-04'] },
+];
+
+// ─── Helper Functions ──────────────────────────────────────────────────────────
+
+function buildTree(progress: ProgressMap, template: typeof MECHANICS_TEMPLATE, layout: typeof MECHANICS_LAYOUT): Tier[] {
   const nodeMap = Object.fromEntries(
-    TREE_TEMPLATE.map(n => [n.id, n])
+    template.map(n => [n.id, n])
   );
 
-  return TIER_LAYOUT.map(tier => ({
+  return layout.map(tier => ({
     label: tier.label,
     sub: tier.sub,
     cx: tier.cx,
@@ -114,15 +160,13 @@ function buildTree(progress: ProgressMap): Tier[] {
   }));
 }
 
-
 function nodeY(_ti: number, ni: number, total: number): number {
   if (total === 1) return 210;
   if (total === 2) return ni === 0 ? 140 : 280;
-  // total === 3
   return ni === 0 ? 100 : ni === 1 ? 210 : 320;
 }
 
-// ─── HexNode ──────────────────────────────────────────────────────────────────
+// ─── HexNode Component ────────────────────────────────────────────────────────
 
 function HexNode({ node, cx, cy, delay, onNavigate }: {
   node: TreeNode; cx: number; cy: number; delay: number;
@@ -204,27 +248,26 @@ function HexNode({ node, cx, cy, delay, onNavigate }: {
   );
 }
 
-// ─── Connectors ───────────────────────────────────────────────────────────────
+// ─── Connectors Component ────────────────────────────────────────────────────
 
 function DynamicConnectors({ tree }: { tree: Tier[] }) {
-  const links = [];
+  const links: any[] = [];
 
-  // Loop through all tiers except the last one
   for (let ti = 0; ti < tree.length - 1; ti++) {
     const currentTier = tree[ti];
     const nextTier = tree[ti + 1];
 
     currentTier.nodes.forEach((nodeA, niA) => {
-      // Starting coordinates (Right edge of current node)
       const x1 = currentTier.cx + 34; 
       const y1 = nodeY(ti, niA, currentTier.nodes.length);
 
       nextTier.nodes.forEach((nodeB, niB) => {
-        // Ending coordinates (Left edge of next node)
+        // Evaluate connection if Node B explicitly depends on Node A
+        if (!nodeB.prerequisites?.includes(nodeA.id)) return;
+
         const x2 = nextTier.cx - 34; 
         const y2 = nodeY(ti + 1, niB, nextTier.nodes.length);
 
-        // Determine line style based on progression
         let pathClass = 'dim';
         if (nodeA.status === 'mastered') {
           if (nodeB.status === 'mastered') pathClass = 'green';
@@ -253,37 +296,108 @@ function DynamicConnectors({ tree }: { tree: Tier[] }) {
   );
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function RoadmapPage() {
   const router = useRouter();
-  const [tree, setTree] = useState<Tier[]>(buildTree({}));
+  const [mechanicsTree, setMechanicsTree] = useState<Tier[]>(buildTree({}, MECHANICS_TEMPLATE, MECHANICS_LAYOUT));
+  const [enmTree, setEnmTree] = useState<Tier[]>(buildTree({}, ENM_TEMPLATE, ENM_LAYOUT));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Wait for auth to resolve, then fetch that user's progress
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // Not logged in — everything stays locked
-        setTree(buildTree({}));
+        setMechanicsTree(buildTree({}, MECHANICS_TEMPLATE, MECHANICS_LAYOUT));
+        setEnmTree(buildTree({}, ENM_TEMPLATE, ENM_LAYOUT));
         setLoading(false);
         return;
       }
 
       try {
-        const snap = await getDoc(doc(db, 'users', user.uid, 'progress', 'mechanics'));
-        const progress = (snap.exists() ? snap.data() : {}) as ProgressMap;
-        setTree(buildTree(progress));
+        // Fetch Mechanics progress
+        const mechSnap = await getDoc(doc(db, 'users', user.uid, 'progress', 'mechanics'));
+        const mechProgress = (mechSnap.exists() ? mechSnap.data() : {}) as ProgressMap;
+        setMechanicsTree(buildTree(mechProgress, MECHANICS_TEMPLATE, MECHANICS_LAYOUT));
+
+        // Fetch Electricity & Magnetism progress
+        const enmSnap = await getDoc(doc(db, 'users', user.uid, 'progress', 'electricity-magnetism'));
+        const enmProgress = (enmSnap.exists() ? enmSnap.data() : {}) as ProgressMap;
+        setEnmTree(buildTree(enmProgress, ENM_TEMPLATE, ENM_LAYOUT));
+
       } catch (err) {
         console.error('Failed to fetch progress:', err);
-        setTree(buildTree({}));
       } finally {
         setLoading(false);
       }
     });
 
-    return () => unsub(); // cleanup listener on unmount
+    return () => unsub();
   }, []);
+
+  const renderMapSvg = (tree: Tier[]) => (
+    <div className="overflow-x-auto pb-4 -mx-4 px-4 mb-20">
+      <svg viewBox="0 0 740 430" style={{ minWidth: 640, width: '100%', display: 'block' }} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#10b981" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+          <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#4f8ef7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+          <marker id="arr-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#444" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+        </defs>
+
+        {tree.map((tier) => (
+          <g key={tier.label}>
+            <text x={tier.cx} y={20} textAnchor="middle"
+              style={{ fontFamily:'monospace', fontSize:'10px', fontWeight:500, letterSpacing:'0.1em', fill:'#555', textTransform:'uppercase' }}>
+              {tier.label}
+            </text>
+            <text x={tier.cx} y={33} textAnchor="middle" style={{ fontFamily:'inherit', fontSize:'9px', fill:'#444' }}>
+              {tier.sub}
+            </text>
+          </g>
+        ))}
+
+        {[190, 370, 550].map(x => (
+          <line key={x} x1={x} y1={42} x2={x} y2={400} stroke="#ffffff10" strokeWidth={0.5} strokeDasharray="4 4" />
+        ))}
+
+        <DynamicConnectors tree={tree} />
+
+        {tree.map((tier, ti) =>
+          tier.nodes.map((node, ni) => (
+            <HexNode
+              key={node.id}
+              node={node}
+              cx={tier.cx}
+              cy={nodeY(ti, ni, tier.nodes.length)}
+              delay={ti * 0.1 + ni * 0.08}
+              onNavigate={(url) => router.push(url)}
+            />
+          ))
+        )}
+
+        <g transform="translate(20, 410)">
+          {[
+            { color: '#10b981', label: 'Mastered' },
+            { color: '#4f8ef7', label: 'Unlocked' },
+            { color: '#2a2a3a', label: 'Locked' },
+          ].map(({ color, label }, i) => (
+            <g key={label} transform={`translate(${i * 90}, 0)`}>
+              <circle cx={6} cy={6} r={5} fill={color} opacity={0.2} stroke={color} strokeWidth={1} />
+              <circle cx={6} cy={6} r={3} fill={color} />
+              <text x={16} y={10} style={{ fontFamily:'inherit', fontSize:'9px', fill:'#555' }}>
+                {label}
+              </text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
 
   return (
     <main className="page-wrapper min-h-screen px-4 pb-20">
@@ -295,98 +409,45 @@ export default function RoadmapPage() {
       `}</style>
 
       <div className="max-w-[960px] mx-auto">
-
-        {/* Header */}
+        {/* Main Header */}
         <div className="text-center mb-12">
-          <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-[#a78bfa] bg-[#a78bfa]/10 border border-[#a78bfa]/20 rounded-full">
-            Mechanics
-          </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white font-heading tracking-tight mb-4">
-            Curriculum <span className="text-[#a78bfa]">Node Tree</span>
+            Curriculum <span className="text-[#a78bfa]">Node Trees</span>
           </h1>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Progress sequentially through the physics architecture. Mastering a tier unlocks subsequent advanced diagnostic modules.
+            Progress sequentially through the physics architectures. Mastering nodes unlocks subsequent units.
           </p>
         </div>
 
-        {/* Loading skeleton */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="flex gap-2">
               {[0,1,2].map(i => (
-                <div key={i} className="w-2 h-2 rounded-full bg-zinc-600 animate-pulse"
-                  style={{ animationDelay: `${i * 0.15}s` }} />
+                <div key={i} className="w-2 h-2 rounded-full bg-zinc-600 animate-pulse" style={{ animationDelay: `${i * 0.15}s` }} />
               ))}
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <svg viewBox="0 0 740 430" style={{ minWidth: 640, width: '100%', display: 'block' }}
-              xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
-                  <path d="M2 1L8 5L2 9" fill="none" stroke="#10b981" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                </marker>
-                <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
-                  <path d="M2 1L8 5L2 9" fill="none" stroke="#4f8ef7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                </marker>
-                <marker id="arr-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth={5} markerHeight={5} orient="auto-start-reverse">
-                  <path d="M2 1L8 5L2 9" fill="none" stroke="#444" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                </marker>
-              </defs>
+          <>
+            {/* Map 1: Mechanics */}
+            <div className="mb-6">
+              <div className="inline-block px-3 py-1 mb-2 text-xs font-mono text-[#a78bfa] bg-[#a78bfa]/10 border border-[#a78bfa]/20 rounded-full">
+                Branch 01 // Classical Mechanics
+              </div>
+            </div>
+            {renderMapSvg(mechanicsTree)}
 
-              {tree.map((tier) => (
-                <g key={tier.label}>
-                  <text x={tier.cx} y={20} textAnchor="middle"
-                    style={{ fontFamily:'monospace', fontSize:'10px', fontWeight:500, letterSpacing:'0.1em', fill:'#555', textTransform:'uppercase' }}>
-                    {tier.label}
-                  </text>
-                  <text x={tier.cx} y={33} textAnchor="middle"
-                    style={{ fontFamily:'inherit', fontSize:'9px', fill:'#444' }}>
-                    {tier.sub}
-                  </text>
-                </g>
-              ))}
+            <hr className="border-zinc-800 my-12" />
 
-              {[190, 370, 550].map(x => (
-                <line key={x} x1={x} y1={42} x2={x} y2={400}
-                  stroke="#ffffff10" strokeWidth={0.5} strokeDasharray="4 4" />
-              ))}
-
-              <DynamicConnectors tree={tree} />
-
-              {tree.map((tier, ti) =>
-                tier.nodes.map((node, ni) => (
-                  <HexNode
-                    key={node.id}
-                    node={node}
-                    cx={tier.cx}
-                    cy={nodeY(ti, ni, tier.nodes.length)}
-                    delay={ti * 0.1 + ni * 0.08}
-                    onNavigate={(url) => router.push(url)}
-                  />
-                ))
-              )}
-
-              <g transform="translate(20, 410)">
-                {[
-                  { color: '#10b981', label: 'Mastered' },
-                  { color: '#4f8ef7', label: 'Unlocked' },
-                  { color: '#2a2a3a', label: 'Locked' },
-                ].map(({ color, label }, i) => (
-                  <g key={label} transform={`translate(${i * 90}, 0)`}>
-                    <circle cx={6} cy={6} r={5} fill={color} opacity={0.2} stroke={color} strokeWidth={1} />
-                    <circle cx={6} cy={6} r={3} fill={color} />
-                    <text x={16} y={10} style={{ fontFamily:'inherit', fontSize:'9px', fill:'#555' }}>
-                      {label}
-                    </text>
-                  </g>
-                ))}
-              </g>
-            </svg>
-          </div>
+            {/* Map 2: Electricity and Magnetism */}
+            <div className="mb-6">
+              <div className="inline-block px-3 py-1 mb-2 text-xs font-mono text-[#3b82f6] bg-[#3b82f6]/10 border border-[#3b82f6]/20 rounded-full">
+                Branch 02 // Electricity & Magnetism
+              </div>
+            </div>
+            {renderMapSvg(enmTree)}
+          </>
         )}
-
       </div>
     </main>
   );
