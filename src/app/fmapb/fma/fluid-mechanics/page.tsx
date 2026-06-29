@@ -16,49 +16,22 @@ import {
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
+import styles from "../../fmapb.module.css";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
-import styles from "../../hsdirectory.module.css";
 
 const STUDY_RESOURCES = [
-  {
-    id: "REF_01",
-    title: "The Physics Classroom: Lesson Three",
-    desc: "A highly readable conceptual breakdown of all type of Newton's Second Law",
-    url: "https://www.physicsclassroom.com/class/newtlaws/Lesson-3/Newton-s-Second-Law",
-    type: "Articles",
-  },
-  {
-    id: "REF_02",
-    title: "Khan Academy: Newton's Second Law",
-    desc: "Step-by-step video lecture explaining balanced forces and reference frames.",
-    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_second_law",
-    type: "Video",
-  },
-  {
-    id: "REF_03",
-    title: "Flipping Physics: Introduction to Newton's Second Law",
-    desc: "A demo video illustrating the relationship between net force, mass, and acceleration with real-world examples.",
-    url: "https://www.flippingphysics.com/second-law.html",
-    type: "Demo",
-  }, 
-   {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor",
-    desc: "Real-world visual demonstrations of objects resisting changes in motion.",
-    url: "https://www.youtube.com/watch?v=Ee6CHn0MRKE&pp=ygUSTmV3dG9ucyBzZWNvbmQgbGF30gcJCTgLAYcqIYzv",
-    type: "Video",
-  },
 ];
 
 const PHYSICS_FACTS = [
-  "If the net force on an object is zero, its velocity must be constant.",
-  "Inertia is not a force; it is a property of matter directly related to its mass.",
-  "An object moving at a constant 100 m/s in a straight line has a net force of zero acting upon it.",
-  "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
+  "If the net heat and work exchange of an isolated system is zero, its total energy must be constant.",
+  "Kinetic energy is not a force; it is a capacity to do work directly related to an object's mass and the square of its velocity.",
+  "A system maintaining a constant internal energy of 100 Joules in a steady state has a net thermal and mechanical energy transfer of zero acting upon it.",
+  "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
 ];
 
-const NODE_ID = 'MCH-03';
-
+const NODE_ID = 'FMA-01';
+const DIFFICULTY_LEVEL = "F=MA physics competition";
+const SAMPLE_PROBLEMS = "### Sample Problem: Fluid Buoyancy and Equilibrium\\n**Problem Statement:**\\nAn object of uniform density floats partially submerged so that $20\\%$ of the object is above the water. A $3\\text{ N}$ force presses down on the top of the object so that the object becomes fully submerged. What is the volume of the object? The density of water is $\\rho_{\\text{H}_2\\text{O}} = 1000\\text{ kg/m}^3$.\\n\\n**Options:**\\na) $V_{\\text{object}} = 0.3\\text{ L}$\\nb) $V_{\\text{object}} = 0.67\\text{ L}$\\nc) $V_{\\text{object}} = 1.2\\text{ L}$\\nd) $V_{\\text{object}} = 1.5\\text{ L}$\\ne) $V_{\\text{object}} = 3.0\\text{ L}$\\n\\n**Correct Answer:** d)\\n\\n**Solution Analysis:**\\n1. In the initial floating state, the buoyant force balances the object's weight, keeping $80\\%$ of its volume submerged.\\n2. Fully submerging the object requires displacing the remaining $20\\%$ of its volume. The downward applied force $F = 3\\text{ N}$ must exactly balance the additional buoyant force provided by this remaining volume:\\n   $$F = \\\\Delta F_B = 0.2 \\\\cdot \\\\rho_{\\text{w}} \\\\cdot V \\\\cdot g$$\\n3. Solving for the total volume $V$:\\n   $$V = \\\\frac{F}{0.2 \\\\cdot \\\\rho_{\\text{w}} \\\\cdot g} = \\\\frac{3\\text{ N}}{0.2 \\\\cdot 1000\\text{ kg/m}^3 \\\\cdot 10\\text{ m/s}^2} = 1.5 \\\\times 10^{-3}\\text{ m}^3 = 1.5\\text{ L}$$";
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
   'MCH-02': ['MCH-03', 'MCH-07'],
@@ -79,11 +52,11 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function NewtonsSecondLawPage() {
+export default function FluidMechanicsPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's Second Law";
+  const TOPIC_NAME = "F=ma";
+  const SUBTOPIC_NAME = "Fluid Mechanics";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -128,14 +101,22 @@ export default function NewtonsSecondLawPage() {
     setAiFeedback(null);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz. 
-Generate exactly ${questionCount} multiple-choice questions specifically focusing on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of Newton's Second Law.\n"}
+      const prompt = `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
 
+Target Difficulty Level: ${DIFFICULTY_LEVEL}
+
+To calibrate the difficulty, carefully analyze the following sample problems. Your generated questions must exactly match the conceptual depth, mathematical rigor, trickiness, and multi-step reasoning required by these samples.
+
+--- SAMPLE PROBLEMS ---
+${SAMPLE_PROBLEMS}
+-----------------------
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : ""}
 CRITICAL INSTRUCTIONS:
-1. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-2. Output ONLY the quiz. Do not include any introductory text.
-3. You may use standard physics constants.
+1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
+2. Ensure the difficulty strictly aligns with the provided sample problems. 
+3. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
+4. Output ONLY the quiz. Do not include any introductory text.
+5. You may use standard physics constants.
 
 Strictly follow this exact format for every question:
 ### Question [number]
@@ -183,7 +164,7 @@ d) [Option 4]
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'F=ma');
 
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
@@ -267,19 +248,19 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
-<svg 
-  className={styles.breadcrumbIcon} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-</svg>
-          Return to Mechanics Directory
+        <Link href="/fmapb/fma" className={styles.breadcrumb}>
+          <svg
+            className={styles.breadcrumbIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Return to F=ma Directory
         </Link>
 
         <div className={styles.header}>
@@ -315,17 +296,17 @@ d) [Option 4]
                 </div>
                 <div className={styles.protocolFooter}>
                   Access resource
-<svg 
-  className={styles.protocolArrow} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-</svg>
+                  <svg
+                    className={styles.protocolArrow}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </div>
               </a>
             ))}
@@ -350,30 +331,30 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Newton's Second Law</p>
+                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
                 <div className={styles.terminalStat}>
-  <span className={styles.terminalStatLabel}>Questions</span>
-  <select 
-    value={questionCount} 
-    onChange={(e) => setQuestionCount(Number(e.target.value))}
-    style={{ 
-      background: '#0f0f20', 
-      color: '#4f8ef7', 
-      border: '1px solid #333', 
-      padding: '4px 8px', 
-      borderRadius: '6px',
-      fontSize: '14px',
-      cursor: 'pointer',
-      outline: 'none',
-      fontFamily: 'monospace'
-    }}
-  >
-    <option value={1}>1 Variable</option>
-    <option value={3}>3 Variables</option>
-    <option value={5}>5 Variables</option>
-    <option value={10}>10 Variables</option>
-  </select>
-</div>
+                  <span className={styles.terminalStatLabel}>Questions</span>
+                  <select
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    style={{
+                      background: '#0f0f20',
+                      color: '#4f8ef7',
+                      border: '1px solid #333',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    <option value={3}>3 Questions</option>
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                  </select>
+                </div>
               </div>
             </div>
 

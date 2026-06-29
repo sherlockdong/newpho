@@ -1,12 +1,12 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import Script from "next/script";
-import "../../public/assets/global-reset.css";
 import "./globals.css";
 import Header from "./comp/header";
 import 'katex/dist/katex.min.css';
 import LenisProvider from "../components/LenisProvider";
 import { Analytics } from "@vercel/analytics/react";
+import "../../public/assets/globals.css";
 
 export const metadata: Metadata = {
   title: "Physics Olympiad Guide",

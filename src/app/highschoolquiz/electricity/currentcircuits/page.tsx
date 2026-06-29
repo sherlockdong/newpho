@@ -16,6 +16,7 @@ import {
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
+import { parseQuizQuestions } from "../../../../lib/quizParser";
 import styles from "../../hsdirectory.module.css";
 
 const STUDY_RESOURCES = [
@@ -165,26 +166,7 @@ d) [Option 4]
     }
   }
 
-  const parseQuizQuestions = (quizString: string) => {
-    if (!quizString) return [];
-    const questions: any[] = [];
-    const sections = quizString.split("---").map((s) => s.trim()).filter(Boolean);
 
-    sections.forEach((section) => {
-      const lines = section.split("\n").map((l) => l.trim()).filter(Boolean);
-      let question: any = { text: "", options: [], correctAnswer: "" };
-
-      lines.forEach((line, idx) => {
-        if (line.match(/^### Question \d+/)) question.text = line.replace(/^### Question \d+\s*/, "").trim();
-        else if (line.match(/^[a-d]\)/)) question.options.push(line.trim());
-        else if (line.startsWith("**Correct Answer:**")) question.correctAnswer = line.replace("**Correct Answer:**", "").trim().toLowerCase();
-        else if (idx > 0 && !question.options.length) question.text += " " + line;
-      });
-
-      if (question.text && question.options.length) questions.push(question);
-    });
-    return questions;
-  };
 
   const handleAnswerChange = (index: number, value: string) => {
     setAnswers((prev: any) => ({ ...prev, [index]: { ...prev[index], answer: value } }));

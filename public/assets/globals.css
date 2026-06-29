@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700;900&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==========================================================================
    1. CORE VARIABLES & THEME (Forced Dark Mode)
    ========================================================================== */
@@ -9,24 +13,33 @@
   --font-heading: 'Space Grotesk', sans-serif;
 
   /* Color Palette */
-  --bg-primary: #050510;        /* deep navy-black base */
-  --bg-secondary: #0A0A18;      /* slightly lighter for cards/sections */
-  --text-main: #e8eaf6;         /* crisp, cool white */
+  --bg-primary: #050510;
+  /* deep navy-black base */
+  --bg-secondary: #0A0A18;
+  /* slightly lighter for cards/sections */
+  --text-main: #e8eaf6;
+  /* crisp, cool white */
   --text-muted: #94a3b8;
-  
+
   /* Accents */
-  --accent-blue: #4f8ef7;       /* electric blue */
-  --accent-violet: #a78bfa;     /* soft violet glow */
+  --accent-blue: #4f8ef7;
+  /* electric blue */
+  --accent-violet: #a78bfa;
+  /* soft violet glow */
   --border-light: rgba(79, 142, 247, 0.2);
 }
 
 /* ==========================================================================
    2. MODERN CSS RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  border: 0 solid transparent;
+  outline: none;
 }
 
 html {
@@ -63,7 +76,13 @@ body::before {
   z-index: 0;
 }
 
-h1, h2, h3, h4, h5, h6, .title {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title {
   font-family: var(--font-heading);
   overflow-wrap: break-word;
 }
@@ -72,7 +91,11 @@ p {
   overflow-wrap: break-word;
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
@@ -85,7 +108,8 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -96,7 +120,10 @@ button {
 /* ==========================================================================
    3. FORMS & INPUT RESETS
    ========================================================================== */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
   color: inherit;
   background: none;
@@ -120,11 +147,10 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 input[type="number"] {
-  -moz-appearance: textfield; 
-  appearance: textfield;      
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-/* Remove default dropdown arrows on selects */
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -134,7 +160,9 @@ select {
 /* ==========================================================================
    4. UTILITY CLASSES
    ========================================================================== */
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 .sr-only {
   position: absolute;
@@ -163,8 +191,25 @@ select {
 }
 
 /* ==========================================================================
-   5. LAYOUT & SECTIONS (Banner & Global Padding)
+   5. GLOBAL LAYOUTS & WRAPPERS
    ========================================================================== */
+main {
+  padding-top: 8rem;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  padding-top: 10rem;
+  /* Pushes content safely below the floating header */
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+.banner__area {
+  margin-top: -8rem;
+  padding-top: 10rem;
+}
+
 .banner__content {
   min-height: 100vh;
   display: flex;
@@ -237,30 +282,6 @@ select {
   max-width: 760px;
 }
 
-/* Interactive Glowing Buttons */
-.tg-btn {
-  background: transparent;
-  border: 1px solid rgba(79, 142, 247, 0.4);
-  color: var(--text-main);
-  padding: 0.75rem 2rem;
-  border-radius: 2rem;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: var(--font-sans);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-}
-
-.tg-btn:hover {
-  background: rgba(79, 142, 247, 0.1);
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 25px rgba(79, 142, 247, 0.4), inset 0 0 10px rgba(167, 139, 250, 0.2);
-  color: #ffffff;
-  transform: translateY(-2px);
-}
-
 /* ==========================================================================
    6. HEADER & NAVIGATION PILL
    ========================================================================== */
@@ -286,7 +307,7 @@ select {
   padding-right: 2.5rem;
 }
 
-.nav-brand-container, 
+.nav-brand-container,
 .nav-auth-container {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -296,7 +317,8 @@ select {
   gap: 2.5rem;
 }
 
-.nav-dropdown, .nav-link {
+.nav-dropdown,
+.nav-link {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
@@ -329,51 +351,204 @@ select {
 }
 
 /* ==========================================================================
-   7. SVG & ICON STYLING
+   7. UI COMPONENTS (Buttons, Cards, Hub, Dashboard)
    ========================================================================== */
-.nav-dropdown-icon {
-  width: 0.75rem;
-  height: 0.75rem;
-  opacity: 0.5;
+.tg-btn {
+  background: transparent;
+  border: 1px solid rgba(79, 142, 247, 0.4);
+  color: var(--text-main);
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+.tg-btn:hover {
+  background: rgba(79, 142, 247, 0.1);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 25px rgba(79, 142, 247, 0.4), inset 0 0 10px rgba(167, 139, 250, 0.2);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.each-card {
+  padding-bottom: 40px;
+  padding-top: 40px;
+}
+
+/* Hub Components */
+.hub-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hub-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hub-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.text-highlight {
+  color: var(--accent-blue);
+}
+
+.hub-subtitle {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  margin-top: 1rem;
+}
+
+.hub-toolbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+
+.hub-search {
+  width: 100%;
+  max-width: 600px;
+  background: rgba(10, 10, 24, 0.5);
+  border: 1px solid #27272a;
+  padding: 1rem 1.5rem;
+  border-radius: 2rem;
+  color: white;
+  font-family: var(--font-sans);
   transition: all 0.3s ease;
 }
 
-.nav-dropdown:hover .nav-dropdown-icon {
-  opacity: 1;
-  transform: rotate(180deg);
+.hub-search:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 15px rgba(79, 142, 247, 0.2);
 }
 
-.accordion-chevron {
-  width: 1rem;
-  height: 1rem;
-  color: #71717a;
-  transition: transform 0.3s ease;
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-.history-accordion[open] .accordion-chevron {
-  transform: rotate(180deg);
+@media (min-width: 768px) {
+  .hub-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
 }
 
-.module-arrow {
-  width: 1.25rem;
-  height: 1.25rem;
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  background: #0A0A18;
+  border: 1px solid #27272a;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  height: 100%;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-card:hover {
+  border-color: rgba(79, 142, 247, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card-sys-label {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: monospace;
+  font-size: 0.75rem;
   color: #52525b;
-  transition: all 0.3s ease;
 }
 
-.module-card:hover .module-arrow {
-  color: #4f8ef7;
-  transform: translateX(0.25rem);
+.card-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
-.auth-google-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.card-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: 2rem;
 }
 
-/* ==========================================================================
-   8. COMPONENT SPECIFICS (About Us & GitHub)
-   ========================================================================== */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #27272a;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.card-action {
+  color: #52525b;
+  transition: color 0.3s ease;
+}
+
+/* Dashboard & User Profile */
+.user-profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .user-profile-header {
+    flex-direction: row;
+    text-align: left;
+  }
+}
+
+.dashboard-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.recent-activity-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  border: 2px dashed #27272a;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+/* Feature & Github Cards */
 .feature-card {
   display: flex;
   flex-direction: column;
@@ -419,8 +594,13 @@ select {
 }
 
 @media (min-width: 768px) {
-  .feature-title { font-size: 1.5rem; }
-  .feature-desc { font-size: 1rem; }
+  .feature-title {
+    font-size: 1.5rem;
+  }
+
+  .feature-desc {
+    font-size: 1rem;
+  }
 }
 
 .github-section-wrapper {
@@ -517,9 +697,53 @@ textarea.github-input {
 }
 
 /* ==========================================================================
+   8. SVG & ICON STYLING
+   ========================================================================== */
+.nav-dropdown-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-icon {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.accordion-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: #71717a;
+  transition: transform 0.3s ease;
+}
+
+.history-accordion[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.module-arrow {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #52525b;
+  transition: all 0.3s ease;
+}
+
+.module-card:hover .module-arrow {
+  color: #4f8ef7;
+  transform: translateX(0.25rem);
+}
+
+.auth-google-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ==========================================================================
    9. LENIS SMOOTH SCROLL SUPPORT
    ========================================================================== */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -537,9 +761,4 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
-}
-
-.each-card{
-padding-bottom: 40px;
-padding-top: 40px;
 }
