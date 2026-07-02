@@ -1,25 +1,36 @@
-name: Deploy
+name: Build Check
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build-check:
     runs-on: ubuntu-latest
+    # Points to your production environment where your secrets live
     environment: production
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Build
-        run: echo "Building project..."
+      - name: Setup Node.js (LTS v22)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-- name: Use secrets safely
-  run: |
-    echo "Using secret: ${{ secrets.XAI_API_KEY }}"
-    echo "Another secret: ${{ secrets.GOOGLE_GENAI_API_KEY }}"
-    echo "Another secret: ${{ secrets.OPENAI_API_KEY }}"
+      - name: Install dependencies
+        run: npm ci
 
-  
+      - name: Build project
+        # We pass the secrets as standard environment variables so Next.js can read them during the build step
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          GOOGLE_GENAI_API_KEY: ${{ secrets.GOOGLE_GENAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npm run build
