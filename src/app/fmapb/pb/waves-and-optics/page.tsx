@@ -18,7 +18,6 @@ import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
 import styles from "../../fmapb.module.css";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
-const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 const STUDY_RESOURCES = [
 ];
 
@@ -71,7 +70,7 @@ export default function WandOPage() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
-
+  const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
