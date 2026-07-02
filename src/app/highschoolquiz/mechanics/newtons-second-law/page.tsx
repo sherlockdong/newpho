@@ -98,6 +98,7 @@ export default function NewtonsSecondLawPage() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
+  const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -126,6 +127,7 @@ export default function NewtonsSecondLawPage() {
     setShowAnswers(false);
     setFinalScore(null);
     setAiFeedback(null);
+    setQuestionExplanations([]);
 
     try {
       const prompt = `You are an expert physics professor generating a diagnostic quiz. 
@@ -232,6 +234,7 @@ d) [Option 4]
       if (!response.ok) throw new Error("Evaluate failed.");
       const data = await response.json();
       setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
+      setQuestionExplanations(data.analysis?.questionExplanations || []);
 
       const db = getFirestore(app);
       await addDoc(collection(db, "quizLogs"), {
@@ -431,6 +434,37 @@ d) [Option 4]
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
             <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
+            {questions.length > 0 && (
+  <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    {questions.map((q, idx) => {
+      const correctOption = q.options.find(
+        (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
+      );
+      const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+
+      return (
+        <div
+          key={idx}
+          style={{
+            background: '#0f0f20',
+            border: '1px solid #333',
+            borderRadius: '6px',
+            padding: '10px 14px',
+          }}
+        >
+          <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
+            Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
+          </p>
+          {explanation && (
+            <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
+              {explanation}
+            </p>
+          )}
+        </div>
+      );
+    })}
+  </div>
+)}
           </motion.div>
         )}
 

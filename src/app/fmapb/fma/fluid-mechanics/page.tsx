@@ -23,10 +23,10 @@ const STUDY_RESOURCES = [
 ];
 
 const PHYSICS_FACTS = [
-  "If the net heat and work exchange of an isolated system is zero, its total energy must be constant.",
-  "Kinetic energy is not a force; it is a capacity to do work directly related to an object's mass and the square of its velocity.",
-  "A system maintaining a constant internal energy of 100 Joules in a steady state has a net thermal and mechanical energy transfer of zero acting upon it.",
-  "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
+  "The Navier-Stokes equations, which govern the motion of fluid substances, are a statement of Newton's second law applied to continuous media under the assumption of a Newtonian fluid.",
+  "In a steady, incompressible, and inviscid flow, Bernoulli's principle states that an increase in the speed of the fluid occurs simultaneously with a decrease in static pressure or a decrease in the fluid's potential energy.",
+  "The Reynolds number (Re = \frac{\rho u L}{\mu}) is a dimensionless quantity that predicts fluid flow patterns, where low values indicate laminar flow dominated by viscous forces and high values indicate turbulent flow dominated by inertial forces.",
+  "Boundary layer separation occurs when the pressure gradient is adverse (\frac{dp}{dx} > 0), causing the velocity gradient at the wall to drop to zero and forcing the bulk fluid to detach from the solid surface."
 ];
 
 const NODE_ID = 'FMA-01';
@@ -71,6 +71,7 @@ export default function FluidMechanicsPage() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
+  const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -99,6 +100,7 @@ export default function FluidMechanicsPage() {
     setShowAnswers(false);
     setFinalScore(null);
     setAiFeedback(null);
+    setQuestionExplanations([]);
 
     try {
       const prompt = `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
@@ -213,6 +215,7 @@ d) [Option 4]
       if (!response.ok) throw new Error("Evaluate failed.");
       const data = await response.json();
       setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
+      setQuestionExplanations(data.analysis?.questionExplanations || []);
 
       const db = getFirestore(app);
       await addDoc(collection(db, "quizLogs"), {
@@ -412,6 +415,37 @@ d) [Option 4]
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
             <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
+            {questions.length > 0 && (
+  <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    {questions.map((q, idx) => {
+      const correctOption = q.options.find(
+        (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
+      );
+      const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+
+      return (
+        <div
+          key={idx}
+          style={{
+            background: '#0f0f20',
+            border: '1px solid #333',
+            borderRadius: '6px',
+            padding: '10px 14px',
+          }}
+        >
+          <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
+            Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
+          </p>
+          {explanation && (
+            <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
+              {explanation}
+            </p>
+          )}
+        </div>
+      );
+    })}
+  </div>
+)}
           </motion.div>
         )}
 

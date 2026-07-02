@@ -5,40 +5,52 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import styles from "../fmapb.module.css";
 
-const ELECTRICITY_SUBTOPICS = [
+const PB_SUBTOPICS = [
   {
-    id: "ENM_01",
-    title: "Electrostatics",
-    desc: "The study of electric charges at rest and the forces they exert on each other. Covers Coulomb's law, electric fields, and electric potential.",
-    slug: "electrostatics",
+    id: "PB_01",
+    title: "Thermodynamics and Kinetic Theory",
+    desc: "Thermal behavior of matter and heat energy. Covers the Zeroth, First, and Second Laws of Thermodynamics, ideal gas laws, kinetic theory, internal energy, PV diagrams, and thermodynamic cycles (Carnot, efficiency).",
+    slug: "thermodynamics-kinetic-theory",
   },
   {
-    id: "ENM_02",
-    title: "Electric Current and Circuits",
-    desc: "The flow of electric charge and the behavior of current in various circuit configurations. Covers Ohm's law, Kirchhoff's laws, and circuit analysis.",
-    slug: "currentcircuits",
+    id: "PB_02",
+    title: "Electrostatics and DC Circuits",
+    desc: "The behavior of electric charges at rest and in steady currents. Covers Coulomb's Law, electric fields, electric potential, Gauss's Law, capacitance, Ohm's Law, and complex resistor-capacitor DC circuit analysis.",
+    slug: "electrostatics-and-circuits",
   },
   {
-    id: "ENM_03",
-    title: "Magnetism",
-    desc: "The study of magnetic fields and the forces they exert on moving charges and magnetic materials. Covers magnetic field lines, electromagnetic induction, and Faraday's law.",
-    slug: "magnetism",
+    id: "PB_03",
+    title: "Magnetism and Electromagnetic Induction",
+    desc: "Magnetic fields and their interactions with moving charges and time-varying fields. Covers the Lorentz force, Biot-Savart Law, Ampere's Law, Faraday's Law of induction, Lenz's Law, and inductors.",
+    slug: "magnetism-and-induction",
   },
   {
-    id: "ENM_04",
-    title: "Electromagnetic Induction",
-    desc: "The process of generating an electric current in a conductor by changing the magnetic field around it. Covers Faraday's law, Lenz's law, and applications of electromagnetic induction.",
-    slug: "induction",
+    id: "PB_04",
+    title: "Waves and Geometric Optics",
+    desc: "Mechanics of wave propagation and light behavior. Covers wave properties, standing waves, the Doppler effect, physical optics (interference, diffraction), reflection, refraction, Snell's Law, mirrors, and lenses.",
+    slug: "waves-and-optics",
   },
+  {
+    id: "PB_05",
+    title: "Modern Physics and Quantum Phenomena",
+    desc: "Physics of the subatomic and relativistic domains. Covers Special Relativity (time dilation, Lorentz factor), the photoelectric effect, wave-particle duality, de Broglie wavelength, Bohr atom, and nuclear physics.",
+    slug: "modern-and-quantum-physics",
+  },
+  {
+    id: "PB_06",
+    title: "Physics History, Discoveries, and Trivia",
+    desc: "Contextual and historic knowledge evaluated on the PhysicsBowl. Covers landmark historical experiments, timelines of major discoveries, notable physicists, Nobel Prize history, and contemporary breakthrough discoveries.",
+    slug: "history-and-trivia",
+  }
 ];
 
-export default function ElectricityDirectoryPage() {
+export default function PBDirectoryPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleSelectSubtopic = (slug: string, id: string) => {
     setSelectedId(id);
-    router.push(`/highschoolquiz/electricity/${slug}`);
+    router.push(`/fmapb/pb/${slug}`);
   };
 
   return (
@@ -47,9 +59,9 @@ export default function ElectricityDirectoryPage() {
 
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.badge}>SYS_// DIRECTORY_ELECTRICITY</div>
+          <div className={styles.badge}>SYS_// DIRECTORY_PB</div>
           <h1 className={styles.title}>
-            Electricity and Magnetism <span className={styles.titleAccent}>Section</span>
+            Physics Bowl <span className={styles.titleAccent}>Section</span>
           </h1>
           <p className={styles.subtitle}>
             Select a specific subtopic below to calibrate the GPT-4o diagnostic engine and begin your evaluation.
@@ -58,7 +70,7 @@ export default function ElectricityDirectoryPage() {
 
         {/* Directory Grid */}
         <div className={styles.grid}>
-          {ELECTRICITY_SUBTOPICS.map((sub) => {
+          {PB_SUBTOPICS.map((sub) => {
             const isActive = selectedId === sub.id;
             return (
               <motion.div
