@@ -30,8 +30,6 @@ export default function Header() {
       setHidden(false);
       return;
     }
-
-    // Compare current scroll position to previous to determine direction
     if (latest > previous) {
       setHidden(true); // Scrolling down
     } else {
@@ -41,10 +39,6 @@ export default function Header() {
 
   return (
     <motion.header
-      /* Notice we removed Tailwind's '-translate-x-1/2' from here and added top-4.
-        Instead, we handle the X translation in the style prop so Motion doesn't 
-        accidentally overwrite it when animating the Y axis!
-      */
       className="fixed left-1/2 top-4 z-50 w-max site-header-floating"
       style={{ x: "-50%" }}
       variants={{
@@ -55,7 +49,7 @@ export default function Header() {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <div className="flex items-center gap-8 md:gap-12 px-8 h-14 rounded-full bg-[#0A0A18]/80 backdrop-blur-md border border-zinc-800 shadow-2xl nav-pill-container">
-        
+
         {/* 1. BRAND / LOGO (Left Side) */}
         <div className="nav-brand-container">
           <Link href="/" className="shrink-0 text-white font-bold text-sm tracking-tight hover:text-[#4f8ef7] transition-colors whitespace-nowrap pr-6 border-r border-zinc-700">
@@ -65,11 +59,12 @@ export default function Header() {
 
         {/* 2. NAVIGATION LINKS (Center) */}
         <nav className="flex items-center text-sm font-medium text-zinc-300 main-nav-list">
-          
+
           <div className="relative group cursor-pointer nav-dropdown">
             <span className="hover:text-[#4f8ef7] transition-colors nav-trigger">Sections</span>
             <ul className="absolute left-1/2 -translate-x-1/2 top-full w-56 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
-              <li><Link href="/highschoolquiz" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">High School Physics</Link></li> 
+              <li><Link href="/highschoolquiz" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">High School Physics</Link></li>
+              <li><Link href="/fmapb" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">F=ma / Physics Bowl</Link></li>
             </ul>
           </div>
 
@@ -84,10 +79,9 @@ export default function Header() {
               <li><Link href="/contact" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">Contact Us</Link></li>
             </ul>
           </div>
-          
+
         </nav>
 
-        {/* 3. AUTH / USER PROFILE (Right Side) */}
         <div className="nav-auth-container flex items-center pl-6 border-l border-zinc-700">
           {user ? (
             <Link href="/user" className="flex items-center text-zinc-300 hover:text-white transition-colors user-profile-link">

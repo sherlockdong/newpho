@@ -22,76 +22,62 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Circular Motion and Satellite Motion",
-    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
-    url: "https://www.physicsclassroom.com/class/circles",
+    title: "The Physics Classroom: Electric Circuits",
+    desc: "One chapter broken into 4 lessons. The flow of charge through electric circuits is discussed in detail. The variables which cause and hinder the rate of charge flow are explained and the mathematical application of electrical principles to series, parallel and combination circuits is presented.",
+    url: "https://www.physicsclassroom.com/tutorial/electric-circuits",
     type: "Articles",
   },
   {
     id: "REF_02",
-    title: "Khan Academy(AP Physics 1): Circular Motion",
-    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
-    type: "Video",
+    title: "The Physics Classroom: Interactive Electric Circuits",
+    desc: "Build a circuit!",
+    url: "https://www.physicsclassroom.com/Interactive/Electric-Circuits",
+    type: "Interactive",
   },
-
-    {
+  {
     id: "REF_03",
-    title: "Khan Academy(AP Physics 1): Motion in 2D",
-    desc: "Step-by-step video lecture explaining motion in two dimensions.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
-    type: "Video",
-  },
-
+    title: "Flipping Physics: Electric Circuits",
+    desc: "Complete, detailed, professional lecture videoes",
+    url: "http://www.flippingphysics.com/ap-physics-2.html#unit11",
+    type: "Lectures",
+  },  
   {
     id: "REF_04",
-    title: "Flipping Physics: Circular Motion",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
-    type: "Lecture Demo",
-  },  {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
-    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
-    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
+    title: "Organic Chemistry Tutor",
+    desc: "Electric Current and Circuits explained, Ohm's Law, Charge, Power, Physics Problems and Basic Electricity.",
+    url: "https://www.youtube.com/watch?v=r-SCyD7f_zI&pp=ygUpb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgZWxlY3RyaWMgY2lyY3VpdHPSBwkJPwsBhyohjO8%3D",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
- "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
- "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
- "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
- "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
+"If the net voltage (potential difference) across a component is zero, its electric current must be constant at zero.",
+"Resistance is not a force; it is an intrinsic property of a material directly related to its resistivity and geometry.",
+"A circuit loop maintaining a constant current of 100 Amperes through a superconducting wire has a net electromotive force of zero dropping across that segment.",
+"A lightbulb brightens the instant you flip a switch because the electric field propagates through the circuit near the speed of light, forcing the already-present electrons into motion."
 ];
 
-const NODE_ID = 'MCH-09';
-
+// 2. ADDED CONSTANTS FOR PROGRESS TRACKING
+// Map each quiz page to its node ID
+const NODE_ID = 'ENM-02'; 
 const UNLOCKS_MAP: Record<string, string[]> = {
-  'MCH-01': ['MCH-03', 'MCH-04'],
-  'MCH-02': ['MCH-03', 'MCH-07'],
-  'MCH-03': ['MCH-05', 'MCH-06', 'MCH-08'],
-  'MCH-04': ['MCH-05'],
-  'MCH-05': ['MCH-08'],
-  'MCH-06': ['MCH-09'],
-  'MCH-07': ['MCH-09'],
+  'ENM-01': ['ENM-02'],
+  'ENM-02': ['ENM-03'],
+  'ENM-03': ['ENM-04'],
+  'ENM-04': [],
 };
 
 const PREREQUISITES_MAP: Record<string, string[]> = {
-  'MCH-03': ['MCH-01', 'MCH-02'],
-  'MCH-04': ['MCH-01'],
-  'MCH-05': ['MCH-03', 'MCH-04'],
-  'MCH-06': ['MCH-03'],
-  'MCH-07': ['MCH-02'],
-  'MCH-08': ['MCH-03', 'MCH-05'],
-  'MCH-09': ['MCH-06', 'MCH-07'],
+  'ENM-02': ['ENM-01'],
+  'ENM-03': ['ENM-02'],
+  'ENM-04': ['ENM-03'],
 };
 
-export default function ProjectileAndSatelliteMotionPage() {
+export default function CurrentCircuitsPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Projectile and Satellite Motion";
+  const TOPIC_NAME = "Electricity and Magnetism";
+  const SUBTOPIC_NAME = "Current Circuits";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -139,7 +125,7 @@ export default function ProjectileAndSatelliteMotionPage() {
 
     try {
       const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of energy.\n"}
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of current circuits.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
@@ -189,24 +175,27 @@ d) [Option 4]
   };
 
   const questions = parseQuizQuestions(quiz || "");
-
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'electricity');
 
+    // Read current progress
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
 
     const updates: Record<string, string> = { ...current };
 
+    // Mark this node mastered if score >= 5
     if (correctCount >= 5) {
       updates[NODE_ID] = 'mastered';
 
+      // Check each node this unlock might affect
       const candidates = UNLOCKS_MAP[NODE_ID] ?? [];
       for (const candidateId of candidates) {
         const prereqs = PREREQUISITES_MAP[candidateId] ?? [];
         const allMet = prereqs.every(p => updates[p] === 'mastered');
+        // Only promote locked → unlocked, never downgrade mastered
         if (allMet && updates[candidateId] !== 'mastered') {
           updates[candidateId] = 'unlocked';
         }
@@ -244,6 +233,7 @@ d) [Option 4]
       setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
       setQuestionExplanations(data.analysis?.questionExplanations || []);
 
+      // 4. UPDATED FIRESTORE LOGIC TO INCLUDE updateProgress()
       const db = getFirestore(app);
       await addDoc(collection(db, "quizLogs"), {
         score: correctCount,
@@ -255,7 +245,8 @@ d) [Option 4]
         userId: user?.uid,
       });
 
-      await updateProgress(correctCount);
+      await updateProgress(correctCount); // Trigger roadmap progress logic
+      
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -278,7 +269,8 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
+        {/* Breadcrumb */}
+        <Link href="/highschoolquiz/electricity" className={styles.breadcrumb}>
 <svg 
   className={styles.breadcrumbIcon} 
   fill="none" 
@@ -290,17 +282,19 @@ d) [Option 4]
 >
   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
 </svg>
-          Return to Mechanics Directory
+          Return to Electricity and Magnetism Directory
         </Link>
 
+        {/* Header */}
         <div className={styles.header}>
-          <div className={styles.badge}>SYS_// {NODE_ID}</div>
+          <div className={styles.badge}>SYS_// ENM_02</div>
           <h1 className={styles.title}>{SUBTOPIC_NAME}</h1>
           <p className={styles.subtitle}>
             Review the study protocols below to calibrate your theoretical knowledge, then initialize the diagnostic terminal to test your mastery.
           </p>
         </div>
 
+        {/* Study Protocols */}
         <div className={styles.protocolsSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Before taking the quiz...</h2>
@@ -343,6 +337,7 @@ d) [Option 4]
           </div>
         </div>
 
+        {/* Diagnostic Terminal */}
         <div id="diagnostic-terminal" className={styles.terminalSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Diagnostic Terminal</h2>
@@ -354,14 +349,15 @@ d) [Option 4]
             animate={{ opacity: 1, y: 0 }}
             className={styles.terminal}
           >
+            {/* Left panel */}
             <div className={styles.terminalLeft}>
               <div>
                 <div className={styles.terminalStatusRow}>
                   <div className={styles.terminalDot} />
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
-                <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Projectile and Satellite Motion</p>
+                <h3 className={styles.terminalId}>ENM-02</h3>
+                <p className={styles.terminalSubtitle}>Current Circuits</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -388,6 +384,7 @@ d) [Option 4]
               </div>
             </div>
 
+            {/* Right panel */}
             <div className={styles.terminalRight}>
               <div>
                 <label className={styles.terminalLabel}>
@@ -415,6 +412,7 @@ d) [Option 4]
           </motion.div>
         </div>
 
+        {/* Loading */}
         {(isGenerating || isEvaluating) && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
             <div className={styles.spinner} />
@@ -425,8 +423,10 @@ d) [Option 4]
           </motion.div>
         )}
 
+        {/* Error */}
         {error && <div className={styles.errorBox}>System Error: {error}</div>}
 
+        {/* Results */}
         <div id="quiz-anchor" />
         {showAnswers && (
           <motion.div
@@ -476,6 +476,7 @@ d) [Option 4]
           </motion.div>
         )}
 
+        {/* Quiz */}
         {quiz && !isGenerating && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -22,76 +22,66 @@ import styles from "../../hsdirectory.module.css";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
-    title: "The Physics Classroom: Circular Motion and Satellite Motion",
-    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
-    url: "https://www.physicsclassroom.com/class/circles",
-    type: "Articles",
+    title: "The Physics Classroom: Magnetic Fields and Electromagnetism",
+    desc: "Basic Concepts in magnetic fields and electromagnetism.",
+    url: "https://www.physicsclassroom.com/tutorial/magnetic-fields-and-electromagnetism",
+    type: "Article",
   },
   {
     id: "REF_02",
-    title: "Khan Academy(AP Physics 1): Circular Motion",
-    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
-    type: "Video",
+    title: "The Physics Classroom: Interactive",
+    desc: "Basic Concepts in magnetic fields and electromagnetism.",
+    url: "https://www.physicsclassroom.com/Interactive/Magnetic-Fields-and-Electromagnetism",
+    type: "Interactive",
   },
-
     {
     id: "REF_03",
-    title: "Khan Academy(AP Physics 1): Motion in 2D",
-    desc: "Step-by-step video lecture explaining motion in two dimensions.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
+    title: "Khan Academy: Unit 6",
+    desc: "Step-by-step video lecture explaining electromagnetics.",
+    url: "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:electromagnetics",
     type: "Video",
   },
-
   {
     id: "REF_04",
-    title: "Flipping Physics: Circular Motion",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
-    type: "Lecture Demo",
+    title: "Flipping Physics: Magnetism and Electromagnetism",
+    desc: "Detailed lectures on magnetism and electromagnetism.",
+    url: "http://www.flippingphysics.com/ap-physics-2.html#unit12",
+    type: "Lectures",
   },  {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
-    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
-    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
+    id: "REF_04",
+    title: "Organic Chemistry Tutor",
+    desc: "Magnetism, Magnetic Field Force, Right Hand Rule, Ampere's Law, Tourque, Solenoid, and related physics problems.",
+    url: "https://www.youtube.com/watch?v=csMqfwJRjCs&pp=ygUhb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgbWFnbmV0aXNt",
     type: "Video",
   },
 ];
 
 const PHYSICS_FACTS = [
- "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
- "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
- "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
- "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
+"If the net magnetic flux through a closed surface is evaluated, its total value must always be zero.",
+"Magnetism is not a mechanical force; it is a relativistic property of moving electric charges directly related to their velocity.",
+"A charged particle moving at a constant 100 m/s parallel to a uniform magnetic field line has a net magnetic force of zero acting upon it.",
+"You feel a strong resistance when pushing two identical magnets together because their matching magnetic field lines repel each other, wanting to maintain their lowest energy state."
 ];
 
-const NODE_ID = 'MCH-09';
+const NODE_ID = 'ENM-03';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
-  'MCH-01': ['MCH-03', 'MCH-04'],
-  'MCH-02': ['MCH-03', 'MCH-07'],
-  'MCH-03': ['MCH-05', 'MCH-06', 'MCH-08'],
-  'MCH-04': ['MCH-05'],
-  'MCH-05': ['MCH-08'],
-  'MCH-06': ['MCH-09'],
-  'MCH-07': ['MCH-09'],
+  'ENM-01': ['ENM-02'],
+  'ENM-02': ['ENM-03'],
+  'ENM-03': ['ENM-04'],
+  'ENM-04': [],
 };
 
 const PREREQUISITES_MAP: Record<string, string[]> = {
-  'MCH-03': ['MCH-01', 'MCH-02'],
-  'MCH-04': ['MCH-01'],
-  'MCH-05': ['MCH-03', 'MCH-04'],
-  'MCH-06': ['MCH-03'],
-  'MCH-07': ['MCH-02'],
-  'MCH-08': ['MCH-03', 'MCH-05'],
-  'MCH-09': ['MCH-06', 'MCH-07'],
+  'ENM-02': ['ENM-01'],
+  'ENM-03': ['ENM-02'],
+  'ENM-04': ['ENM-03'],
 };
-
-export default function ProjectileAndSatelliteMotionPage() {
+export default function MagnetismPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Projectile and Satellite Motion";
+  const TOPIC_NAME = "Electricity and Magnetism";
+  const SUBTOPIC_NAME = "Magnetism";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -138,8 +128,8 @@ export default function ProjectileAndSatelliteMotionPage() {
     setQuestionExplanations([]);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of energy.\n"}
+const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of magnetism.\n"}
 
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
@@ -193,7 +183,7 @@ d) [Option 4]
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'electricity');
 
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
@@ -278,7 +268,7 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
+        <Link href="/highschoolquiz/electricity" className={styles.breadcrumb}>
 <svg 
   className={styles.breadcrumbIcon} 
   fill="none" 
@@ -290,7 +280,7 @@ d) [Option 4]
 >
   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
 </svg>
-          Return to Mechanics Directory
+          Return to Electricity and Magnetism Directory
         </Link>
 
         <div className={styles.header}>
@@ -361,7 +351,7 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Projectile and Satellite Motion</p>
+                <p className={styles.terminalSubtitle}>Magnetism</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -554,6 +544,6 @@ d) [Option 4]
         )}
 
       </div>
-    </main>
+    </main> 
   );
 }

@@ -19,79 +19,65 @@ import { motion } from "framer-motion";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
 import styles from "../../hsdirectory.module.css";
 
-const STUDY_RESOURCES = [
+const STUDY_RESOURCES =[
   {
-    id: "REF_01",
-    title: "The Physics Classroom: Circular Motion and Satellite Motion",
-    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
-    url: "https://www.physicsclassroom.com/class/circles",
-    type: "Articles",
+    "id": "REF_01",
+    "title": "The Physics Classroom: Electromagnetic Induction",
+    "desc": "A highly readable conceptual breakdown of all types of induction, changing magnetic flux, and Faraday's observations.",
+    "url": "https://www.physicsclassroom.com/class/estatics/Lesson-1/Electromagnetic-Induction",
+    "type": "Articles"
   },
   {
-    id: "REF_02",
-    title: "Khan Academy(AP Physics 1): Circular Motion",
-    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
-    type: "Video",
+    "id": "REF_02",
+    "title": "Khan Academy: Faraday's Law and Lenz's Law",
+    "desc": "Step-by-step video lecture explaining induced electromotive force (EMF) and non-inertial reference frames for moving magnets.",
+    "url": "https://www.khanacademy.org/science/physics/magnetic-forces-and-magnetic-fields/magnetic-flux-faradays-law/v/faradays-law-of-induction",
+    "type": "Video"
+  },
+  {
+    "id": "REF_03",
+    "title": "Flipping Physics: Introduction to Electromagnetic Induction",
+    "desc": "A demo video illustrating the relationship between magnetic flux change, coil loops, and induced current with real-world examples.",
+    "url": "https://www.flippingphysics.com/electromagnetic-induction.html",
+    "type": "Demo"
   },
 
-    {
-    id: "REF_03",
-    title: "Khan Academy(AP Physics 1): Motion in 2D",
-    desc: "Step-by-step video lecture explaining motion in two dimensions.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
-    type: "Video",
-  },
-
   {
-    id: "REF_04",
-    title: "Flipping Physics: Circular Motion",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
-    type: "Lecture Demo",
-  },  {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
-    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
-    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
-    type: "Video",
-  },
-];
+    "id": "REF_04",
+    "title": "Organic Chemistry Tutor: Faraday's Law & Lenz's Law",
+    "desc": "Real-world visual demonstrations of loops resisting changes in external magnetic fields.",
+    "url": "https://www.youtube.com/watch?v=Ee6CHn0MRKE&pp=ygUSTmV3dG9ucyBzZWNvbmQgbGF30gcJCTgLAYcqIYzv",
+    "type": "Video"
+  }
+]
 
 const PHYSICS_FACTS = [
- "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
- "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
- "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
- "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
+  "If the net force on an object is zero, its velocity must be constant.",
+  "Inertia is not a force; it is a property of matter directly related to its mass.",
+  "An object moving at a constant 100 m/s in a straight line has a net force of zero acting upon it.",
+  "You feel pushed back in an accelerating car because your body's inertia wants to stay at rest.",
 ];
 
-const NODE_ID = 'MCH-09';
+const NODE_ID = 'ENM-04';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
-  'MCH-01': ['MCH-03', 'MCH-04'],
-  'MCH-02': ['MCH-03', 'MCH-07'],
-  'MCH-03': ['MCH-05', 'MCH-06', 'MCH-08'],
-  'MCH-04': ['MCH-05'],
-  'MCH-05': ['MCH-08'],
-  'MCH-06': ['MCH-09'],
-  'MCH-07': ['MCH-09'],
+  'ENM-01': ['ENM-02'],
+  'ENM-02': ['ENM-03'],
+  'ENM-03': ['ENM-04'],
+  'ENM-04': [],
 };
 
 const PREREQUISITES_MAP: Record<string, string[]> = {
-  'MCH-03': ['MCH-01', 'MCH-02'],
-  'MCH-04': ['MCH-01'],
-  'MCH-05': ['MCH-03', 'MCH-04'],
-  'MCH-06': ['MCH-03'],
-  'MCH-07': ['MCH-02'],
-  'MCH-08': ['MCH-03', 'MCH-05'],
-  'MCH-09': ['MCH-06', 'MCH-07'],
+  'ENM-02': ['ENM-01'],
+  'ENM-03': ['ENM-02'],
+  'ENM-04': ['ENM-03'],
 };
 
-export default function ProjectileAndSatelliteMotionPage() {
+export default function InductionPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Projectile and Satellite Motion";
+  const TOPIC_NAME = "Electricity and Magnetism";
+  const SUBTOPIC_NAME = "Induction";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -138,14 +124,14 @@ export default function ProjectileAndSatelliteMotionPage() {
     setQuestionExplanations([]);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of energy.\n"}
+      const prompt = `You are an expert physics professor generating a diagnostic quiz. 
+Generate exactly ${questionCount} multiple-choice questions specifically focusing on: "${SUBTOPIC_NAME}".
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of electromagnetic induction.\n"}
 
 CRITICAL INSTRUCTIONS:
-1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
-2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-3. Output ONLY the quiz. Do not include any introductory text.
-4. You may use standard physics constants.
+1. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
+2. Output ONLY the quiz. Do not include any introductory text.
+3. You may use standard physics constants.
 
 Strictly follow this exact format for every question:
 ### Question [number]
@@ -193,7 +179,7 @@ d) [Option 4]
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'electricity');
 
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
@@ -278,7 +264,7 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
+        <Link href="/highschoolquiz/electricity" className={styles.breadcrumb}>
 <svg 
   className={styles.breadcrumbIcon} 
   fill="none" 
@@ -290,7 +276,7 @@ d) [Option 4]
 >
   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
 </svg>
-          Return to Mechanics Directory
+          Return to Electricity and Magnetism Directory
         </Link>
 
         <div className={styles.header}>
@@ -361,7 +347,7 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Projectile and Satellite Motion</p>
+                <p className={styles.terminalSubtitle}>Electromagnetic Induction</p>
                 <div className={styles.terminalStat}>
   <span className={styles.terminalStatLabel}>Questions</span>
   <select 
@@ -379,10 +365,10 @@ d) [Option 4]
       fontFamily: 'monospace'
     }}
   >
-<option value={3}>3 Questions</option>
-<option value={5}>5 Questions</option>
-<option value={10}>10 Questions</option>
-<option value={15}>15 Questions</option>
+    <option value={1}>1 Variable</option>
+    <option value={3}>3 Variables</option>
+    <option value={5}>5 Variables</option>
+    <option value={10}>10 Variables</option>
   </select>
 </div>
               </div>

@@ -16,57 +16,22 @@ import {
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
+import styles from "../../fmapb.module.css";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
-import styles from "../../hsdirectory.module.css";
 
 const STUDY_RESOURCES = [
-  {
-    id: "REF_01",
-    title: "The Physics Classroom: Circular Motion and Satellite Motion",
-    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
-    url: "https://www.physicsclassroom.com/class/circles",
-    type: "Articles",
-  },
-  {
-    id: "REF_02",
-    title: "Khan Academy(AP Physics 1): Circular Motion",
-    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
-    type: "Video",
-  },
-
-    {
-    id: "REF_03",
-    title: "Khan Academy(AP Physics 1): Motion in 2D",
-    desc: "Step-by-step video lecture explaining motion in two dimensions.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
-    type: "Video",
-  },
-
-  {
-    id: "REF_04",
-    title: "Flipping Physics: Circular Motion",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
-    type: "Lecture Demo",
-  },  {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
-    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
-    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
-    type: "Video",
-  },
 ];
 
 const PHYSICS_FACTS = [
- "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
- "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
- "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
- "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
+  "The Navier-Stokes equations, which govern the motion of fluid substances, are a statement of Newton's second law applied to continuous media under the assumption of a Newtonian fluid.",
+  "In a steady, incompressible, and inviscid flow, Bernoulli's principle states that an increase in the speed of the fluid occurs simultaneously with a decrease in static pressure or a decrease in the fluid's potential energy.",
+  "The Reynolds number (Re = \frac{\rho u L}{\mu}) is a dimensionless quantity that predicts fluid flow patterns, where low values indicate laminar flow dominated by viscous forces and high values indicate turbulent flow dominated by inertial forces.",
+  "Boundary layer separation occurs when the pressure gradient is adverse (\frac{dp}{dx} > 0), causing the velocity gradient at the wall to drop to zero and forcing the bulk fluid to detach from the solid surface."
 ];
 
-const NODE_ID = 'MCH-09';
-
+const NODE_ID = 'FMA-01';
+const DIFFICULTY_LEVEL = "F=MA physics competition";
+const SAMPLE_PROBLEMS = "### Sample Problem: Fluid Buoyancy and Equilibrium\\n**Problem Statement:**\\nAn object of uniform density floats partially submerged so that $20\\%$ of the object is above the water. A $3\\text{ N}$ force presses down on the top of the object so that the object becomes fully submerged. What is the volume of the object? The density of water is $\\rho_{\\text{H}_2\\text{O}} = 1000\\text{ kg/m}^3$.\\n\\n**Options:**\\na) $V_{\\text{object}} = 0.3\\text{ L}$\\nb) $V_{\\text{object}} = 0.67\\text{ L}$\\nc) $V_{\\text{object}} = 1.2\\text{ L}$\\nd) $V_{\\text{object}} = 1.5\\text{ L}$\\ne) $V_{\\text{object}} = 3.0\\text{ L}$\\n\\n**Correct Answer:** d)\\n\\n**Solution Analysis:**\\n1. In the initial floating state, the buoyant force balances the object's weight, keeping $80\\%$ of its volume submerged.\\n2. Fully submerging the object requires displacing the remaining $20\\%$ of its volume. The downward applied force $F = 3\\text{ N}$ must exactly balance the additional buoyant force provided by this remaining volume:\\n   $$F = \\\\Delta F_B = 0.2 \\\\cdot \\\\rho_{\\text{w}} \\\\cdot V \\\\cdot g$$\\n3. Solving for the total volume $V$:\\n   $$V = \\\\frac{F}{0.2 \\\\cdot \\\\rho_{\\text{w}} \\\\cdot g} = \\\\frac{3\\text{ N}}{0.2 \\\\cdot 1000\\text{ kg/m}^3 \\\\cdot 10\\text{ m/s}^2} = 1.5 \\\\times 10^{-3}\\text{ m}^3 = 1.5\\text{ L}$$";
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
   'MCH-02': ['MCH-03', 'MCH-07'],
@@ -87,11 +52,11 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function ProjectileAndSatelliteMotionPage() {
+export default function FluidMechanicsPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Projectile and Satellite Motion";
+  const TOPIC_NAME = "F=ma";
+  const SUBTOPIC_NAME = "Fluid Mechanics";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -138,14 +103,22 @@ export default function ProjectileAndSatelliteMotionPage() {
     setQuestionExplanations([]);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of energy.\n"}
+      const prompt = `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
 
+Target Difficulty Level: ${DIFFICULTY_LEVEL}
+
+To calibrate the difficulty, carefully analyze the following sample problems. Your generated questions must exactly match the conceptual depth, mathematical rigor, trickiness, and multi-step reasoning required by these samples.
+
+--- SAMPLE PROBLEMS ---
+${SAMPLE_PROBLEMS}
+-----------------------
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : ""}
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
-2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-3. Output ONLY the quiz. Do not include any introductory text.
-4. You may use standard physics constants.
+2. Ensure the difficulty strictly aligns with the provided sample problems. 
+3. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
+4. Output ONLY the quiz. Do not include any introductory text.
+5. You may use standard physics constants.
 
 Strictly follow this exact format for every question:
 ### Question [number]
@@ -193,7 +166,7 @@ d) [Option 4]
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'F=ma');
 
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
@@ -278,19 +251,19 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
-<svg 
-  className={styles.breadcrumbIcon} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-</svg>
-          Return to Mechanics Directory
+        <Link href="/fmapb/fma" className={styles.breadcrumb}>
+          <svg
+            className={styles.breadcrumbIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Return to F=ma Directory
         </Link>
 
         <div className={styles.header}>
@@ -326,17 +299,17 @@ d) [Option 4]
                 </div>
                 <div className={styles.protocolFooter}>
                   Access resource
-<svg 
-  className={styles.protocolArrow} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-</svg>
+                  <svg
+                    className={styles.protocolArrow}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </div>
               </a>
             ))}
@@ -361,30 +334,30 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Projectile and Satellite Motion</p>
+                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
                 <div className={styles.terminalStat}>
-  <span className={styles.terminalStatLabel}>Questions</span>
-  <select 
-    value={questionCount} 
-    onChange={(e) => setQuestionCount(Number(e.target.value))}
-    style={{ 
-      background: '#0f0f20', 
-      color: '#4f8ef7', 
-      border: '1px solid #333', 
-      padding: '4px 8px', 
-      borderRadius: '6px',
-      fontSize: '14px',
-      cursor: 'pointer',
-      outline: 'none',
-      fontFamily: 'monospace'
-    }}
-  >
-<option value={3}>3 Questions</option>
-<option value={5}>5 Questions</option>
-<option value={10}>10 Questions</option>
-<option value={15}>15 Questions</option>
-  </select>
-</div>
+                  <span className={styles.terminalStatLabel}>Questions</span>
+                  <select
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    style={{
+                      background: '#0f0f20',
+                      color: '#4f8ef7',
+                      border: '1px solid #333',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    <option value={3}>3 Questions</option>
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                  </select>
+                </div>
               </div>
             </div>
 

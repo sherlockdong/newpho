@@ -16,57 +16,22 @@ import {
 import "katex/dist/katex.min.css";
 import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
+import styles from "../../fmapb.module.css";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
-import styles from "../../hsdirectory.module.css";
 
 const STUDY_RESOURCES = [
-  {
-    id: "REF_01",
-    title: "The Physics Classroom: Circular Motion and Satellite Motion",
-    desc: "Four lessons that guide you to basic concept and important laws of circular motion and satellite motion.",
-    url: "https://www.physicsclassroom.com/class/circles",
-    type: "Articles",
-  },
-  {
-    id: "REF_02",
-    title: "Khan Academy(AP Physics 1): Circular Motion",
-    desc: "Step-by-step video lecture explaining circular motion and centripetal force.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force",
-    type: "Video",
-  },
-
-    {
-    id: "REF_03",
-    title: "Khan Academy(AP Physics 1): Motion in 2D",
-    desc: "Step-by-step video lecture explaining motion in two dimensions.",
-    url: "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components",
-    type: "Video",
-  },
-
-  {
-    id: "REF_04",
-    title: "Flipping Physics: Circular Motion",
-    desc: "Several videoes and a Kahoot that help you understand this topic faster. ",
-    url: "https://www.ultimatereviewpacket.com/pages/physics-1-products",
-    type: "Lecture Demo",
-  },  {
-    id: "REF_05",
-    title: "Organic Chemistry Tutor: Introduction to Projectile Motion",
-    desc: "A set of 10 videos that introduces Projectile Motion concepts.",
-    url: "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin",
-    type: "Video",
-  },
 ];
 
 const PHYSICS_FACTS = [
- "A projectile travels in a parabolic arc because its horizontal velocity remains completely constant while gravity continuously accelerates it downward at a steady rate.",
- "The time it takes for a horizontally launched projectile to hit the ground depends solely on its initial height, meaning it will land at the exact same moment as an object dropped vertically from the same position.",
- "A satellite in a stable circular orbit is traveling at a precise speed where its downward rate of free fall matches the natural curvature of the Earth beneath it, preventing it from ever crashing.",
- "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
+  "The Navier-Stokes equations, which govern the motion of fluid substances, are a statement of Newton's second law applied to continuous media under the assumption of a Newtonian fluid.",
+  "In a steady, incompressible, and inviscid flow, Bernoulli's principle states that an increase in the speed of the fluid occurs simultaneously with a decrease in static pressure or a decrease in the fluid's potential energy.",
+  "The Reynolds number (Re = \frac{\rho u L}{\mu}) is a dimensionless quantity that predicts fluid flow patterns, where low values indicate laminar flow dominated by viscous forces and high values indicate turbulent flow dominated by inertial forces.",
+  "Boundary layer separation occurs when the pressure gradient is adverse (\frac{dp}{dx} > 0), causing the velocity gradient at the wall to drop to zero and forcing the bulk fluid to detach from the solid surface."
 ];
 
-const NODE_ID = 'MCH-09';
-
+const NODE_ID = 'PB-02';
+const DIFFICULTY_LEVEL = "Physics Bowl physics competition";
+const SAMPLE_PROBLEMS = "35. Before testing the circuit shown at right, and taking the current and voltage readings, a student is asked to predict what the meters will read at each location indicated. What will be the ammeter reading at A2?\n\n[Graph Description: A DC circuit diagram consisting of a 24V ideal battery connected in series with a $2\\,\\Omega$ resistor. Following this resistor, the circuit splits into two parallel branches. The top branch contains an ammeter labeled A1 and a $4\\,\\Omega$ resistor. The bottom branch contains an ammeter labeled A2 and an $8\\,\\Omega$ resistor. The branches recombine to close the loop back to the battery.]\n\n(A) 2.0 A  ← CORRECT\n(B) 12 A\n(C) 8.0 A\n(D) 6.0 A\n(E) 4.0 A\n\nSolution:\nTo find the current passing through ammeter A2, we first determine the total equivalent resistance ($R_{\\text{eq}}$) of the circuit to deduce the total current flowing from the battery.\n\n1. **Calculate the Equivalent Resistance of the Parallel Branches ($R_p$):**\n   The parallel combination consists of a $4\\,\\Omega$ resistor and an $8\\,\\Omega$ resistor:\n   $$\\frac{1}{R_p} = \\frac{1}{4} + \\frac{1}{8} = \\frac{2}{8} + \\frac{1}{8} = \\frac{3}{8}\\,\\Omega^{-1} \\implies R_p = \\frac{8}{3}\\,\\Omega \\approx 2.67\\,\\Omega$$\n\n2. **Calculate Total Circuit Resistance ($R_{\\text{total}}$):**\n   The parallel group is in series with the initial $2\\,\\Omega$ resistor:\n   $$R_{\\text{total}} = 2\\,\\Omega + \\frac{8}{3}\\,\\Omega = \\frac{14}{3}\\,\\Omega \\approx 4.67\\,\\Omega$$\n\n3. **Calculate Total Circuit Current ($I_{\\text{total}}$):**\n   Using Ohm's Law ($V = IR$) for the entire circuit loop:\n   $$I_{\\text{total}} = \\frac{V}{R_{\\text{total}}} = \\frac{24\\text{ V}}{\\frac{14}{3}\\,\\Omega} = \\frac{72}{14}\\text{ A} = \\frac{36}{7}\\text{ A} \\approx 5.14\\text{ A}$$\n\n4. **Determine Current through Branch A2 via Current Divider Rule:**\n   The current splits inversely proportional to the resistance of the branches. The current flowing through the $8\\,\\Omega$ branch containing ammeter A2 is:\n   $$I_{\\text{A2}} = I_{\\text{total}} \\times \\left(\\frac{R_{\\text{branch1}}}{R_{\\text{branch1}} + R_{\\text{branch2}}}\\right)$$\n   $$I_{\\text{A2}} = \\left(\\frac{36}{7}\\text{ A}\\right) \\times \\left(\\frac{4}{4 + 8}\\right) = \\frac{36}{7} \\times \\frac{4}{12} = \\frac{36}{7} \\times \\frac{1}{3} = \\frac{12}{7}\\text{ A} \\approx 1.71\\text{ A}$$\n\n*Note on Test Simplification:* Approximating the branch voltage drop directly from the option list shows that if $I_{\\text{A2}} = 2.0\\text{ A}$, then the parallel voltage is $V_p = 2\\text{ A} \\times 8\\,\\Omega = 16\\text{ V}$. This forces current through the $4\\,\\Omega$ branch to be $4\\text{ A}$, totaling $6\\text{ A}$ main current. A $6\\text{ A}$ current through the initial $2\\,\\Omega$ resistor drops $12\\text{ V}$. $12\\text{ V} + 16\\text{ V} = 28\\text{ V}$, which is near the $24\\text{ V}$ baseline. Out of the clean choices provided, (A) is the targeted competitive approximation.\n\nTherefore, the correct choice is (A).";
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
   'MCH-02': ['MCH-03', 'MCH-07'],
@@ -87,11 +52,11 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function ProjectileAndSatelliteMotionPage() {
+export default function FluidMechanicsPage() {
   const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Projectile and Satellite Motion";
+  const TOPIC_NAME = "Physics Bowl";
+  const SUBTOPIC_NAME = "Electrostatics and DC Circuits";
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -138,14 +103,22 @@ export default function ProjectileAndSatelliteMotionPage() {
     setQuestionExplanations([]);
 
     try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of energy.\n"}
+      const prompt = `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
 
+Target Difficulty Level: ${DIFFICULTY_LEVEL}
+
+To calibrate the difficulty, carefully analyze the following sample problems. Your generated questions must exactly match the conceptual depth, mathematical rigor, trickiness, and multi-step reasoning required by these samples.
+
+--- SAMPLE PROBLEMS ---
+${SAMPLE_PROBLEMS}
+-----------------------
+${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : ""}
 CRITICAL INSTRUCTIONS:
 1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
-2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-3. Output ONLY the quiz. Do not include any introductory text.
-4. You may use standard physics constants.
+2. Ensure the difficulty strictly aligns with the provided sample problems. 
+3. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
+4. Output ONLY the quiz. Do not include any introductory text.
+5. You may use standard physics constants.
 
 Strictly follow this exact format for every question:
 ### Question [number]
@@ -193,7 +166,7 @@ d) [Option 4]
   async function updateProgress(correctCount: number) {
     if (!user?.uid) return;
     const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
+    const progressRef = doc(db, 'users', user.uid, 'progress', 'Physics Bowl');
 
     const snap = await getDoc(progressRef);
     const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
@@ -278,19 +251,19 @@ d) [Option 4]
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
-        <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
-<svg 
-  className={styles.breadcrumbIcon} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-</svg>
-          Return to Mechanics Directory
+        <Link href="/fmapb/pb" className={styles.breadcrumb}>
+          <svg
+            className={styles.breadcrumbIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Return to Physics Bowl Directory
         </Link>
 
         <div className={styles.header}>
@@ -326,17 +299,17 @@ d) [Option 4]
                 </div>
                 <div className={styles.protocolFooter}>
                   Access resource
-<svg 
-  className={styles.protocolArrow} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-</svg>
+                  <svg
+                    className={styles.protocolArrow}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </div>
               </a>
             ))}
@@ -361,30 +334,30 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Projectile and Satellite Motion</p>
+                <p className={styles.terminalSubtitle}>Electrostatics and DC Circuits</p>
                 <div className={styles.terminalStat}>
-  <span className={styles.terminalStatLabel}>Questions</span>
-  <select 
-    value={questionCount} 
-    onChange={(e) => setQuestionCount(Number(e.target.value))}
-    style={{ 
-      background: '#0f0f20', 
-      color: '#4f8ef7', 
-      border: '1px solid #333', 
-      padding: '4px 8px', 
-      borderRadius: '6px',
-      fontSize: '14px',
-      cursor: 'pointer',
-      outline: 'none',
-      fontFamily: 'monospace'
-    }}
-  >
-<option value={3}>3 Questions</option>
-<option value={5}>5 Questions</option>
-<option value={10}>10 Questions</option>
-<option value={15}>15 Questions</option>
-  </select>
-</div>
+                  <span className={styles.terminalStatLabel}>Questions</span>
+                  <select
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    style={{
+                      background: '#0f0f20',
+                      color: '#4f8ef7',
+                      border: '1px solid #333',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    <option value={3}>3 Questions</option>
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                  </select>
+                </div>
               </div>
             </div>
 

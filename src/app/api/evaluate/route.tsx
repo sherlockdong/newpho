@@ -26,16 +26,25 @@ export async function POST(request: NextRequest) {
     Here is the breakdown of the questions and whether the student got them correct or incorrect:
     ${JSON.stringify(gradedResults, null, 2)}
 
-    Based on the specific questions they got wrong, provide 2 to 3 sentences of targeted, encouraging feedback. Identify their weak areas and suggest what overarching concepts they should review next. Do not list out individual question feedback.
-    
-    Return the output strictly as a JSON object with a single "feedbackSummary" string field.`;
+    Based on the specific questions they got wrong, provide 2 to 3 sentences of targeted, encouraging feedback. Identify their weak areas and suggest what overarching concepts they should review next. Do not list out individual question feedback in this summary.
+
+    Additionally, for EVERY question in the breakdown (regardless of correct/incorrect), provide a brief 1-sentence explanation of why the correct answer is correct.
+
+    Return the output strictly as a JSON object with this exact shape:
+    {
+      "feedbackSummary": "string",
+      "questionExplanations": [
+        { "index": 0, "explanation": "string" }
+      ]
+    }
+    The "index" field must match the zero-based position of the question in the input array.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 300, // Reduced max_tokens since we only want 2-3 sentences
-      response_format: { type: "json_object" }, 
+      max_tokens: 1200, // Raised to accommodate per-question explanations
+      response_format: { type: "json_object" },
     });
 
     const analysisText = completion.choices[0]?.message?.content;
