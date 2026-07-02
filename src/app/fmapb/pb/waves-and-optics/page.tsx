@@ -18,7 +18,6 @@ import { InlineMath } from "react-katex";
 import { motion } from "framer-motion";
 import styles from "../../fmapb.module.css";
 import { parseQuizQuestions } from "../../../../lib/quizParser";
-const [aiFeedback, setAiFeedback] = useState<string | null>(null);
 const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 const STUDY_RESOURCES = [
 ];
@@ -53,7 +52,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function FluidMechanicsPage() {
+export default function WandOPage() {
   const auth = getAuth(app);
 
   const TOPIC_NAME = "Physics Bowl";
