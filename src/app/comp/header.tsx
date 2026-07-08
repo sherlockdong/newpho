@@ -65,6 +65,7 @@ export default function Header() {
             <ul className="absolute left-1/2 -translate-x-1/2 top-full w-56 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
               <li><Link href="/highschoolquiz" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">High School Physics</Link></li>
               <li><Link href="/fmapb" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">F=ma / Physics Bowl</Link></li>
+              <li><Link href="/usapho" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">USAPhO</Link></li>
             </ul>
           </div>
 
@@ -99,7 +100,7 @@ export default function Header() {
             </Link>
           ) : (
             <Link href="/auth" className="text-sm font-medium hover:text-[#4f8ef7] transition-colors nav-login-btn">
-              Login
+              Login / Sign Up
             </Link>
           )}
         </div>

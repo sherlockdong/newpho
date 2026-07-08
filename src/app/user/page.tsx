@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../firebase"; 
+import { app } from "../../firebase";
 import { motion } from "framer-motion";
 
-const auth = getAuth(app); 
+const auth = getAuth(app);
 
 export default function UserDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [wantsUpdates, setWantsUpdates] = useState(true);
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -34,7 +34,7 @@ export default function UserDashboard() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className="text-center bg-[#0A0A18] border border-zinc-800 p-10 rounded-3xl max-w-md shadow-2xl"
         >
@@ -52,14 +52,14 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">
       <main className="max-w-[1000px] mx-auto">
-        
+
         {/* =========================================
             USER PROFILE HEADER
             ========================================= */}
-   <motion.section 
-  initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-  className="user-profile-header bg-[#0A0A18] border border-zinc-800 rounded-3xl shadow-2xl relative overflow-hidden"
->
+        <motion.section
+          initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+          className="user-profile-header bg-[#0A0A18] border border-zinc-800 rounded-3xl shadow-2xl relative overflow-hidden"
+        >
           {/* Schematic visual accent */}
           <div className="absolute top-0 right-0 p-4 font-mono text-xs text-zinc-700 select-none">
             USR_OP_ID // {user.uid.substring(0, 8)}
@@ -83,10 +83,20 @@ export default function UserDashboard() {
               {user.email}
             </p>
           </div>
-
+          <label className="flex items-start gap-3 cursor-pointer mb-6 group bg-[#0f0f20]/50 p-4 rounded-xl border border-[#27272a]/80 hover:border-[var(--accent-blue)]/50 transition-colors">
+            <input
+              type="checkbox"
+              checked={wantsUpdates}
+              onChange={(e) => setWantsUpdates(e.target.checked)}
+              className="w-5 h-5 shrink-0 cursor-pointer mt-0.5 accent-[var(--accent-blue)]"
+            />
+            <span className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors leading-relaxed">
+              I agree to receive notifications about system updates and new training modules.
+            </span>
+          </label>
           <div className="flex-shrink-0">
-            <button 
-              onClick={() => auth.signOut()} 
+            <button
+              onClick={() => auth.signOut()}
               className="text-sm font-medium text-zinc-400 hover:text-[#ff6b9d] border border-zinc-800 hover:border-[#ff6b9d]/50 px-6 py-2 rounded-full transition-all duration-300"
             >
               Sign Out
@@ -98,8 +108,8 @@ export default function UserDashboard() {
             DASHBOARD METRICS GRID
             ========================================= */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-[#4f8ef7]/50 transition-colors"
           >
@@ -108,7 +118,7 @@ export default function UserDashboard() {
             <p className="text-[#4f8ef7] text-sm mt-4 cursor-pointer group-hover:underline">View History →</p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-[#a78bfa]/50 transition-colors"
           >
@@ -117,7 +127,7 @@ export default function UserDashboard() {
             <p className="text-[#a78bfa] text-sm mt-4 cursor-pointer group-hover:underline">Analytics Matrix →</p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
             className="bg-[#0A0A18] border border-zinc-800 p-8 rounded-3xl relative group hover:border-emerald-500/50 transition-colors"
           >
@@ -131,7 +141,7 @@ export default function UserDashboard() {
         {/* =========================================
             RECENT ACTIVITY PLACEHOLDER
             ========================================= */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
           className="bg-[#0A0A18] border border-zinc-800 p-10 rounded-3xl shadow-xl"
         >
@@ -139,7 +149,7 @@ export default function UserDashboard() {
             <h2 className="text-2xl font-bold text-white font-heading">Recent Activity</h2>
             <Link href="/quiz-history" className="text-sm text-zinc-400 hover:text-white transition-colors">View All</Link>
           </div>
-          
+
           <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-zinc-800 rounded-xl">
             <p className="text-zinc-500">No telemetry data recorded yet.</p>
             <Link href="/highschoolquiz">
