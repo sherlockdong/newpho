@@ -254,7 +254,13 @@ d) [Option 4]
             const response = await fetch("/api/evaluate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: user?.uid || "guest", score: correctCount, total: questions.length, gradedResults }),
+                body: JSON.stringify({
+                    userId: user?.uid || "guest",
+                    score: correctCount,
+                    total: questions.length,
+                    gradedResults,
+                    difficultyLevel: DIFFICULTY_LEVEL // Passes the difficulty to the backend
+                }),
             });
 
             if (!response.ok) throw new Error("Evaluate failed.");

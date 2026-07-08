@@ -209,7 +209,13 @@ d) [Option 4]
             const response = await fetch("/api/evaluate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: user?.uid || "guest", score: correctCount, total: questions.length, gradedResults }),
+                body: JSON.stringify({
+                    userId: user?.uid || "guest",
+                    score: correctCount,
+                    total: questions.length,
+                    gradedResults,
+                    difficultyLevel: DIFFICULTY_LEVEL // Passes the difficulty to the backend
+                }),
             });
 
             if (!response.ok) throw new Error("Evaluate failed.");
@@ -416,35 +422,35 @@ d) [Option 4]
                         <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
                         <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
                         {questions.length > 0 && (
-                          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {questions.map((q, idx) => {
-                              const correctOption = q.options.find(
-                                (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
-                              );
-                              const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+                            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {questions.map((q, idx) => {
+                                    const correctOption = q.options.find(
+                                        (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
+                                    );
+                                    const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
 
-                              return (
-                                <div
-                                  key={idx}
-                                  style={{
-                                    background: '#0f0f20',
-                                    border: '1px solid #333',
-                                    borderRadius: '6px',
-                                    padding: '10px 14px',
-                                  }}
-                                >
-                                  <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
-                                    Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
-                                  </p>
-                                  {explanation && (
-                                    <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-                                      {explanation}
-                                    </p>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
+                                    return (
+                                        <div
+                                            key={idx}
+                                            style={{
+                                                background: '#0f0f20',
+                                                border: '1px solid #333',
+                                                borderRadius: '6px',
+                                                padding: '10px 14px',
+                                            }}
+                                        >
+                                            <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
+                                                Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
+                                            </p>
+                                            {explanation && (
+                                                <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
+                                                    {explanation}
+                                                </p>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         )}
                     </motion.div>
                 )}
