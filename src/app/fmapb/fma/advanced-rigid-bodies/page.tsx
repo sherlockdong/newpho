@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+    getAuth,
+    onAuthStateChanged,
+    type User,
+} from "firebase/auth";
+
 import { app } from "../../../../firebase";
 import {
     getFirestore,
@@ -54,6 +59,28 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 export default function AdvancedRigidBodiesPage() {
     const auth = getAuth(app);
 
+    async function authenticatedFetch(
+        url: string,
+        options: RequestInit = {},
+    ): Promise<Response> {
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+            throw new Error("You must be signed in to continue.");
+        }
+
+        const idToken = await currentUser.getIdToken();
+
+        return fetch(url, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${idToken}`,
+                ...options.headers,
+            },
+        });
+    }
+
     const TOPIC_NAME = "F=ma";
     const SUBTOPIC_NAME = "Advanced Rigit Bodies";
 
@@ -65,7 +92,9 @@ export default function AdvancedRigidBodiesPage() {
     const [error, setError] = useState<string | null>(null);
     const [answers, setAnswers] = useState<any>({});
     const [startTime, setStartTime] = useState<number | null>(null);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [authReady, setAuthReady] = useState(false);
+
     const [currentFact, setCurrentFact] = useState("");
     const [showAnswers, setShowAnswers] = useState(false);
     const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -73,11 +102,17 @@ export default function AdvancedRigidBodiesPage() {
     const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
-        return () => unsubscribe();
-    }, [auth]);
+        const unsubscribe = onAuthStateChanged(
+            auth,
+            (currentUser) => {
+                setUser(currentUser);
+                setAuthReady(true);
+            },
+        );
+
+        return unsubscribe;
+    }, []);
+
 
     useEffect(() => {
         let interval: any;
@@ -130,11 +165,12 @@ d) [Option 4]
 **Correct Answer:** [Correct option letter]
 ---`;
 
-            const quizResponse = await fetch("/api/generate", {
+            const quizResponse = await authenticatedFetch("/api/generate", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt }),
             });
+
+
 
             if (!quizResponse.ok) throw new Error(`API Error: ${await quizResponse.text()}`);
 
@@ -188,7 +224,15 @@ d) [Option 4]
 
         await setDoc(progressRef, updates, { merge: true });
     }
+    function normalizeAnswer(value: unknown): string {
+        if (typeof value !== "string") return "";
 
+        return value
+            .trim()
+            .toLowerCase()
+            .replace(/[).:\s]/g, "")
+            .charAt(0);
+    }
     async function handleSubmitAnswers() {
         setIsEvaluating(true);
         setError(null);
@@ -196,32 +240,73 @@ d) [Option 4]
         try {
             const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
             let correctCount = 0;
-            const gradedResults = questions.map((q, index) => {
-                const userAnswer = answers[index]?.answer?.toLowerCase() || "none";
-                const isCorrect = userAnswer === q.correctAnswer;
-                if (isCorrect) correctCount++;
-                return { question: q.text, userAnswer, correctAnswer: q.correctAnswer, isCorrect };
+
+            const gradedResults = questions.map((question, index) => {
+                const userAnswer = normalizeAnswer(
+                    answers[index]?.answer,
+                );
+
+                const correctAnswer = normalizeAnswer(
+                    question.correctAnswer,
+                );
+
+
+                const isCorrect =
+                    userAnswer === correctAnswer;
+
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                return {
+                    question: question.text,
+                    userAnswer: userAnswer || "none",
+                    correctAnswer,
+                    isCorrect,
+                };
             });
+
+
 
             setFinalScore(correctCount);
             setShowAnswers(true);
 
-            const response = await fetch("/api/evaluate", {
+            const response = await authenticatedFetch("/api/evaluate", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userId: user?.uid || "guest",
                     score: correctCount,
                     total: questions.length,
                     gradedResults,
-                    difficultyLevel: DIFFICULTY_LEVEL // Passes the difficulty to the backend
+                    difficultyLevel: DIFFICULTY_LEVEL,
                 }),
             });
 
-            if (!response.ok) throw new Error("Evaluate failed.");
-            const data = await response.json();
-            setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
-            setQuestionExplanations(data.analysis?.questionExplanations || []);
+            const responseText = await response.text();
+
+            let data: any;
+
+            try {
+                data = JSON.parse(responseText);
+            } catch {
+                throw new Error(
+                    responseText || `Evaluation failed with status ${response.status}`,
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || `Evaluation failed with status ${response.status}`,
+                );
+            }
+
+            setAiFeedback(
+                data.analysis?.feedbackSummary || "Diagnostic complete.",
+            );
+
+            setQuestionExplanations(
+                data.analysis?.questionExplanations || [],
+            );
+
 
             const db = getFirestore(app);
             await addDoc(collection(db, "quizLogs"), {
@@ -398,7 +483,7 @@ d) [Option 4]
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
                         <div className={styles.spinner} />
                         <p className={styles.loadingLabel}>
-                            {isGenerating ? "Generating GPT-4o Parameters..." : "AI Evaluating Telemetry..."}
+                            {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
                         </p>
                         <p className={styles.loadingFact}>"{currentFact}"</p>
                     </motion.div>

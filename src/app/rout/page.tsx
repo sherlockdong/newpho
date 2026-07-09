@@ -19,14 +19,14 @@ export default function Rout() {
   return (
     <main className="page-wrapper">
       <div className="hub-container">
-        
+
         {/* =========================================
             SYSTEM TELEMETRY SUMMARY
             ========================================= */}
         <div className="system-status-banner">
           <div className="status-item">
             <span className="status-dot green"></span>
-            <span className="status-text">AI ENGINE: ACTIVE // GPT-4o PROTOCOL</span>
+            <span className="status-text">AI ENGINE: ACTIVE // GPT 5.4 PROTOCOL</span>
           </div>
           <div className="status-item">
             <span className="status-text">TOTAL DIAGNOSTICS LOGGED: <span className="text-white font-mono">0</span></span>
@@ -50,23 +50,23 @@ export default function Rout() {
         <div className="hub-grid">
           {topics.map((topic, i) => (
             <Link href={topic.href} key={topic.id}>
-              <motion.div 
+              <motion.div
                 whileHover={{ y: -6, borderColor: topic.color }}
                 className="hub-card group relative overflow-hidden"
               >
                 {/* Subtle background glow effect on hover */}
-                <div 
+                <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
                   style={{ backgroundColor: topic.color }}
                 ></div>
 
                 {/* Identifier tag */}
                 <div className="card-sys-label">{topic.id}</div>
-                
+
                 {/* Core Title */}
                 <h2 className="card-title">{topic.title}</h2>
                 <p className="card-desc">{topic.desc}</p>
-                
+
                 {/* Interactive Sub-topic Tags */}
                 <div className="subtopic-tag-container">
                   {topic.subtopics.map((sub, idx) => (
@@ -81,7 +81,7 @@ export default function Rout() {
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
                     Module Ready
                   </span>
-                  <span 
+                  <span
                     className="card-action text-sm font-semibold transition-colors duration-300"
                     style={{ color: topic.color }}
                   >

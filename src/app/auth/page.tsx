@@ -15,7 +15,7 @@ import { app } from "../../firebase";
 import { motion, AnimatePresence } from "framer-motion";
 
 const provider = new GoogleAuthProvider();
-
+const auth = getAuth(app);
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -82,7 +82,7 @@ export default function AuthPage() {
     setError("");
 
     try {
-      const auth = getAuth(app);
+
       let userCredential;
 
       if (isSignUp) {
@@ -108,7 +108,6 @@ export default function AuthPage() {
     setError("");
 
     try {
-      const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
       // 3. Fixed! Check if this Google user just created their account right now

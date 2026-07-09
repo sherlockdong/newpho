@@ -2,14 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { app } from "../../firebase";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
 
 const auth = getAuth(app);
 
 export default function Header() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 

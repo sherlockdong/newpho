@@ -76,7 +76,7 @@ export default function MechDirectoryPage() {
             USAPhO <span className={styles.titleAccent}>Section</span>
           </h1>
           <p className={styles.subtitle}>
-            Select a specific subtopic below to calibrate the GPT-4o diagnostic engine and begin your evaluation.
+            Select a specific subtopic below to calibrate the GPT 5.4 diagnostic engine and begin your evaluation.
           </p>
         </div>
 

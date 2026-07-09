@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { app } from "../../../../firebase";
 import {
   getFirestore,
@@ -51,10 +56,8 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-08': ['MCH-03', 'MCH-05'],
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
-
+const auth = getAuth(app);
 export default function FluidMechanicsPage() {
-  const auth = getAuth(app);
-
   const TOPIC_NAME = "F=ma";
   const SUBTOPIC_NAME = "Fluid Mechanics";
 
@@ -66,19 +69,45 @@ export default function FluidMechanicsPage() {
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<any>({});
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [currentFact, setCurrentFact] = useState("");
   const [showAnswers, setShowAnswers] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
+  async function authenticatedFetch(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      throw new Error("You must be signed in to continue.");
+    }
+
+    const idToken = await currentUser.getIdToken();
+
+    return fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+        ...options.headers,
+      },
+    });
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setAuthReady(true);
     });
-    return () => unsubscribe();
-  }, [auth]);
+
+    return unsubscribe;
+  }, []);
+
 
   useEffect(() => {
     let interval: any;
@@ -130,11 +159,12 @@ d) [Option 4]
 **Correct Answer:** [Correct option letter]
 ---`;
 
-      const quizResponse = await fetch("/api/generate", {
+      const quizResponse = await authenticatedFetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
+
+
 
       if (!quizResponse.ok) throw new Error(`API Error: ${await quizResponse.text()}`);
 
@@ -188,7 +218,15 @@ d) [Option 4]
 
     await setDoc(progressRef, updates, { merge: true });
   }
+  function normalizeAnswer(value: unknown): string {
+    if (typeof value !== "string") return "";
 
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[).:\s]/g, "")
+      .charAt(0);
+  }
   async function handleSubmitAnswers() {
     setIsEvaluating(true);
     setError(null);
@@ -196,12 +234,30 @@ d) [Option 4]
     try {
       const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
       let correctCount = 0;
-      const gradedResults = questions.map((q, index) => {
-        const userAnswer = answers[index]?.answer?.toLowerCase() || "none";
-        const isCorrect = userAnswer === q.correctAnswer;
-        if (isCorrect) correctCount++;
-        return { question: q.text, userAnswer, correctAnswer: q.correctAnswer, isCorrect };
+      const gradedResults = questions.map((question, index) => {
+        const userAnswer = normalizeAnswer(
+          answers[index]?.answer,
+        );
+
+        const correctAnswer = normalizeAnswer(
+          question.correctAnswer,
+        );
+
+        const isCorrect =
+          userAnswer === correctAnswer;
+
+        if (isCorrect) {
+          correctCount++;
+        }
+
+        return {
+          question: question.text,
+          userAnswer: userAnswer || "none",
+          correctAnswer,
+          isCorrect,
+        };
       });
+
 
       setFinalScore(correctCount);
       setShowAnswers(true);
@@ -398,7 +454,7 @@ d) [Option 4]
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
             <div className={styles.spinner} />
             <p className={styles.loadingLabel}>
-              {isGenerating ? "Generating GPT-4o Parameters..." : "AI Evaluating Telemetry..."}
+              {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
             <p className={styles.loadingFact}>"{currentFact}"</p>
           </motion.div>

@@ -2,14 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { app } from "../../firebase";
 import { motion } from "framer-motion";
 
 const auth = getAuth(app);
 
 export default function UserDashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [wantsUpdates, setWantsUpdates] = useState(true);
   // Listen for auth state changes

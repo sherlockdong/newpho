@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import {
@@ -24,7 +29,9 @@ interface QuizLog {
 const auth = getAuth(app);
 
 export default function QuizHistoryPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [quizLogs, setQuizLogs] = useState<QuizLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,7 +132,7 @@ export default function QuizHistoryPage() {
   return (
     <main className="page-wrapper">
       <div className="max-w-[1000px] mx-auto px-6 history-container">
-        
+
         {/* Header Block */}
         <div className="mb-10 history-header">
           <h1 className="text-3xl md:text-4xl font-bold text-white font-heading tracking-tight mb-2">
@@ -166,13 +173,13 @@ export default function QuizHistoryPage() {
           <div className="flex flex-col gap-4 history-list">
             {quizLogs.map((log, i) => {
               const formattedDate = getFormattedDate(log.timestamp);
-              
+
               return (
-                <motion.details 
+                <motion.details
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.4) }}
-                  key={i} 
+                  key={i}
                   className="group border border-zinc-800 bg-[#0A0A18] rounded-2xl overflow-hidden transition-all duration-300 hover:border-zinc-700/80 history-accordion"
                 >
                   <summary className="flex items-center justify-between p-5 md:p-6 cursor-pointer select-none list-none accordion-summary">
@@ -193,8 +200,8 @@ export default function QuizHistoryPage() {
                       )}
                       {/* Interactive CSS Chevron Indicator */}
                       <svg className="accordion-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-</svg>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
                   </summary>
 

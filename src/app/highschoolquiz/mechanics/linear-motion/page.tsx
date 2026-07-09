@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { app } from "../../../../firebase";
 import {
   getFirestore,
@@ -40,7 +45,7 @@ const STUDY_RESOURCES = [
     desc: "Complete, detailed, professional lecture notes",
     url: "https://www.flippingphysics.com/uploads/2/1/1/0/21103672/02-01_lecture_notes_compilation_-_displacement_speed_and_velocity.pdf",
     type: "Lecture Note",
-  },  
+  },
   {
     id: "REF_04",
     title: "Flipping Physics: One Dimensional Motion Demos",
@@ -93,6 +98,28 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 export default function LinearMotionPage() {
   const auth = getAuth(app);
 
+  async function authenticatedFetch(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      throw new Error("You must be signed in to continue.");
+    }
+
+    const idToken = await currentUser.getIdToken();
+
+    return fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+        ...options.headers,
+      },
+    });
+  }
+
   const TOPIC_NAME = "Mechanics";
   const SUBTOPIC_NAME = "Linear Motion";
 
@@ -104,7 +131,9 @@ export default function LinearMotionPage() {
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<any>({});
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [currentFact, setCurrentFact] = useState("");
   const [showAnswers, setShowAnswers] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -114,9 +143,12 @@ export default function LinearMotionPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setAuthReady(true);
     });
-    return () => unsubscribe();
-  }, [auth]);
+
+    return unsubscribe;
+  }, []);
+
 
   useEffect(() => {
     let interval: any;
@@ -160,11 +192,12 @@ d) [Option 4]
 **Correct Answer:** [Correct option letter]
 ---`;
 
-      const quizResponse = await fetch("/api/generate", {
+      const quizResponse = await authenticatedFetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
+
+
 
       if (!quizResponse.ok) throw new Error(`API Error: ${await quizResponse.text()}`);
 
@@ -222,6 +255,15 @@ d) [Option 4]
     await setDoc(progressRef, updates, { merge: true });
   }
 
+  function normalizeAnswer(value: unknown): string {
+    if (typeof value !== "string") return "";
+
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[).:\s]/g, "")
+      .charAt(0);
+  }
   async function handleSubmitAnswers() {
     setIsEvaluating(true);
     setError(null);
@@ -229,21 +271,43 @@ d) [Option 4]
     try {
       const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
       let correctCount = 0;
-      const gradedResults = questions.map((q, index) => {
-        const userAnswer = answers[index]?.answer?.toLowerCase() || "none";
-        const isCorrect = userAnswer === q.correctAnswer;
-        if (isCorrect) correctCount++;
-        return { question: q.text, userAnswer, correctAnswer: q.correctAnswer, isCorrect };
+      const gradedResults = questions.map((question, index) => {
+        const userAnswer = normalizeAnswer(
+          answers[index]?.answer,
+        );
+
+        const correctAnswer = normalizeAnswer(
+          question.correctAnswer,
+        );
+
+        const isCorrect =
+          userAnswer === correctAnswer;
+
+        if (isCorrect) {
+          correctCount++;
+        }
+
+        return {
+          question: question.text,
+          userAnswer: userAnswer || "none",
+          correctAnswer,
+          isCorrect,
+        };
       });
 
       setFinalScore(correctCount);
       setShowAnswers(true);
 
-      const response = await fetch("/api/evaluate", {
+      const response = await authenticatedFetch("/api/evaluate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid || "guest", score: correctCount, total: questions.length, gradedResults }),
+        body: JSON.stringify({
+          score: correctCount,
+          total: questions.length,
+          gradedResults,
+          difficultyLevel: "High School Physics",
+        }),
       });
+
 
       if (!response.ok) throw new Error("Evaluate failed.");
       const data = await response.json();
@@ -262,7 +326,7 @@ d) [Option 4]
       });
 
       await updateProgress(correctCount); // Trigger roadmap progress logic
-      
+
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -287,17 +351,17 @@ d) [Option 4]
 
         {/* Breadcrumb */}
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
-<svg 
-  className={styles.breadcrumbIcon} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-</svg>
+          <svg
+            className={styles.breadcrumbIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
           Return to Mechanics Directory
         </Link>
 
@@ -336,17 +400,17 @@ d) [Option 4]
                 </div>
                 <div className={styles.protocolFooter}>
                   Access resource
-<svg 
-  className={styles.protocolArrow} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-</svg>
+                  <svg
+                    className={styles.protocolArrow}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </div>
               </a>
             ))}
@@ -375,28 +439,28 @@ d) [Option 4]
                 <h3 className={styles.terminalId}>MECH_02</h3>
                 <p className={styles.terminalSubtitle}>Linear Motion</p>
                 <div className={styles.terminalStat}>
-  <span className={styles.terminalStatLabel}>Questions</span>
-  <select 
-    value={questionCount} 
-    onChange={(e) => setQuestionCount(Number(e.target.value))}
-    style={{ 
-      background: '#0f0f20', 
-      color: '#4f8ef7', 
-      border: '1px solid #333', 
-      padding: '4px 8px', 
-      borderRadius: '6px',
-      fontSize: '14px',
-      cursor: 'pointer',
-      outline: 'none',
-      fontFamily: 'monospace'
-    }}
-  >
-<option value={3}>3 Questions</option>
-<option value={5}>5 Questions</option>
-<option value={10}>10 Questions</option>
-<option value={15}>15 Questions</option>
-  </select>
-</div>
+                  <span className={styles.terminalStatLabel}>Questions</span>
+                  <select
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    style={{
+                      background: '#0f0f20',
+                      color: '#4f8ef7',
+                      border: '1px solid #333',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    <option value={3}>3 Questions</option>
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -433,7 +497,7 @@ d) [Option 4]
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
             <div className={styles.spinner} />
             <p className={styles.loadingLabel}>
-              {isGenerating ? "Generating GPT-4o Parameters..." : "AI Evaluating Telemetry..."}
+              {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
             <p className={styles.loadingFact}>"{currentFact}"</p>
           </motion.div>
@@ -459,36 +523,36 @@ d) [Option 4]
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
             <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
             {questions.length > 0 && (
-  <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-    {questions.map((q, idx) => {
-      const correctOption = q.options.find(
-        (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
-      );
-      const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {questions.map((q, idx) => {
+                  const correctOption = q.options.find(
+                    (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
+                  );
+                  const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
 
-      return (
-        <div
-          key={idx}
-          style={{
-            background: '#0f0f20',
-            border: '1px solid #333',
-            borderRadius: '6px',
-            padding: '10px 14px',
-          }}
-        >
-          <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
-            Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
-          </p>
-          {explanation && (
-            <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-              {explanation}
-            </p>
-          )}
-        </div>
-      );
-    })}
-  </div>
-)}
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        background: '#0f0f20',
+                        border: '1px solid #333',
+                        borderRadius: '6px',
+                        padding: '10px 14px',
+                      }}
+                    >
+                      <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
+                        Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
+                      </p>
+                      {explanation && (
+                        <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
+                          {explanation}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </motion.div>
         )}
 
