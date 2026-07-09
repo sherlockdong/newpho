@@ -41,9 +41,12 @@ export function parseQuizQuestions(quizString: string): ParsedQuestion[] {
 
     // Check for correct answer (e.g., "**Correct Answer:** b", "Correct Answer: B")
     if (line.toLowerCase().includes("correct answer")) {
-      const ansMatch = line.match(/correct\s*answer\s*[:.-]?\s*\**([a-e])\**/i);
-      if (ansMatch) {
-        currentQuestion.correctAnswer = ansMatch[1].toLowerCase();
+      const normalized = line
+        .toLowerCase()
+        .replace(/\*\*/g, "")
+        .match(/correct\s*answer\s*[:.-]?\s*([a-d])/i);
+      if (normalized?.[1]) {
+        currentQuestion.correctAnswer = normalized[1].toLowerCase();
       }
       return;
     }

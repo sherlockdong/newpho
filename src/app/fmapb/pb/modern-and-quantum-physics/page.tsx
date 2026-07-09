@@ -1,28 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  getAuth,
-  onAuthStateChanged,
-  type User,
-} from "firebase/auth";
-
-import { app } from "../../../../firebase";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  Timestamp,
-  doc,
-  getDoc,
-  setDoc
-} from "firebase/firestore";
 import "katex/dist/katex.min.css";
-import { InlineMath } from "react-katex";
+import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
+import { getOptionTextByLetter } from "../../../../lib/quizUtils";
+import { RenderQuizMath } from "../../../../lib/renderQuizMath";
 import { motion } from "framer-motion";
 import styles from "../../fmapb.module.css";
-import { parseQuizQuestions } from "../../../../lib/quizParser";
 
 const STUDY_RESOURCES = [
 ];
@@ -56,88 +40,24 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-08': ['MCH-03', 'MCH-05'],
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
-const auth = getAuth(app);
-export default function FluidMechanicsPage() {
 
+const TOPIC_NAME = "Physics Bowl";
+const SUBTOPIC_NAME = "Modern Physics and Quantum Phenomena";
 
-  async function authenticatedFetch(
-    url: string,
-    options: RequestInit = {},
-  ): Promise<Response> {
-    const currentUser = auth.currentUser;
+function buildQuizPrompt({
+  questionCount,
+  overrideText,
+  subtopicName,
+  difficultyLevel,
+}: {
+  questionCount: number;
+  overrideText: string;
+  subtopicName: string;
+  difficultyLevel: string;
+}) {
+  return `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${subtopicName}".
 
-    if (!currentUser) {
-      throw new Error("You must be signed in to continue.");
-    }
-
-    const idToken = await currentUser.getIdToken();
-
-    return fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
-        ...options.headers,
-      },
-    });
-  }
-
-  const TOPIC_NAME = "Physics Bowl";
-  const SUBTOPIC_NAME = "Modern Physics and Quantum Phenomena";
-
-  const [overrideText, setOverrideText] = useState("");
-  const [questionCount, setQuestionCount] = useState(3);
-  const [quiz, setQuiz] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isEvaluating, setIsEvaluating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<any>({});
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(false);
-
-  const [currentFact, setCurrentFact] = useState("");
-  const [showAnswers, setShowAnswers] = useState(false);
-  const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [aiFeedback, setAiFeedback] = useState<string | null>(null);
-  const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setAuthReady(true);
-    });
-
-    return unsubscribe;
-  }, []);
-
-
-  useEffect(() => {
-    let interval: any;
-    if (isGenerating || isEvaluating) {
-      setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
-      interval = setInterval(() => {
-        setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
-      }, 4000);
-    }
-    return () => clearInterval(interval);
-  }, [isGenerating, isEvaluating]);
-
-  async function handleGenerateQuiz() {
-    setIsGenerating(true);
-    setError(null);
-    setQuiz(null);
-    setAnswers({});
-    setStartTime(Date.now());
-    setShowAnswers(false);
-    setFinalScore(null);
-    setAiFeedback(null);
-    setQuestionExplanations([]);
-
-    try {
-      const prompt = `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-
-Target Difficulty Level: ${DIFFICULTY_LEVEL}
+Target Difficulty Level: ${difficultyLevel}
 
 To calibrate the difficulty, carefully analyze the following sample problems. Your generated questions must exactly match the conceptual depth, mathematical rigor, trickiness, and multi-step reasoning required by these samples.
 
@@ -161,155 +81,45 @@ c) [Option 3]
 d) [Option 4]
 **Correct Answer:** [Correct option letter]
 ---`;
+}
 
-      const quizResponse = await authenticatedFetch("/api/generate", {
-        method: "POST",
-        body: JSON.stringify({ prompt }),
-      });
-
-
-
-      if (!quizResponse.ok) throw new Error(`API Error: ${await quizResponse.text()}`);
-
-      const data = await quizResponse.json();
-      const quizContent = data.content || "";
-
-      const parsedQuestions = parseQuizQuestions(quizContent);
-      if (!quizContent || parsedQuestions.length === 0) {
-        throw new Error("Quiz parsing failed: The AI returned invalid formatting.");
-      }
-
-      setQuiz(quizContent);
-      setTimeout(() => document.getElementById("quiz-anchor")?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsGenerating(false);
-    }
-  }
-
-
-
-  const handleAnswerChange = (index: number, value: string) => {
-    setAnswers((prev: any) => ({ ...prev, [index]: { ...prev[index], answer: value } }));
-  };
-
-  const questions = parseQuizQuestions(quiz || "");
-
-  async function updateProgress(correctCount: number) {
-    if (!user?.uid) return;
-    const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'Physics Bowl');
-
-    const snap = await getDoc(progressRef);
-    const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
-
-    const updates: Record<string, string> = { ...current };
-
-    if (correctCount >= 5) {
-      updates[NODE_ID] = 'mastered';
-
-      const candidates = UNLOCKS_MAP[NODE_ID] ?? [];
-      for (const candidateId of candidates) {
-        const prereqs = PREREQUISITES_MAP[candidateId] ?? [];
-        const allMet = prereqs.every(p => updates[p] === 'mastered');
-        if (allMet && updates[candidateId] !== 'mastered') {
-          updates[candidateId] = 'unlocked';
-        }
-      }
-    }
-
-    await setDoc(progressRef, updates, { merge: true });
-  }
-  function normalizeAnswer(value: unknown): string {
-    if (typeof value !== "string") return "";
-
-    return value
-      .trim()
-      .toLowerCase()
-      .replace(/[).:\s]/g, "")
-      .charAt(0);
-  }
-  async function handleSubmitAnswers() {
-    setIsEvaluating(true);
-    setError(null);
-
-    try {
-      const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
-      let correctCount = 0;
-      const gradedResults = questions.map((question, index) => {
-        const userAnswer = normalizeAnswer(
-          answers[index]?.answer,
-        );
-
-        const correctAnswer = normalizeAnswer(
-          question.correctAnswer,
-        );
-
-        const isCorrect =
-          userAnswer === correctAnswer;
-
-        if (isCorrect) {
-          correctCount++;
-        }
-
-        return {
-          question: question.text,
-          userAnswer: userAnswer || "none",
-          correctAnswer,
-          isCorrect,
-        };
-      });
-
-
-      setFinalScore(correctCount);
-      setShowAnswers(true);
-
-      const response = await authenticatedFetch("/api/evaluate", {
-        method: "POST",
-        body: JSON.stringify({
-          score: correctCount,
-          total: questions.length,
-          gradedResults,
-          difficultyLevel: DIFFICULTY_LEVEL,
-        }),
-      });
-
-
-      if (!response.ok) throw new Error("Evaluate failed.");
-      const data = await response.json();
-      setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
-      setQuestionExplanations(data.analysis?.questionExplanations || []);
-
-      const db = getFirestore(app);
-      await addDoc(collection(db, "quizLogs"), {
-        score: correctCount,
-        totalQuestions: questions.length,
-        topic: `${TOPIC_NAME} - ${SUBTOPIC_NAME}`,
-        timeTaken: `${timeTaken}s`,
-        analysis: data.analysis?.feedbackSummary,
-        timestamp: Timestamp.fromDate(new Date()),
-        userId: user?.uid,
-      });
-
-      await updateProgress(correctCount);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsEvaluating(false);
-    }
-  }
-
-  const renderMathText = (text: string) => {
-    const parts = text.split(/(\$.*?\$)/);
-    return parts.map((part, idx) =>
-      part.startsWith("$") && part.endsWith("$") ? (
-        <InlineMath key={idx} math={part.slice(1, -1)} />
-      ) : (
-        <span key={idx}>{part}</span>
-      )
-    );
-  };
+export default function FluidMechanicsPage() {
+  const {
+    overrideText,
+    setOverrideText,
+    questionCount,
+    setQuestionCount,
+    quiz,
+    parsedQuestions,
+    isGenerating,
+    isEvaluating,
+    isBusy,
+    error,
+    answers,
+    showAnswers,
+    finalScore,
+    aiFeedback,
+    questionExplanations,
+    currentFact,
+    isNodeAccessible,
+    authReady,
+    user,
+    progressWarning,
+    handleGenerateQuiz,
+    handleSubmitAnswers,
+    handleAnswerChange,
+    normalizeAnswer,
+  } = useQuizDiagnostics({
+    nodeId: NODE_ID,
+    progressCollection: "Physics Bowl",
+    unlocksMap: UNLOCKS_MAP,
+    prerequisitesMap: PREREQUISITES_MAP,
+    topicName: "Physics Bowl",
+    subtopicName: "Modern Physics and Quantum Phenomena",
+    difficultyLevel: "Physics Bowl physics competition",
+    physicsFacts: PHYSICS_FACTS,
+    buildPrompt: buildQuizPrompt,
+  });
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
@@ -403,7 +213,7 @@ d) [Option 4]
                   <span className={styles.terminalStatLabel}>Questions</span>
                   <select
                     value={questionCount}
-                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    onChange={(e) => !isBusy && setQuestionCount(Number(e.target.value))} disabled={isBusy}
                     style={{
                       background: '#0f0f20',
                       color: '#4f8ef7',
@@ -432,18 +242,18 @@ d) [Option 4]
                 </label>
                 <textarea
                   value={overrideText}
-                  onChange={(e) => setOverrideText(e.target.value)}
+                  onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                   className={styles.terminalTextarea}
                   rows={3}
-                  placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
+                  placeholder='> e.g., "Make the parsedQuestions strictly conceptual with no math calculations required..."'
                 />
               </div>
               <div className={styles.terminalFooter}>
                 <button
                   onClick={handleGenerateQuiz}
-                  disabled={isGenerating}
+                  disabled={isBusy || !authReady || !user || !isNodeAccessible}
                   className="tg-btn"
-                  style={{ opacity: isGenerating ? 0.5 : 1, cursor: isGenerating ? "not-allowed" : "pointer" }}
+                  style={{ opacity: isBusy || !authReady || !user || !isNodeAccessible ? 0.5 : 1, cursor: isBusy || !authReady || !user || !isNodeAccessible ? "not-allowed" : "pointer" }}
                 >
                   {isGenerating ? "Compiling Matrix..." : "Initialize Diagnostic"}
                 </button>
@@ -463,6 +273,10 @@ d) [Option 4]
         )}
 
         {error && <div className={styles.errorBox}>System Error: {error}</div>}
+        {progressWarning && <div className={styles.errorBox}>Progress Warning: {progressWarning}</div>}
+        {!authReady && <div className={styles.errorBox}>Initializing authentication...</div>}
+        {authReady && !user && <div className={styles.errorBox}>Sign in to generate and submit quizzes.</div>}
+        {authReady && user && !isNodeAccessible && <div className={styles.errorBox}>Prerequisites for this node are not yet mastered.</div>}
 
         <div id="quiz-anchor" />
         {showAnswers && (
@@ -474,17 +288,16 @@ d) [Option 4]
             <p className={styles.resultsLabel}>Diagnostic Score</p>
             <div className={styles.resultsScore}>
               {finalScore}
-              <span className={styles.resultsScoreDenom}> / {questions.length}</span>
+              <span className={styles.resultsScoreDenom}> / {parsedQuestions.length}</span>
             </div>
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
             <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
-            {questions.length > 0 && (
+            {parsedQuestions.length > 0 && (
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {questions.map((q, idx) => {
-                  const correctOption = q.options.find(
-                    (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
-                  );
+                {parsedQuestions.map((q, idx) => {
+                  const correctAnswer = normalizeAnswer(q.correctAnswer);
+                  const correctOption = getOptionTextByLetter(q, correctAnswer);
                   const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
 
                   return (
@@ -498,7 +311,7 @@ d) [Option 4]
                       }}
                     >
                       <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
-                        Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
+                        Q_0{idx + 1} — Correct: {<RenderQuizMath text={correctOption || ""} />}
                       </p>
                       {explanation && (
                         <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
@@ -519,29 +332,29 @@ d) [Option 4]
             animate={{ opacity: 1, y: 0 }}
             className={styles.quizSection}
           >
-            {questions.length > 0 && (
+            {parsedQuestions.length > 0 && (
               <form onSubmit={(e) => { e.preventDefault(); handleSubmitAnswers(); }}>
                 <div className={styles.questionList}>
-                  {questions.map((question, index) => {
-                    const userAnswer = answers[index]?.answer?.toLowerCase();
-                    const isCorrect = userAnswer === question.correctAnswer;
+                  {parsedQuestions.map((question, index) => {
+                    const userAnswer = normalizeAnswer(answers[index]?.answer);
+                    const correctAnswer = normalizeAnswer(question.correctAnswer);
+                    const isCorrect = userAnswer === correctAnswer;
 
                     return (
-                      <div
-                        key={index}
+                      <div id={`question-${index}`} key={index}
                         className={[
                           styles.questionCard,
                           showAnswers ? (isCorrect ? styles.correct : styles.incorrect) : "",
                         ].join(" ")}
                       >
                         <div className={styles.questionNumber}>Q_0{index + 1}</div>
-                        <h3 className={styles.questionText}>{renderMathText(question.text)}</h3>
+                        <h3 className={styles.questionText}>{<RenderQuizMath text={question.text} />}</h3>
 
                         <div className={styles.optionsList}>
                           {question.options.map((option: string, optIdx: number) => {
-                            const optionLetter = option.charAt(0).toLowerCase();
+                            const optionLetter = normalizeAnswer(option);
                             const isSelected = userAnswer === optionLetter;
-                            const isActuallyCorrect = optionLetter === question.correctAnswer;
+                            const isActuallyCorrect = optionLetter === correctAnswer;
 
                             let optionClass = styles.optionLabel;
                             if (showAnswers) {
@@ -559,11 +372,11 @@ d) [Option 4]
                                   name={`question-${index}`}
                                   value={optionLetter}
                                   checked={isSelected}
-                                  onChange={(e) => !showAnswers && handleAnswerChange(index, e.target.value)}
-                                  disabled={showAnswers}
+                                  onChange={(e) => !showAnswers && !isBusy && handleAnswerChange(index, e.target.value)}
+                                  disabled={showAnswers || isBusy}
                                   className={styles.optionRadio}
                                 />
-                                <span className={styles.optionText}>{renderMathText(option)}</span>
+                                <span className={styles.optionText}>{<RenderQuizMath text={option} />}</span>
                               </label>
                             );
                           })}
@@ -577,9 +390,9 @@ d) [Option 4]
                   <div className={styles.submitRow}>
                     <button
                       type="submit"
-                      disabled={isEvaluating}
+                      disabled={isBusy || !authReady || !user}
                       className="tg-btn"
-                      style={{ opacity: isEvaluating ? 0.5 : 1 }}
+                      style={{ opacity: isBusy || !authReady || !user ? 0.5 : 1 }}
                     >
                       Transmit Telemetry
                     </button>

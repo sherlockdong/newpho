@@ -7,9 +7,13 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 type GradedResult = {
+  index?: number;
   question: string;
+  options?: string[];
   userAnswer: string;
+  userAnswerText?: string | null;
   correctAnswer: string;
+  correctAnswerText?: string | null;
   isCorrect: boolean;
 };
 
@@ -236,10 +240,13 @@ export async function POST(
         total,
         difficultyLevel: difficultyLevel ?? "unspecified",
         gradedResults: gradedResults.map((result, index) => ({
-          index,
+          index: result.index ?? index,
           question: result.question,
+          options: result.options ?? [],
           userAnswer: result.userAnswer,
+          userAnswerText: result.userAnswerText ?? null,
           correctAnswer: result.correctAnswer,
+          correctAnswerText: result.correctAnswerText ?? null,
           isCorrect: result.isCorrect,
         })),
       }),
