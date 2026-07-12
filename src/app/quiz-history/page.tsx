@@ -16,9 +16,10 @@ import {
   query,
   where,
   getDocs,
+  Timestamp,
 } from "firebase/firestore";
 import { app } from "../../firebase";
-
+const auth = getAuth(app);
 interface QuizLog {
   analysis: string;
   quizTopic?: string;
@@ -26,7 +27,7 @@ interface QuizLog {
   score?: number;
 }
 
-const auth = getAuth(app);
+
 
 export default function QuizHistoryPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -36,86 +37,127 @@ export default function QuizHistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Safe timestamp to milliseconds converter
-  const getTimestampMs = (ts: any): number => {
-    if (!ts) return 0;
-    if (typeof ts.toDate === "function") return ts.toDate().getTime();
-    if (ts instanceof Date && !isNaN(ts.getTime())) return ts.getTime();
-    if (typeof ts === "number") return ts * (ts > 1e10 ? 1 : 1000);
-    if (typeof ts === "string") {
-      const date = new Date(ts);
-      return !isNaN(date.getTime()) ? date.getTime() : 0;
+  type QuizTimestamp = Timestamp | Date | number | string | null;
+
+  interface QuizLog {
+    analysis?: string;
+    topic?: string;
+    quizTopic?: string;
+    timestamp?: QuizTimestamp;
+    score?: number;
+    totalQuestions?: number;
+  }
+  
+  function getTimestampMs(timestamp?: QuizTimestamp): number {
+    if (!timestamp) return 0;
+  
+    if (timestamp instanceof Timestamp) {
+      return timestamp.toMillis();
     }
+  
+    if (timestamp instanceof Date) {
+      return Number.isNaN(timestamp.getTime()) ? 0 : timestamp.getTime();
+    }
+  
+    if (typeof timestamp === "number") {
+      return timestamp > 1e10 ? timestamp : timestamp * 1000;
+    }
+  
+    if (typeof timestamp === "string") {
+      const milliseconds = new Date(timestamp).getTime();
+      return Number.isNaN(milliseconds) ? 0 : milliseconds;
+    }
+  
     return 0;
-  };
-
-  // Safe date formatter for display
-  const getFormattedDate = (timestamp: any): string => {
+  }
+  
+  function getFormattedDate(timestamp?: QuizTimestamp): string {
     if (!timestamp) return "Unknown date";
-
-    let date: Date | null = null;
-
-    if (typeof timestamp.toDate === "function") {
-      date = timestamp.toDate();
-    } else if (timestamp instanceof Date) {
-      date = timestamp;
-    } else if (typeof timestamp === "number") {
-      date = new Date(timestamp * (timestamp > 1e10 ? 1 : 1000));
-    } else if (typeof timestamp === "string") {
-      date = new Date(timestamp);
-    }
-
-    if (date && !isNaN(date.getTime())) {
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-    }
-
-    return "Invalid date";
-  };
+  
+    const milliseconds = getTimestampMs(timestamp);
+  
+    if (!milliseconds) return "Invalid date";
+  
+    return new Date(milliseconds).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchLogs = async () => {
-      setLoading(true);
+      setAuthReady(true);
       setError(null);
-      try {
-        const db = getFirestore();
-        const q = query(collection(db, "quizLogs"), where("userId", "==", user.uid));
-        const snapshot = await getDocs(q);
-
-        const logs: QuizLog[] = snapshot.docs.map((doc) => doc.data() as QuizLog);
-
-        // Safe sorting: newest first
-        logs.sort((a, b) => getTimestampMs(b.timestamp) - getTimestampMs(a.timestamp));
-
-        setQuizLogs(logs);
-      } catch (err) {
-        console.error("Error fetching quiz logs:", err);
-        setError("Failed to load telemetry logs. Please query again later.");
-      } finally {
+  
+      if (currentUser) {
+        setLoading(true);
+      } else {
+        setQuizLogs([]);
         setLoading(false);
       }
+    });
+  
+    return unsubscribe;
+  }, []);
+  
+  useEffect(() => {
+    if (!authReady || !user) return;
+  
+    const userId = user.uid;
+    let cancelled = false;
+  
+    async function fetchLogs() {
+      try {
+        const db = getFirestore(app);
+        const logsQuery = query(
+          collection(db, "quizLogs"),
+          where("userId", "==", userId),
+        );
+  
+        const snapshot = await getDocs(logsQuery);
+  
+        if (cancelled) return;
+  
+        const logs: QuizLog[] = snapshot.docs.map((document) => ({
+          id: document.id,
+          ...(document.data() as Omit<QuizLog, "id">),
+        }));
+  
+        logs.sort(
+          (first, second) =>
+            getTimestampMs(second.timestamp) -
+            getTimestampMs(first.timestamp),
+        );
+  
+        setQuizLogs(logs);
+      } catch (fetchError: unknown) {
+        console.error("Error fetching quiz logs:", fetchError);
+  
+        if (!cancelled) {
+          setError(
+            fetchError instanceof Error
+              ? fetchError.message
+              : "Failed to load telemetry logs.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+  
+    void fetchLogs();
+  
+    return () => {
+      cancelled = true;
     };
-
-    fetchLogs();
-  }, [user]);
+  }, [authReady, user]);
 
   // Unauthenticated State
-  if (!user && !loading) {
+  if (authReady && !user && !loading)  {
     return (
       <main className="page-wrapper min-h-screen flex flex-col items-center justify-center px-6">
         <div className="text-center bg-[#0A0A18] border border-zinc-800 p-10 rounded-3xl max-w-md shadow-2xl">
@@ -185,7 +227,7 @@ export default function QuizHistoryPage() {
                   <summary className="flex items-center justify-between p-5 md:p-6 cursor-pointer select-none list-none accordion-summary">
                     <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
                       <span className="text-white font-semibold font-heading tracking-tight text-base md:text-lg log-topic">
-                        {log.quizTopic || "General Physics Assessment"}
+                      {log.topic || log.quizTopic || "General Physics Assessment"}
                       </span>
                       <span className="text-zinc-500 text-xs md:text-sm font-medium log-date">
                         {formattedDate}
@@ -193,11 +235,18 @@ export default function QuizHistoryPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                      {log.score !== undefined && (
-                        <span className="px-3 py-1 text-xs font-bold font-mono rounded-full bg-[#4f8ef7]/10 text-[#4f8ef7] border border-[#4f8ef7]/20 score-badge">
-                          SCORE: {log.score}%
-                        </span>
-                      )}
+                    {log.score !== undefined && (
+  <span className="px-3 py-1 text-xs font-bold font-mono rounded-full bg-[#4f8ef7]/10 text-[#4f8ef7] border border-[#4f8ef7]/20 score-badge">
+    {log.totalQuestions && log.totalQuestions > 0 ? (
+      <>
+        SCORE: {log.score}/{log.totalQuestions} ·{" "}
+        {Math.round((log.score / log.totalQuestions) * 100)}%
+      </>
+    ) : (
+      <>SCORE: {log.score}</>
+    )}
+  </span>
+)}
                       {/* Interactive CSS Chevron Indicator */}
                       <svg className="accordion-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />

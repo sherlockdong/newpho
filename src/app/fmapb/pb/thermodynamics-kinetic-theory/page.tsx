@@ -12,10 +12,10 @@ const STUDY_RESOURCES = [
 ];
 
 const PHYSICS_FACTS = [
-  "The Navier-Stokes equations, which govern the motion of fluid substances, are a statement of Newton's second law applied to continuous media under the assumption of a Newtonian fluid.",
-  "In a steady, incompressible, and inviscid flow, Bernoulli's principle states that an increase in the speed of the fluid occurs simultaneously with a decrease in static pressure or a decrease in the fluid's potential energy.",
-  "The Reynolds number (Re = \frac{\rho u L}{\mu}) is a dimensionless quantity that predicts fluid flow patterns, where low values indicate laminar flow dominated by viscous forces and high values indicate turbulent flow dominated by inertial forces.",
-  "Boundary layer separation occurs when the pressure gradient is adverse (\frac{dp}{dx} > 0), causing the velocity gradient at the wall to drop to zero and forcing the bulk fluid to detach from the solid surface."
+  "The Navier–Stokes equations govern fluid motion.",
+  "Bernoulli’s principle relates pressure, speed, and height in ideal flow.",
+  String.raw`The Reynolds number, $Re=\frac{\rho uL}{\mu}$, predicts whether flow tends to be laminar or turbulent.`,
+  String.raw`Boundary-layer separation can occur under an adverse pressure gradient, $\frac{dp}{dx}>0$.`,
 ];
 
 const NODE_ID = 'PB-01';

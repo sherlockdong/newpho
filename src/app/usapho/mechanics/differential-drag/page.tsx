@@ -304,8 +304,13 @@ export default function DifferentialDragPage() {
                             <span className={styles.resultsScoreDenom}> / {parsedQuestions.length}</span>
                         </div>
                         <hr className={styles.resultsDivider} />
-                        <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
-                        <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
+                        <h3 className={styles.resultsFeedbackTitle}>
+  AI Feedback Analysis
+</h3>
+
+<div className={styles.resultsFeedbackText}>
+  <RenderQuizMath text={aiFeedback || ""} />
+</div>
                         {parsedQuestions.length > 0 && (
                             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {parsedQuestions.map((q, idx) => {
@@ -327,10 +332,16 @@ export default function DifferentialDragPage() {
                                                 Q_0{idx + 1} — Correct: {<RenderQuizMath text={correctOption || ""} />}
                                             </p>
                                             {explanation && (
-                                                <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-                                                    {explanation}
-                                                </p>
-                                            )}
+  <div
+    style={{
+      color: "#aaa",
+      fontSize: "13px",
+      margin: "6px 0 0 0",
+    }}
+  >
+    <RenderQuizMath text={explanation} />
+  </div>
+)}
                                         </div>
                                     );
                                 })}

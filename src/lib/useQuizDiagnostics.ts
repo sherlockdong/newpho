@@ -141,29 +141,21 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
   }, [authReady, user, config.nodeId, config.prerequisitesMap, config.progressCollection]);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
-
-    if (isGenerating || isEvaluating) {
-      setCurrentFact(
+    if (!isBusy || config.physicsFacts.length === 0) {
+      return;
+    }
+  
+    const interval = setInterval(() => {
+      const fact =
         config.physicsFacts[
           Math.floor(Math.random() * config.physicsFacts.length)
-        ],
-      );
-      interval = setInterval(() => {
-        setCurrentFact(
-          config.physicsFacts[
-            Math.floor(Math.random() * config.physicsFacts.length)
-          ],
-        );
-      }, 4000);
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [config.physicsFacts, isGenerating, isEvaluating]);
+        ];
+  
+      setCurrentFact(fact);
+    }, 4000);
+  
+    return () => clearInterval(interval);
+  }, [config.physicsFacts, isBusy]);
 
   async function handleGenerateQuiz() {
     if (!authReady || !user) {
