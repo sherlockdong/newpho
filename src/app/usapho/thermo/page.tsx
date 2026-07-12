@@ -7,19 +7,19 @@ import styles from "../usa.module.css";
 
 const thermo_SUBTOPICS = [
   {
-    id: "USA_17",
+    id: "USA_20",
     title: "Kinetic Theory, Statistical Transport, and Calorimetry",
     desc: "Microscopic thermal physics. Covers the Maxwell-Boltzmann distribution, root-mean-square speed, mean free path, internal energy degrees of freedom, equipartition theorem, and complex multi-phase calorimetry.",
     slug: "kinetic-theory-gases"
   },
   {
-    id: "USA_18",
+    id: "USA_21",
     title: "Thermodynamic Cycles and Entropy Formulations",
     desc: "Macroscopic thermal systems. Covers the First and Second Laws of Thermodynamics, calculating work, heat, and internal energy changes along arbitrary p-V pathways, Carnot cycles, and calculus-based entropy changes.",
     slug: "thermodynamic-cycles"
   }
 ]
-export default function thermoDirectoryPage() {
+export default function ThermoDirectoryPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 

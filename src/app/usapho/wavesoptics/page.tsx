@@ -7,26 +7,26 @@ import styles from "../usa.module.css";
 
 const waves_SUBTOPICS = [
   {
-    id: "USA_09",
+    id: "USA_19_",
     title: "Mechanical Waves, Standing Modes, and Acoustics",
     desc: "The physics of continuous media. Covers the classical wave equation, boundary reflections, phase shifts, standing waves in strings and columns, sound intensity, and the relativistic/non-relativistic Doppler effect.",
     slug: "mechanical-waves"
   },
   {
-    id: "USA_10",
+    id: "USA_23",
     title: "Geometrical Optics and Optical Instrument Matrix Analysis",
     desc: "Light behavior as rays. Covers Fermat's Principle, Snell's law, derivation of the mirror and thin-lens equations, thick lenses, spherical aberration, and tracing rays through multi-component optical systems.",
     slug: "geometrical-optics"
   },
   {
-    id: "USA_11",
+    id: "USA_24",
     title: "Wave Optics, Interference, and Diffraction Regimes",
     desc: "Light behavior as a wave. Covers Huygens' principle, thin-film interference, double-slit interference, single-slit diffraction patterns, diffraction gratings, and resolution limits via Rayleigh's criterion.",
     slug: "wave-optics"
   }
 ];
 
-export default function wavesDirectoryPage() {
+export default function WavesDirectoryPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 

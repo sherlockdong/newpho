@@ -10,13 +10,13 @@ import styles from "../../usa.module.css";
 
 const PAST_PROBLEMS = [
     {
-        id: "PST_01",
-        title: "USAPhO 2020 Problem B1",
-        desc: "A short video describing the problem and its solution.",
-        url: "https://www.youtube.com/watch?v=wsYU4DY4kRs&t=461s",
-        type: "Video",
+        id: "USA_19_P01",
+        title: "USAPhO 2021 Problem A3",
+        desc: "The problem focuses on relativistic mechanics and time dilation in a moving reference frame, tracking light travel time, muon decay, and geometric coordinate transformations between observers under high-velocity shifts.",
+        url: "https://aapt.org/Common2022/upload/2021-USAPhO_Solutions_v3.pdf",
+        type: "Problem"
     },
-];
+]
 
 const PHYSICS_FACTS = [
     "The Navier–Stokes equations describe the motion of fluid substances.",
@@ -26,59 +26,29 @@ const PHYSICS_FACTS = [
 ];
 
 
-const NODE_ID = 'USA-01';
-const DIFFICULTY_LEVEL = "USAPhO Mechanics physics competition";
-const SAMPLE_PROBLEMS = `When a faucet is turned on, a stream of water flows down with initial speed v0 at the spout.
-For this problem, we define y to be the vertical coordinate with its positive direction pointing
-up.
-Assuming the water speed is only affected by gravity as the water falls, find the speed of water
-v(y) at height y. Define the zero of y such that the equation for v
-2 has only one term and find
-y0, the height of the spout.
-b. Assume that the stream of water falling from the faucet is cylindrically symmetric about a
-vertical axis through the center of the stream. Also assume that the volume of water per unit
-time exiting the spout is constant, and that the shape of the stream of water is constant over
-time.
-In this case, the radius r of the stream of water is a function of vertical position y. Let the
-radius at the faucet be r0. Using your result from part (a), find r(y).
-If r(y) is not constant, it implies that the water has some radial velocity during its fall, in
-contradiction to our assumptions in part (a) that the motion is purely vertical. You may assume
-throughout the problem that any such radial velocity is negligibly small.
-c. The water-air interface has some surface tension, σ. The effect of surface tension is to change
-the pressure in the stream according to the Young-Laplace equation,
-∆P = σ
-
-1
-r
-+
-1
-R
-
-,
-where ∆P is the difference in pressure between the stream and the atmosphere and R is the
-radius of curvature of the vertical profile of the stream, visualized below. (R < 0 for the stream
-of water; the radius of curvature would be positive only if the stream profile curved inwards.)
-|R|
-For this part of the problem, we assume that |R|  |r|, so that the curvature of the vertical
-profile of the stream can be ignored. Also assume that water is incompressible.
-Accounting for the pressure in the stream, find a new equation relating for r(y) in terms of
-σ, r0, v0, and ρ, the density of water. You do not need to solve the equation for r.
-d. After falling for some distance, the water stream usually breaks into smaller droplets. This
-occurs because small random perturbations to the shape of the stream grow over time, eventually
-breaking the stream into apart.
-Copyright c 2020 American Association of Physics Teachers
-2020 USAPhO Part B 7
-For the rest of this problem we ignore the change in the radius of the stream due to changing
-speed of the water, as considered earlier. Instead, we examine small random variations in the
-radius of the stream.
-Random variations can be broken down into a sum of sinusoidal variations in stream radius,
-each with a different wavenumber k. We can analyze these different sinusoidal variations independently.
-Consider a stream of water whose radius obeys
-r(y) = r0 + A cos(ky),
-where A  r0 is the perturbation amplitude. To analyze such a stream, it is sufficient to consider
-only the thickest and thinnest parts of the stream.
-Accounting for both sources of curvature, find a condition on r0 and k such that the size of
-perturbations increases with time.`;
+const NODE_ID = 'USA-17';
+const DIFFICULTY_LEVEL = "USAPhO relativity physics competition";
+const SAMPLE_PROBLEMS = String.raw`plug in Question A2 (from USAPhO 2016)
+An electron is a particle with charge −q, mass m, and magnetic moment µ. In this problem we will
+explore whether a classical model consistent with these properties can also explain the rest energy
+E_0 = mc^2 of the electron.
+Let us describe the electron as a thin spherical shell with uniformly distributed charge and
+radius R. Recall that the magnetic moment of a closed, planar loop of current is always equal to
+the product of the current and the area of the loop. For the electron, a magnetic moment can be
+created by making the sphere rotate around an axis passing through its center.
+a. If no point on the sphere’s surface can travel faster than the speed of light (in the frame of the
+sphere’s center of mass), what is the maximum magnetic moment that the sphere can have?
+You may use the integral: \int_{0}^{\pi} \sin^3(\theta) d\theta = 4/3.
+b. The electron’s magnetic moment is known to be µ = q*hbar/(2m), where hbar is the reduced Planck
+constant. In this model, what is the minimum possible radius of the electron? Express your
+answer in terms of m and fundamental constants.
+c. Assuming the radius is the value you found in part (b), how much energy is stored in the electric
+field of the electron? Express your answer in terms of E_0 = mc^2 and the fine structure constant,
+α = q^2 / (4*π*ε_0*hbar*c) ≈ 1/137.
+d. Roughly estimate the total energy stored in the magnetic field of the electron, in terms of E_0 and
+α. (Hint: one way to do this is to suppose the magnetic field has roughly constant magnitude
+inside the sphere and is negligible outside of it, then estimate the field inside the sphere.)
+e. How does your estimate for the total energy in the electric and magnetic fields compare to E_0?`
 const UNLOCKS_MAP: Record<string, string[]> = {
     'MCH-01': ['MCH-03', 'MCH-04'],
     'MCH-02': ['MCH-03', 'MCH-07'],
@@ -101,7 +71,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 
 const TOPIC_NAME = "USAPhO";
-const SUBTOPIC_NAME = "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics";
+const SUBTOPIC_NAME = "Special Relativity and Relativistic Mechanics";
 
 function buildQuizPrompt({
     questionCount,
@@ -142,7 +112,7 @@ d) [Option 4]
 ---`;
 }
 
-export default function FluidMechanicsPage() {
+export default function AdvancedStatPage() {
     const {
         overrideText,
         setOverrideText,
@@ -185,7 +155,7 @@ export default function FluidMechanicsPage() {
         <main className={`page-wrapper ${styles.pageWrapper}`}>
             <div className={styles.inner}>
 
-                <Link href="/usapho/mechanics" className={styles.breadcrumb}>
+                <Link href="/usapho/relativity" className={styles.breadcrumb}>
                     <svg
                         className={styles.breadcrumbIcon}
                         fill="none"
@@ -197,7 +167,7 @@ export default function FluidMechanicsPage() {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Return to USAPhO Mechanics Directory
+                    Return to USAPhO Modern PhysicsDirectory
                 </Link>
 
                 <div className={styles.header}>
@@ -268,7 +238,7 @@ export default function FluidMechanicsPage() {
                                     <span className={styles.terminalStatusLabel}>Target Locked</span>
                                 </div>
                                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
+                                <p className={styles.terminalSubtitle}>Special Relativity</p>
                                 <div className={styles.terminalStat}>
                                     <span className={styles.terminalStatLabel}>Questions</span>
                                     <select

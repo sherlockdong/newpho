@@ -7,8 +7,11 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  getAdditionalUserInfo // 1. Added this to check if Google users are brand new
+  getAdditionalUserInfo,
+  type User,
 } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { app } from "../../firebase";
@@ -45,8 +48,18 @@ export default function AuthPage() {
         return "An authentication error occurred. Please try again.";
     }
   };
+  const handleFirebaseError = (error: unknown) => {
+    if (error instanceof FirebaseError) {
+      return mapFirebaseErrorToMessage(error.code);
+    }
 
-  const saveUserToFirestore = async (user: any, isNewRegistration: boolean) => {
+    return "An unexpected error occurred. Please try again.";
+  };
+
+  const saveUserToFirestore = async (
+    user: User,
+    isNewRegistration: boolean,
+  ) => {
     const db = getFirestore(app);
     const userRef = doc(db, "users", user.uid);
 
@@ -116,8 +129,9 @@ export default function AuthPage() {
 
       await saveUserToFirestore(result.user, isNewUser);
       router.push(`/user`);
-    } catch (err: any) {
-      setError(mapFirebaseErrorToMessage(err.code));
+    } catch (error: unknown) {
+      setError(handleFirebaseError(error));
+      console.error("Google auth error:", error);
     } finally {
       setIsLoading(false);
     }

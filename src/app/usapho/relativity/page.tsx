@@ -7,26 +7,26 @@ import styles from "../usa.module.css";
 
 const relativity_SUBTOPICS = [
   {
-    id: "USA_19",
+    id: "USA_17",
     title: "Special Relativity and Relativistic Mechanics",
     desc: "Space-time mechanics at high velocities. Covers the Michelson-Morley experiment, Lorentz transformations, time dilation, length contraction, relativistic velocity addition, four-momentum, and energy-momentum invariants.",
     slug: "special-relativity"
   },
   {
-    id: "USA_20",
+    id: "USA_18",
     title: "Quantum Mechanics, Photons, and Atomic Structure",
     desc: "Early quantum theory and foundations. Covers the photoelectric effect, Compton scattering, de Broglie wavelength, Heisenberg uncertainty principle, Bohr model of the atom, and the 1D time-independent Schrödinger equation.",
     slug: "quantum-and-atomic"
   },
   {
-    id: "USA_21",
+    id: "USA_19",
     title: "Nuclear Physics, Radioactive Decay, and Particle Reactions",
     desc: "Subatomic interactions. Covers nuclear binding energy, mass defect, alpha/beta/gamma decay kinetics, fission and fusion energetics, the Standard Model basics, and conservation laws in high-energy particle collisions.",
     slug: "nuclear-and-particle"
   }
 ];
 
-export default function relativityDirectoryPage() {
+export default function RelativityDirectoryPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 

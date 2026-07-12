@@ -10,14 +10,13 @@ import styles from "../../usa.module.css";
 
 const PAST_PROBLEMS = [
     {
-        id: "PST_01",
-        title: "USAPhO 2020 Problem B1",
-        desc: "A short video describing the problem and its solution.",
-        url: "https://www.youtube.com/watch?v=wsYU4DY4kRs&t=461s",
-        type: "Video",
+        id: "USA_15_P01",
+        title: "USAPhO 2017 Problem A3",
+        desc: "The problem focuses on computing magnetic fields for a long current-carrying wire via Ampere's law, requiring students to set up and integrate the equations of motion for a charged particle launched perpendicularly to analyze its trajectory boundaries.",
+        url: "https://www.aapt.org/physicsteam/2017/upload/2017-USAPhO-Exam.pdf",
+        type: "Problem"
     },
-];
-
+]
 const PHYSICS_FACTS = [
     "The Navier–Stokes equations describe the motion of fluid substances.",
     "Bernoulli’s principle relates pressure, speed, and height in ideal flow.",
@@ -26,59 +25,47 @@ const PHYSICS_FACTS = [
 ];
 
 
-const NODE_ID = 'USA-01';
-const DIFFICULTY_LEVEL = "USAPhO Mechanics physics competition";
-const SAMPLE_PROBLEMS = `When a faucet is turned on, a stream of water flows down with initial speed v0 at the spout.
-For this problem, we define y to be the vertical coordinate with its positive direction pointing
-up.
-Assuming the water speed is only affected by gravity as the water falls, find the speed of water
-v(y) at height y. Define the zero of y such that the equation for v
-2 has only one term and find
-y0, the height of the spout.
-b. Assume that the stream of water falling from the faucet is cylindrically symmetric about a
-vertical axis through the center of the stream. Also assume that the volume of water per unit
-time exiting the spout is constant, and that the shape of the stream of water is constant over
-time.
-In this case, the radius r of the stream of water is a function of vertical position y. Let the
-radius at the faucet be r0. Using your result from part (a), find r(y).
-If r(y) is not constant, it implies that the water has some radial velocity during its fall, in
-contradiction to our assumptions in part (a) that the motion is purely vertical. You may assume
-throughout the problem that any such radial velocity is negligibly small.
-c. The water-air interface has some surface tension, σ. The effect of surface tension is to change
-the pressure in the stream according to the Young-Laplace equation,
-∆P = σ
-
-1
-r
-+
-1
-R
-
-,
-where ∆P is the difference in pressure between the stream and the atmosphere and R is the
-radius of curvature of the vertical profile of the stream, visualized below. (R < 0 for the stream
-of water; the radius of curvature would be positive only if the stream profile curved inwards.)
-|R|
-For this part of the problem, we assume that |R|  |r|, so that the curvature of the vertical
-profile of the stream can be ignored. Also assume that water is incompressible.
-Accounting for the pressure in the stream, find a new equation relating for r(y) in terms of
-σ, r0, v0, and ρ, the density of water. You do not need to solve the equation for r.
-d. After falling for some distance, the water stream usually breaks into smaller droplets. This
-occurs because small random perturbations to the shape of the stream grow over time, eventually
-breaking the stream into apart.
-Copyright c 2020 American Association of Physics Teachers
-2020 USAPhO Part B 7
-For the rest of this problem we ignore the change in the radius of the stream due to changing
-speed of the water, as considered earlier. Instead, we examine small random variations in the
-radius of the stream.
-Random variations can be broken down into a sum of sinusoidal variations in stream radius,
-each with a different wavenumber k. We can analyze these different sinusoidal variations independently.
-Consider a stream of water whose radius obeys
-r(y) = r0 + A cos(ky),
-where A  r0 is the perturbation amplitude. To analyze such a stream, it is sufficient to consider
-only the thickest and thinnest parts of the stream.
-Accounting for both sources of curvature, find a condition on r0 and k such that the size of
-perturbations increases with time.`;
+const NODE_ID = 'USA-15';
+const DIFFICULTY_LEVEL = "USAPhO Electricity and magnetism physics competition";
+const SAMPLE_PROBLEMS = String.raw`Question A3 (from USAPhO 2017)
+A ship can be thought of as a symmetric arrangement of soft iron. In the presence of an external
+magnetic field, the soft iron will become magnetized, creating a second, weaker magnetic field. We
+want to examine the effect of the ship’s field on the ship’s compass, which will be located in the
+middle of the ship.
+Let the strength of the Earth’s magnetic field near the ship be B_e, and the orientation of the
+field be horizontal, pointing directly toward true north.
+The Earth’s magnetic field B_e will magnetize the ship, which will then create a second magnetic
+field B_s in the vicinity of the ship’s compass given by
+B_s = B_e * (-K_b * cos(θ) b_hat + K_s * sin(θ) s_hat)
+where K_b and K_s are positive constants, θ is the angle between the heading of the ship and magnetic
+north, measured clockwise, and b_hat and s_hat are unit vectors pointing in the forward direction of the ship
+(bow) and directly right of the forward direction (starboard), respectively.
+Because of the ship’s magnetic field, the ship’s compass will no longer necessarily point North.
+a. Derive an expression for the deviation of the compass, δθ, from north as a function of K_b,
+K_s, and θ.
+b. Assuming that K_b and K_s are both much smaller than one, at what heading(s) θ will the
+deviation δθ be largest?
+A pair of iron balls placed in the same horizontal plane as the compass but a distance d away
+can be used to help correct for the error caused by the induced magnetism of the ship.
+(A binnacle protects the ship’s compass in the center, with two soft iron spheres to help correct for errors in the
+compass heading. The use of the spheres was suggested by Lord Kelvin.)
+Just like the ship, the iron balls will become magnetic because of the Earth’s field B_e. As
+spheres, the balls will individually act like dipoles. A dipole can be thought of as the field produced
+by two magnetic monopoles of strength ±m at two different points.
+The magnetic field of a single pole is
+B = ±m * r_hat / r^2
+where the positive sign is for a north pole and the negative for a south pole. The dipole magnetic
+field is the sum of the two fields: a north pole at y = +a/2 and a south pole at y = -a/2, where
+the y-axis is horizontal and pointing north. The value a is a small distance much smaller than the radius of
+the iron balls; in general, a = K_i * B_e where K_i is a constant that depends on the size of the iron
+sphere.
+c. Derive an expression for the magnetic field B_i from the iron a distance d >> a from the center
+of the ball. Note that there will be a component directed radially away from the ball and a
+component directed tangent to a circle of radius d around the ball, so using polar coordinates
+is recommended.
+d. If placed directly to the right and left of the ship's compass, the iron balls can be located at a
+distance d to cancel out the error in the magnetic heading for any angle(s) where δθ is largest.
+Assuming that this is done, find the resulting expression for the compass deviation at all headings.`
 const UNLOCKS_MAP: Record<string, string[]> = {
     'MCH-01': ['MCH-03', 'MCH-04'],
     'MCH-02': ['MCH-03', 'MCH-07'],
@@ -101,7 +88,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 
 const TOPIC_NAME = "USAPhO";
-const SUBTOPIC_NAME = "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics";
+const SUBTOPIC_NAME = "Magnetic Fields, Biot-Savart Law, and Ampere's Law";
 
 function buildQuizPrompt({
     questionCount,
@@ -142,7 +129,7 @@ d) [Option 4]
 ---`;
 }
 
-export default function FluidMechanicsPage() {
+export default function MagneticFieldPage() {
     const {
         overrideText,
         setOverrideText,
@@ -185,7 +172,7 @@ export default function FluidMechanicsPage() {
         <main className={`page-wrapper ${styles.pageWrapper}`}>
             <div className={styles.inner}>
 
-                <Link href="/usapho/mechanics" className={styles.breadcrumb}>
+                <Link href="/usapho/eandm" className={styles.breadcrumb}>
                     <svg
                         className={styles.breadcrumbIcon}
                         fill="none"
@@ -197,7 +184,7 @@ export default function FluidMechanicsPage() {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Return to USAPhO Mechanics Directory
+                    Return to USAPhO E&M Directory
                 </Link>
 
                 <div className={styles.header}>
@@ -268,7 +255,7 @@ export default function FluidMechanicsPage() {
                                     <span className={styles.terminalStatusLabel}>Target Locked</span>
                                 </div>
                                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
+                                <p className={styles.terminalSubtitle}>Magnetic Field</p>
                                 <div className={styles.terminalStat}>
                                     <span className={styles.terminalStatLabel}>Questions</span>
                                     <select

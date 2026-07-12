@@ -10,14 +10,13 @@ import styles from "../../usa.module.css";
 
 const PAST_PROBLEMS = [
     {
-        id: "PST_01",
-        title: "USAPhO 2020 Problem B1",
-        desc: "A short video describing the problem and its solution.",
-        url: "https://www.youtube.com/watch?v=wsYU4DY4kRs&t=461s",
-        type: "Video",
-    },
-];
-
+        id: "USA_16_P01",
+        title: "USAPhO 2017 Problem B2",
+        desc: "The problem focuses on electromagnetic induction and mutual inductance between concentric loops, expanding into motional EMF, induced tangential electric fields, and the conversion of electromagnetic field momentum into mechanical impulse.",
+        url: "https://www.aapt.org/physicsteam/2018/upload/2017-USAPhO-exam-2.pdf",
+        type: "Problem"
+    }
+]
 const PHYSICS_FACTS = [
     "The Navier–Stokes equations describe the motion of fluid substances.",
     "Bernoulli’s principle relates pressure, speed, and height in ideal flow.",
@@ -26,59 +25,45 @@ const PHYSICS_FACTS = [
 ];
 
 
-const NODE_ID = 'USA-01';
-const DIFFICULTY_LEVEL = "USAPhO Mechanics physics competition";
-const SAMPLE_PROBLEMS = `When a faucet is turned on, a stream of water flows down with initial speed v0 at the spout.
-For this problem, we define y to be the vertical coordinate with its positive direction pointing
-up.
-Assuming the water speed is only affected by gravity as the water falls, find the speed of water
-v(y) at height y. Define the zero of y such that the equation for v
-2 has only one term and find
-y0, the height of the spout.
-b. Assume that the stream of water falling from the faucet is cylindrically symmetric about a
-vertical axis through the center of the stream. Also assume that the volume of water per unit
-time exiting the spout is constant, and that the shape of the stream of water is constant over
-time.
-In this case, the radius r of the stream of water is a function of vertical position y. Let the
-radius at the faucet be r0. Using your result from part (a), find r(y).
-If r(y) is not constant, it implies that the water has some radial velocity during its fall, in
-contradiction to our assumptions in part (a) that the motion is purely vertical. You may assume
-throughout the problem that any such radial velocity is negligibly small.
-c. The water-air interface has some surface tension, σ. The effect of surface tension is to change
-the pressure in the stream according to the Young-Laplace equation,
-∆P = σ
-
-1
-r
-+
-1
-R
-
-,
-where ∆P is the difference in pressure between the stream and the atmosphere and R is the
-radius of curvature of the vertical profile of the stream, visualized below. (R < 0 for the stream
-of water; the radius of curvature would be positive only if the stream profile curved inwards.)
-|R|
-For this part of the problem, we assume that |R|  |r|, so that the curvature of the vertical
-profile of the stream can be ignored. Also assume that water is incompressible.
-Accounting for the pressure in the stream, find a new equation relating for r(y) in terms of
-σ, r0, v0, and ρ, the density of water. You do not need to solve the equation for r.
-d. After falling for some distance, the water stream usually breaks into smaller droplets. This
-occurs because small random perturbations to the shape of the stream grow over time, eventually
-breaking the stream into apart.
-Copyright c 2020 American Association of Physics Teachers
-2020 USAPhO Part B 7
-For the rest of this problem we ignore the change in the radius of the stream due to changing
-speed of the water, as considered earlier. Instead, we examine small random variations in the
-radius of the stream.
-Random variations can be broken down into a sum of sinusoidal variations in stream radius,
-each with a different wavenumber k. We can analyze these different sinusoidal variations independently.
-Consider a stream of water whose radius obeys
-r(y) = r0 + A cos(ky),
-where A  r0 is the perturbation amplitude. To analyze such a stream, it is sufficient to consider
-only the thickest and thinnest parts of the stream.
-Accounting for both sources of curvature, find a condition on r0 and k such that the size of
-perturbations increases with time.`;
+const NODE_ID = 'USA-16';
+const DIFFICULTY_LEVEL = "USAPhO Electricity and magnetism physics competition";
+const SAMPLE_PROBLEMS = String.raw`plug in Question B2 (from USAPhO 2017)
+Beloit College has a “homemade” 500 kV Van de Graaff proton accelerator, designed and constructed
+by the students and faculty.
+The accelerator dome, an aluminum sphere of radius a = 0.50 meters, is charged by a rubber
+belt with width w = 10 cm that moves with speed v_b = 20 m/s. The accelerating column consists
+of 20 metal rings separated by glass rings; the rings are connected in series with 500 MΩ resistors.
+The proton beam has a current of 25 µA and is accelerated through 500 kV and then passes through
+a tuning electromagnet. The electromagnet consists of wound copper pipe as a conductor. The
+electromagnet effectively creates a uniform field B inside a circular region of radius b = 10 cm and
+zero outside that region.
+Only six of the 20 metal rings and resistors are shown in the configuration. The path taken by the
+protons is from the dome, through the electromagnet, into the target.
+a. Assuming the dome is charged to 500 kV, determine the strength of the electric field at the
+surface of the dome.
+b. Assuming the proton beam is off, determine the time constant for the accelerating dome (the
+time it takes for the charge on the dome to decrease to 1/e ≈ 1/3 of the initial value).
+c. Assuming the 25 µA proton beam is on, determine the surface charge density that must be
+sprayed onto the charging belt in order to maintain a steady charge of 500 kV on the dome.
+d. The proton beam enters the electromagnet and is deflected by an angle θ = 10°. Determine
+the magnetic field strength.
+e. The electromagnet is composed of layers of spiral wound copper pipe; the pipe has inner
+diameter d_i = 0.40 cm and outer diameter d_o = 0.50 cm. The copper pipe is wound into this
+flat spiral that has an inner diameter D_i = 20 cm and outer diameter D_o = 50 cm. Assuming
+the pipe almost touches in the spiral winding, determine the length L in one spiral.
+f. Hollow pipe is used instead of solid conductors in order to allow for cooling of the magnet.
+If the resistivity of copper is ρ = 1.7 × 10^-8 Ω · m, determine the electrical resistance of one
+spiral.
+g. There are N = 24 coils stacked on top of each other. Tap water with an initial temperature
+of T_c = 18°C enters the spiral through the copper pipe to keep it from overheating; the
+water exits at a temperature of T_h = 31°C. The copper pipe carries a direct 45 Amp current
+in order to generate the necessary magnetic field. At what rate must the cooling water flow
+be provided to the electromagnet? Express your answer in liters per second with only one
+significant digit. The specific heat capacity of water is 4200 J / (°C · kg); the density of water is
+1000 kg/m^3.
+h. The protons are fired at a target consisting of Fluorine atoms (Z = 9). What is the distance
+of closest approach to the center of the Fluorine nuclei for the protons? You can assume that
+the Fluorine does not move.`
 const UNLOCKS_MAP: Record<string, string[]> = {
     'MCH-01': ['MCH-03', 'MCH-04'],
     'MCH-02': ['MCH-03', 'MCH-07'],
@@ -101,7 +86,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 
 const TOPIC_NAME = "USAPhO";
-const SUBTOPIC_NAME = "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics";
+const SUBTOPIC_NAME = "Electromagnetic Induction and Maxwell's Equations";
 
 function buildQuizPrompt({
     questionCount,
@@ -142,7 +127,7 @@ d) [Option 4]
 ---`;
 }
 
-export default function FluidMechanicsPage() {
+export default function InductionPage() {
     const {
         overrideText,
         setOverrideText,
@@ -185,7 +170,7 @@ export default function FluidMechanicsPage() {
         <main className={`page-wrapper ${styles.pageWrapper}`}>
             <div className={styles.inner}>
 
-                <Link href="/usapho/mechanics" className={styles.breadcrumb}>
+                <Link href="/usapho/eandm" className={styles.breadcrumb}>
                     <svg
                         className={styles.breadcrumbIcon}
                         fill="none"
@@ -197,7 +182,7 @@ export default function FluidMechanicsPage() {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Return to USAPhO Mechanics Directory
+                    Return to USAPhO E&M Directory
                 </Link>
 
                 <div className={styles.header}>
@@ -268,7 +253,7 @@ export default function FluidMechanicsPage() {
                                     <span className={styles.terminalStatusLabel}>Target Locked</span>
                                 </div>
                                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
+                                <p className={styles.terminalSubtitle}>Electromagnetic Induction</p>
                                 <div className={styles.terminalStat}>
                                     <span className={styles.terminalStatLabel}>Questions</span>
                                     <select

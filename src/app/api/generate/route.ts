@@ -5,29 +5,39 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+type GenerateRequestBody = {
+  prompt?: unknown;
+  difficultyLevel?: unknown;
+};
+
 export async function POST(request: NextRequest) {
   try {
-    // Extract difficultyLevel alongside the prompt
-    const { prompt, difficultyLevel } = await request.json();
+    const body = (await request.json()) as GenerateRequestBody;
+    const { prompt, difficultyLevel } = body;
 
-    if (!prompt || typeof prompt !== "string" || prompt.trim() === "") {
-      return NextResponse.json({ error: "Valid prompt string is required" }, { status: 400 });
+    if (
+      typeof prompt !== "string" ||
+      prompt.trim() === ""
+    ) {
+      return NextResponse.json(
+        { error: "Valid prompt string is required" },
+        { status: 400 },
+      );
     }
 
-    // --- DYNAMIC MODEL ROUTING ---
-    let targetModel = "gpt-5.4-mini"; // Default to fast/cheap for Physics Bowl, F=ma
-    let targetTemperature = 0.4;      // Lowered from 0.7 for better LaTeX/JSON stability
+    let targetModel = "gpt-5.4-mini";
+    let targetTemperature = 0.4;
     let targetMaxTokens = 1200;
 
-    // Check if USAPhO or IPhO is explicitly mentioned in the difficulty or the prompt text
     const isUSAPhO =
-      (difficultyLevel && /usapho|ipho/i.test(difficultyLevel)) ||
+      (typeof difficultyLevel === "string" &&
+        /usapho|ipho/i.test(difficultyLevel)) ||
       /usapho|ipho/i.test(prompt);
 
     if (isUSAPhO) {
-      targetModel = "gpt-5.4"; // Switch to the flagship reasoning engine
-      targetTemperature = 0.1; // Strict logic needed for complex proofs
-      targetMaxTokens = 2500;  // Give the model more runway for deep derivations
+      targetModel = "gpt-5.4";
+      targetTemperature = 0.1;
+      targetMaxTokens = 2500;
     }
 
     const completion = await openai.chat.completions.create({
@@ -38,14 +48,24 @@ export async function POST(request: NextRequest) {
     });
 
     const content = completion.choices[0]?.message?.content;
+
     if (!content) {
-      return NextResponse.json({ error: "No content returned from OpenAI" }, { status: 500 });
+      return NextResponse.json(
+        { error: "No content returned from OpenAI" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ content });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Unknown OpenAI error";
 
-  } catch (error: any) {
     console.error("Error calling OpenAI:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    return NextResponse.json(
+      { error: message },
+      { status: 500 },
+    );
   }
 }

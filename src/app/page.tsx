@@ -1,15 +1,7 @@
 'use client';
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  getAuth,
-  onAuthStateChanged,
-  type User,
-} from "firebase/auth";
-
-import { app } from "../firebase";
+import React from "react";
 import { motion } from "framer-motion";
-const auth = getAuth(app);
 export default function Home() {
   const wordVariants = {
     hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
@@ -29,33 +21,7 @@ export default function Home() {
       },
     },
   };
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollPosition, setLastScrollPosition] = useState(0);
-  const [user, setUser] = useState(null);
 
-  // Listen for auth state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Header hide/show on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollPosition = window.scrollY;
-      if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-      setLastScrollPosition(currentScrollPosition);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollPosition]);
 
 
   return (
@@ -162,7 +128,8 @@ export default function Home() {
                 className="feature-card"
               >
                 <div className="feature-content">
-                  <h4 className="feature-title">Who are "we"?</h4>
+                  <h4 className="feature-title">Who are &quot;we&quot;?</h4>
+
                   <p className="feature-desc">
                     We are current high school students who share a deep passion for advanced theoretical physics, and hope to share our structural insights with those aiming to excel in this amazing subject.
                     The greater our collaborative network, the more formidable our combined framework becomes. If you are driven to join and build this project together, please connect with us.

@@ -8,15 +8,37 @@ import { RenderQuizMath } from "../../../../lib/renderQuizMath";
 import { motion } from "framer-motion";
 import styles from "../../usa.module.css";
 
-const PAST_PROBLEMS = [
-    {
-        id: "PST_01",
-        title: "USAPhO 2020 Problem B1",
-        desc: "A short video describing the problem and its solution.",
-        url: "https://www.youtube.com/watch?v=wsYU4DY4kRs&t=461s",
-        type: "Video",
-    },
-];
+const PAST_PROBLEMS =
+    [
+        {
+            "id": "USA_22_P01",
+            "title": "AAPT Semifinals 2008 Problem A4",
+            "desc": "The problem focuses on mechanical waves and the acoustic Doppler effect, requiring an analytical determination of ground-received frequency transformations over time from a falling acoustic source moving through a colinear gravitational field vector.",
+            "url": "https://www.aapt.org/Programs/contests/upload/olympiad_2008_semi-final.pdf",
+            "type": "Problem"
+        },
+        {
+            "id": "USA_22_P02",
+            "title": "AAPT Semifinals 2011 Problem A2",
+            "desc": "The problem focuses on rigid body dynamics and physical pendulums, applying the parallel axis theorem and small-angle simple harmonic configurations to extract local gravitational acceleration $g$ and structural rod length invariants from periodic datasets.",
+            "url": "https://www.aapt.org/physicsteam/2012/upload/E3-2-2-solutions.pdf",
+            "type": "Problem"
+        },
+        {
+            "id": "USA_22_P03",
+            "title": "AAPT Semifinals 2012 Problem A2",
+            "desc": "The problem focuses on thermodynamic cycles, requiring the calculation of a non-standard cycle's thermal efficiency in terms of its pressure multiplier $\\alpha$ and its adiabatic scaling parameter $\\gamma$ using an isolated log-space linear regression model.",
+            "url": "https://www.aapt.org/physicsteam/2013/upload/E3-2-3.pdf",
+            "type": "Problem"
+        },
+        {
+            "id": "USA_22_P04",
+            "title": "USAPhO 2024 Problem B3",
+            "desc": "The problem focuses on transient and steady-state AC circuit dynamics, mapping the damping profiles of $LCR$ series resonators alongside a Lorentzian optimization strategy near the peak transmission profile to extract quality factor parameters.",
+            "url": "https://aapt.org/physicsteam/upload/USAPhO_Exam_24.pdf",
+            "type": "Problem"
+        }
+    ]
 
 const PHYSICS_FACTS = [
     "The Navier–Stokes equations describe the motion of fluid substances.",
@@ -26,59 +48,31 @@ const PHYSICS_FACTS = [
 ];
 
 
-const NODE_ID = 'USA-01';
-const DIFFICULTY_LEVEL = "USAPhO Mechanics physics competition";
-const SAMPLE_PROBLEMS = `When a faucet is turned on, a stream of water flows down with initial speed v0 at the spout.
-For this problem, we define y to be the vertical coordinate with its positive direction pointing
-up.
-Assuming the water speed is only affected by gravity as the water falls, find the speed of water
-v(y) at height y. Define the zero of y such that the equation for v
-2 has only one term and find
-y0, the height of the spout.
-b. Assume that the stream of water falling from the faucet is cylindrically symmetric about a
-vertical axis through the center of the stream. Also assume that the volume of water per unit
-time exiting the spout is constant, and that the shape of the stream of water is constant over
-time.
-In this case, the radius r of the stream of water is a function of vertical position y. Let the
-radius at the faucet be r0. Using your result from part (a), find r(y).
-If r(y) is not constant, it implies that the water has some radial velocity during its fall, in
-contradiction to our assumptions in part (a) that the motion is purely vertical. You may assume
-throughout the problem that any such radial velocity is negligibly small.
-c. The water-air interface has some surface tension, σ. The effect of surface tension is to change
-the pressure in the stream according to the Young-Laplace equation,
-∆P = σ
-
-1
-r
-+
-1
-R
-
-,
-where ∆P is the difference in pressure between the stream and the atmosphere and R is the
-radius of curvature of the vertical profile of the stream, visualized below. (R < 0 for the stream
-of water; the radius of curvature would be positive only if the stream profile curved inwards.)
-|R|
-For this part of the problem, we assume that |R|  |r|, so that the curvature of the vertical
-profile of the stream can be ignored. Also assume that water is incompressible.
-Accounting for the pressure in the stream, find a new equation relating for r(y) in terms of
-σ, r0, v0, and ρ, the density of water. You do not need to solve the equation for r.
-d. After falling for some distance, the water stream usually breaks into smaller droplets. This
-occurs because small random perturbations to the shape of the stream grow over time, eventually
-breaking the stream into apart.
-Copyright c 2020 American Association of Physics Teachers
-2020 USAPhO Part B 7
-For the rest of this problem we ignore the change in the radius of the stream due to changing
-speed of the water, as considered earlier. Instead, we examine small random variations in the
-radius of the stream.
-Random variations can be broken down into a sum of sinusoidal variations in stream radius,
-each with a different wavenumber k. We can analyze these different sinusoidal variations independently.
-Consider a stream of water whose radius obeys
-r(y) = r0 + A cos(ky),
-where A  r0 is the perturbation amplitude. To analyze such a stream, it is sufficient to consider
-only the thickest and thinnest parts of the stream.
-Accounting for both sources of curvature, find a condition on r0 and k such that the size of
-perturbations increases with time.`;
+const NODE_ID = 'USA-22';
+const DIFFICULTY_LEVEL = "USAPhO physics competition";
+const SAMPLE_PROBLEMS = String.raw`plug in Question A2 (from USAPhO 2016)
+A tape recorder playing a single tone of frequency f_0 is dropped from rest at a height h. You stand directly
+underneath the tape recorder and measure the frequency observed as a function of time. Here t = 0 s is the
+time at which the tape recorder was dropped.
+t (s) | f (Hz)
+2.0   | 581
+4.0   | 619
+6.0   | 665
+8.0   | 723
+10.0  | 801
+The acceleration due to gravity is g = 9.80 m/s^2 and the speed of sound in air is v_snd = 340 m/s. Ignore
+air resistance. You might need to use the Doppler shift formula for co-linear motion of sources and observers
+in still air,
+f = f_0 * (v_snd ± v_obs) / (v_snd ± v_src)
+where f_0 is the emitted frequency as determined by the source, f is the frequency as detected by the observer,
+and v_snd, v_src, and v_obs are the speed of sound in air, the speed of the source, and the speed of the observer.
+The positive and negative signs are dependent upon the relative directions of the motions of the source and
+the observer.
+a. Determine the frequency measured on the ground at time t, in terms of f_0, g, h, and v_snd. Consider
+only the case where the falling tape recorder doesn’t exceed the speed of sound v_snd.
+b. Verify graphically that your result is consistent with the provided data.
+c. What (numerically) is the frequency played by the tape recorder?
+d. From what height h was the tape recorder dropped?`
 const UNLOCKS_MAP: Record<string, string[]> = {
     'MCH-01': ['MCH-03', 'MCH-04'],
     'MCH-02': ['MCH-03', 'MCH-07'],
@@ -101,8 +95,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 
 const TOPIC_NAME = "USAPhO";
-const SUBTOPIC_NAME = "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics";
-
+const SUBTOPIC_NAME = "Data Analysis and Error Propagation";
 function buildQuizPrompt({
     questionCount,
     overrideText,
@@ -142,7 +135,7 @@ d) [Option 4]
 ---`;
 }
 
-export default function FluidMechanicsPage() {
+export default function AdvancedStatPage() {
     const {
         overrideText,
         setOverrideText,
@@ -185,7 +178,7 @@ export default function FluidMechanicsPage() {
         <main className={`page-wrapper ${styles.pageWrapper}`}>
             <div className={styles.inner}>
 
-                <Link href="/usapho/mechanics" className={styles.breadcrumb}>
+                <Link href="/usapho/dataanalysis" className={styles.breadcrumb}>
                     <svg
                         className={styles.breadcrumbIcon}
                         fill="none"
@@ -197,7 +190,7 @@ export default function FluidMechanicsPage() {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Return to USAPhO Mechanics Directory
+                    Return to USAPhO Data Analysis Directory
                 </Link>
 
                 <div className={styles.header}>
@@ -268,7 +261,7 @@ export default function FluidMechanicsPage() {
                                     <span className={styles.terminalStatusLabel}>Target Locked</span>
                                 </div>
                                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
+                                <p className={styles.terminalSubtitle}>Data Analysis</p>
                                 <div className={styles.terminalStat}>
                                     <span className={styles.terminalStatLabel}>Questions</span>
                                     <select

@@ -10,14 +10,20 @@ import styles from "../../usa.module.css";
 
 const PAST_PROBLEMS = [
     {
-        id: "PST_01",
-        title: "USAPhO 2020 Problem B1",
-        desc: "A short video describing the problem and its solution.",
-        url: "https://www.youtube.com/watch?v=wsYU4DY4kRs&t=461s",
-        type: "Video",
+        id: "USA_13_P01",
+        title: "USAPhO 2017 Problem A4",
+        desc: "The problem focuses on parallel cylindrical conductors, requiring calculations for capacitance per unit length, magnetic fields midway between the configurations, and finding the equilibrium resistance balancing electrical and magnetic forces.",
+        url: "https://www.aapt.org/physicsteam/2017/upload/2017-USAPhO-Exam.pdf",
+        type: "Problem"
     },
-];
-
+    {
+        id: "USA_13_P02",
+        title: "USAPhO 2022 Problem A3",
+        desc: "The problem focuses on a parallel-plate capacitor partially submerged in a liquid dielectric, analyzing electrostatic energy storage gradients, fluid boundaries, and equilibrium changes under constant voltage vs. constant charge conditions.",
+        url: "https://aapt.org/physicsteam/upload/2022-USAPhO-Exam.pdf",
+        type: "Problem"
+    }
+]
 const PHYSICS_FACTS = [
     "The Navier–Stokes equations describe the motion of fluid substances.",
     "Bernoulli’s principle relates pressure, speed, and height in ideal flow.",
@@ -26,59 +32,13 @@ const PHYSICS_FACTS = [
 ];
 
 
-const NODE_ID = 'USA-01';
-const DIFFICULTY_LEVEL = "USAPhO Mechanics physics competition";
-const SAMPLE_PROBLEMS = `When a faucet is turned on, a stream of water flows down with initial speed v0 at the spout.
-For this problem, we define y to be the vertical coordinate with its positive direction pointing
-up.
-Assuming the water speed is only affected by gravity as the water falls, find the speed of water
-v(y) at height y. Define the zero of y such that the equation for v
-2 has only one term and find
-y0, the height of the spout.
-b. Assume that the stream of water falling from the faucet is cylindrically symmetric about a
-vertical axis through the center of the stream. Also assume that the volume of water per unit
-time exiting the spout is constant, and that the shape of the stream of water is constant over
-time.
-In this case, the radius r of the stream of water is a function of vertical position y. Let the
-radius at the faucet be r0. Using your result from part (a), find r(y).
-If r(y) is not constant, it implies that the water has some radial velocity during its fall, in
-contradiction to our assumptions in part (a) that the motion is purely vertical. You may assume
-throughout the problem that any such radial velocity is negligibly small.
-c. The water-air interface has some surface tension, σ. The effect of surface tension is to change
-the pressure in the stream according to the Young-Laplace equation,
-∆P = σ
-
-1
-r
-+
-1
-R
-
-,
-where ∆P is the difference in pressure between the stream and the atmosphere and R is the
-radius of curvature of the vertical profile of the stream, visualized below. (R < 0 for the stream
-of water; the radius of curvature would be positive only if the stream profile curved inwards.)
-|R|
-For this part of the problem, we assume that |R|  |r|, so that the curvature of the vertical
-profile of the stream can be ignored. Also assume that water is incompressible.
-Accounting for the pressure in the stream, find a new equation relating for r(y) in terms of
-σ, r0, v0, and ρ, the density of water. You do not need to solve the equation for r.
-d. After falling for some distance, the water stream usually breaks into smaller droplets. This
-occurs because small random perturbations to the shape of the stream grow over time, eventually
-breaking the stream into apart.
-Copyright c 2020 American Association of Physics Teachers
-2020 USAPhO Part B 7
-For the rest of this problem we ignore the change in the radius of the stream due to changing
-speed of the water, as considered earlier. Instead, we examine small random variations in the
-radius of the stream.
-Random variations can be broken down into a sum of sinusoidal variations in stream radius,
-each with a different wavenumber k. We can analyze these different sinusoidal variations independently.
-Consider a stream of water whose radius obeys
-r(y) = r0 + A cos(ky),
-where A  r0 is the perturbation amplitude. To analyze such a stream, it is sufficient to consider
-only the thickest and thinnest parts of the stream.
-Accounting for both sources of curvature, find a condition on r0 and k such that the size of
-perturbations increases with time.`;
+const NODE_ID = 'USA-13';
+const DIFFICULTY_LEVEL = "USAPhO Electricity and magnetism physics competition";
+const SAMPLE_PROBLEMS = String.raw`plug in Question A4 (from USAPhO 2017)
+Two identical long cylindrical conductors, of diameter d and negligible resistance, are placed parallel to each other with their axes separated by distance D = 50d. A battery of voltage V is connected between the ends of the wires, and a resistor R is connected across the other ends.
+a. Find the capacitance per unit length of the two parallel cylindrical conductors. Express your answer in terms of d, D, and ε_0.
+b. Find the magnetic field B at a point midway between the two conductors when a current I flows through them in opposite directions. Express your answer in terms of I, D, and μ_0.
+c. Numerically compute the resistance R that makes the electric and magnetic forces between the conductors equal.`
 const UNLOCKS_MAP: Record<string, string[]> = {
     'MCH-01': ['MCH-03', 'MCH-04'],
     'MCH-02': ['MCH-03', 'MCH-07'],
@@ -101,7 +61,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 
 const TOPIC_NAME = "USAPhO";
-const SUBTOPIC_NAME = "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics";
+const SUBTOPIC_NAME = "Dielectric, Capatitance, and Electrostatic Energy Densities";
 
 function buildQuizPrompt({
     questionCount,
@@ -142,7 +102,7 @@ d) [Option 4]
 ---`;
 }
 
-export default function FluidMechanicsPage() {
+export default function DielectricPage() {
     const {
         overrideText,
         setOverrideText,
@@ -185,7 +145,7 @@ export default function FluidMechanicsPage() {
         <main className={`page-wrapper ${styles.pageWrapper}`}>
             <div className={styles.inner}>
 
-                <Link href="/usapho/mechanics" className={styles.breadcrumb}>
+                <Link href="/usapho/eandm" className={styles.breadcrumb}>
                     <svg
                         className={styles.breadcrumbIcon}
                         fill="none"
@@ -197,7 +157,7 @@ export default function FluidMechanicsPage() {
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Return to USAPhO Mechanics Directory
+                    Return to USAPhO E&M Directory
                 </Link>
 
                 <div className={styles.header}>
@@ -268,7 +228,7 @@ export default function FluidMechanicsPage() {
                                     <span className={styles.terminalStatusLabel}>Target Locked</span>
                                 </div>
                                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                                <p className={styles.terminalSubtitle}>Fluid Mechanics</p>
+                                <p className={styles.terminalSubtitle}>Dielectrics and Capatitance</p>
                                 <div className={styles.terminalStat}>
                                     <span className={styles.terminalStatLabel}>Questions</span>
                                     <select
