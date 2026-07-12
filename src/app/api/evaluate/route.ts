@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyFirebaseToken } from "../../../middleware/auth";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 60;
 
 type GradedResult = {
   index?: number;
