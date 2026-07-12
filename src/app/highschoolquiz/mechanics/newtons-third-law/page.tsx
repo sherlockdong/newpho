@@ -1,24 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../../firebase";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  Timestamp,
-  doc,
-  getDoc,
-  setDoc
-} from "firebase/firestore";
 import "katex/dist/katex.min.css";
-import { InlineMath } from "react-katex";
+import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
+import { getOptionTextByLetter } from "../../../../lib/quizUtils";
+import { RenderQuizMath } from "../../../../lib/renderQuizMath";
 import { motion } from "framer-motion";
-import { parseQuizQuestions } from "../../../../lib/quizParser";
 import styles from "../../hsdirectory.module.css";
-
+const DIFFICULTY_LEVEL = "High School Physics";
 const STUDY_RESOURCES = [
   {
     id: "REF_01",
@@ -40,7 +29,7 @@ const STUDY_RESOURCES = [
     desc: "A brief video review on Newton's Third Law.",
     url: "https://www.flippingphysics.com/ap-physics-1-unit-2a-review.html",
     type: "Video",
-  }, 
+  },
   {
     id: "REF_04",
     title: "Organic Chemistry Tutor",
@@ -79,209 +68,131 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
   'MCH-09': ['MCH-06', 'MCH-07'],
 };
 
-export default function NewtonsThirdLawPage() {
-  const auth = getAuth(app);
 
-  const TOPIC_NAME = "Mechanics";
-  const SUBTOPIC_NAME = "Newton's Third Law";
+const TOPIC_NAME = "Mechanics";
+const SUBTOPIC_NAME = "Newton's Third Law";
+function buildQuizPrompt({
+  questionCount,
+  overrideText,
+  subtopicName,
+  difficultyLevel,
+}: {
+  questionCount: number;
+  overrideText: string;
+  subtopicName: string;
+  difficultyLevel: string;
+}) {
+  return String.raw`
+You are an experienced high-school physics teacher creating a diagnostic multiple-choice quiz.
 
-  const [overrideText, setOverrideText] = useState("");
-  const [questionCount, setQuestionCount] = useState(3);
-  const [quiz, setQuiz] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isEvaluating, setIsEvaluating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<any>({});
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [currentFact, setCurrentFact] = useState("");
-  const [showAnswers, setShowAnswers] = useState(false);
-  const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [aiFeedback, setAiFeedback] = useState<string | null>(null);
-  const [questionExplanations, setQuestionExplanations] = useState<any[]>([]);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, [auth]);
+QUIZ SETTINGS:
+- Topic: ${subtopicName}
+- Difficulty: ${difficultyLevel}
+- Number of questions: exactly ${questionCount}
+${overrideText ? `- Additional instructions: ${overrideText}` : ""}
 
-  useEffect(() => {
-    let interval: any;
-    if (isGenerating || isEvaluating) {
-      setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
-      interval = setInterval(() => {
-        setCurrentFact(PHYSICS_FACTS[Math.floor(Math.random() * PHYSICS_FACTS.length)]);
-      }, 4000);
-    }
-    return () => clearInterval(interval);
-  }, [isGenerating, isEvaluating]);
 
-  async function handleGenerateQuiz() {
-    setIsGenerating(true);
-    setError(null);
-    setQuiz(null);
-    setAnswers({});
-    setStartTime(Date.now());
-    setShowAnswers(false);
-    setFinalScore(null);
-    setAiFeedback(null);
-    setQuestionExplanations([]);
+QUESTION REQUIREMENTS:
+1. Generate exactly ${questionCount} questions about ${subtopicName}.
+2. Test genuine physics understanding, not simple vocabulary memorization.
+3. Include a balanced mix of:
+   - conceptual reasoning;
+   - interpretation of physical situations;
+   - calculations appropriate for high-school physics;
+   - common misconceptions students may have.
+4. Each question must have exactly four answer choices labeled a), b), c), and d).
+5. Each question must have exactly one correct answer.
+6. Make incorrect options believable and based on realistic student mistakes.
+7. Keep all calculations solvable using the information provided.
+8. Do not require calculus unless the additional instructions explicitly request it.
+9. Use standard SI units unless another unit system is necessary.
+10. Use LaTeX for variables, equations, and scientific notation:
+    - Inline mathematics: $...$
+    - Display mathematics: $$...$$
+11. Do not repeat questions or create questions that test the same idea in nearly identical ways.
+12. Do not reveal the correct answer inside the question or answer choices.
 
-    try {
-      const prompt = `You are an expert physics professor generating a diagnostic quiz on: "${SUBTOPIC_NAME}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of Newton's Third Law.\n"}
 
-CRITICAL INSTRUCTIONS:
-1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
-2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-3. Output ONLY the quiz. Do not include any introductory text.
-4. You may use standard physics constants.
+OUTPUT RULES:
+- Output only the quiz.
+- Do not include an introduction, conclusion, explanations, hints, or grading commentary.
+- Follow the exact format below for every question.
+- Write the correct answer as one lowercase letter: a, b, c, or d.
 
-Strictly follow this exact format for every question:
-### Question [number]
+
+EXACT FORMAT:
+
+
+### Question 1
 [Question text]
-a) [Option 1]
-b) [Option 2]
-c) [Option 3]
-d) [Option 4]
-**Correct Answer:** [Correct option letter]
----`;
-
-      const quizResponse = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!quizResponse.ok) throw new Error(`API Error: ${await quizResponse.text()}`);
-
-      const data = await quizResponse.json();
-      const quizContent = data.content || "";
-
-      const parsedQuestions = parseQuizQuestions(quizContent);
-      if (!quizContent || parsedQuestions.length === 0) {
-        throw new Error("Quiz parsing failed: The AI returned invalid formatting.");
-      }
-
-      setQuiz(quizContent);
-      setTimeout(() => document.getElementById("quiz-anchor")?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsGenerating(false);
-    }
-  }
+a) [First option]
+b) [Second option]
+c) [Third option]
+d) [Fourth option]
+**Correct Answer:** [lowercase letter]
+---
 
 
+Repeat this structure until exactly ${questionCount} complete questions have been generated.
+`;
+}
 
-  const handleAnswerChange = (index: number, value: string) => {
-    setAnswers((prev: any) => ({ ...prev, [index]: { ...prev[index], answer: value } }));
-  };
 
-  const questions = parseQuizQuestions(quiz || "");
-
-  async function updateProgress(correctCount: number) {
-    if (!user?.uid) return;
-    const db = getFirestore(app);
-    const progressRef = doc(db, 'users', user.uid, 'progress', 'mechanics');
-
-    const snap = await getDoc(progressRef);
-    const current = (snap.exists() ? snap.data() : {}) as Record<string, string>;
-
-    const updates: Record<string, string> = { ...current };
-
-    if (correctCount >= 5) {
-      updates[NODE_ID] = 'mastered';
-
-      const candidates = UNLOCKS_MAP[NODE_ID] ?? [];
-      for (const candidateId of candidates) {
-        const prereqs = PREREQUISITES_MAP[candidateId] ?? [];
-        const allMet = prereqs.every(p => updates[p] === 'mastered');
-        if (allMet && updates[candidateId] !== 'mastered') {
-          updates[candidateId] = 'unlocked';
-        }
-      }
-    }
-
-    await setDoc(progressRef, updates, { merge: true });
-  }
-
-  async function handleSubmitAnswers() {
-    setIsEvaluating(true);
-    setError(null);
-
-    try {
-      const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
-      let correctCount = 0;
-      const gradedResults = questions.map((q, index) => {
-        const userAnswer = answers[index]?.answer?.toLowerCase() || "none";
-        const isCorrect = userAnswer === q.correctAnswer;
-        if (isCorrect) correctCount++;
-        return { question: q.text, userAnswer, correctAnswer: q.correctAnswer, isCorrect };
-      });
-
-      setFinalScore(correctCount);
-      setShowAnswers(true);
-
-      const response = await fetch("/api/evaluate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid || "guest", score: correctCount, total: questions.length, gradedResults }),
-      });
-
-      if (!response.ok) throw new Error("Evaluate failed.");
-      const data = await response.json();
-      setAiFeedback(data.analysis?.feedbackSummary || "Diagnostic complete.");
-      setQuestionExplanations(data.analysis?.questionExplanations || []);
-
-      const db = getFirestore(app);
-      await addDoc(collection(db, "quizLogs"), {
-        score: correctCount,
-        totalQuestions: questions.length,
-        topic: `${TOPIC_NAME} - ${SUBTOPIC_NAME}`,
-        timeTaken: `${timeTaken}s`,
-        analysis: data.analysis?.feedbackSummary,
-        timestamp: Timestamp.fromDate(new Date()),
-        userId: user?.uid,
-      });
-
-      await updateProgress(correctCount);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsEvaluating(false);
-    }
-  }
-
-  const renderMathText = (text: string) => {
-    const parts = text.split(/(\$.*?\$)/);
-    return parts.map((part, idx) =>
-      part.startsWith("$") && part.endsWith("$") ? (
-        <InlineMath key={idx} math={part.slice(1, -1)} />
-      ) : (
-        <span key={idx}>{part}</span>
-      )
-    );
-  };
+export default function NewtonsThirdLawPage() {
+  const {
+    overrideText,
+    setOverrideText,
+    questionCount,
+    setQuestionCount,
+    quiz,
+    parsedQuestions,
+    isGenerating,
+    isEvaluating,
+    isBusy,
+    error,
+    answers,
+    showAnswers,
+    finalScore,
+    aiFeedback,
+    questionExplanations,
+    currentFact,
+    isNodeAccessible,
+    authReady,
+    user,
+    progressWarning,
+    handleGenerateQuiz,
+    handleSubmitAnswers,
+    handleAnswerChange,
+    normalizeAnswer,
+  } = useQuizDiagnostics({
+    nodeId: NODE_ID,
+    progressCollection: "mechanics",
+    unlocksMap: UNLOCKS_MAP,
+    prerequisitesMap: PREREQUISITES_MAP,
+    topicName: TOPIC_NAME,
+    subtopicName: SUBTOPIC_NAME,
+    difficultyLevel: DIFFICULTY_LEVEL,
+    physicsFacts: PHYSICS_FACTS,
+    buildPrompt: buildQuizPrompt,
+  });
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
       <div className={styles.inner}>
 
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>
-<svg 
-  className={styles.breadcrumbIcon} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-</svg>
+          <svg
+            className={styles.breadcrumbIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
           Return to Mechanics Directory
         </Link>
 
@@ -318,17 +229,17 @@ d) [Option 4]
                 </div>
                 <div className={styles.protocolFooter}>
                   Access resource
-<svg 
-  className={styles.protocolArrow} 
-  fill="none" 
-  viewBox="0 0 24 24" 
-  width="16" 
-  height="16" 
-  stroke="currentColor" 
-  strokeWidth={2}
->
-  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-</svg>
+                  <svg
+                    className={styles.protocolArrow}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </div>
               </a>
             ))}
@@ -353,30 +264,30 @@ d) [Option 4]
                   <span className={styles.terminalStatusLabel}>Target Locked</span>
                 </div>
                 <h3 className={styles.terminalId}>{NODE_ID}</h3>
-                <p className={styles.terminalSubtitle}>Newton's Third Law</p>
+                <p className={styles.terminalSubtitle}>Newtons Third Law</p>
                 <div className={styles.terminalStat}>
-  <span className={styles.terminalStatLabel}>Questions</span>
-  <select 
-    value={questionCount} 
-    onChange={(e) => setQuestionCount(Number(e.target.value))}
-    style={{ 
-      background: '#0f0f20', 
-      color: '#4f8ef7', 
-      border: '1px solid #333', 
-      padding: '4px 8px', 
-      borderRadius: '6px',
-      fontSize: '14px',
-      cursor: 'pointer',
-      outline: 'none',
-      fontFamily: 'monospace'
-    }}
-  >
-<option value={3}>3 Questions</option>
-<option value={5}>5 Questions</option>
-<option value={10}>10 Questions</option>
-<option value={15}>15 Questions</option>
-  </select>
-</div>
+                  <span className={styles.terminalStatLabel}>Questions</span>
+                  <select
+                    value={questionCount}
+                    onChange={(e) => !isBusy && setQuestionCount(Number(e.target.value))} disabled={isBusy}
+                    style={{
+                      background: '#0f0f20',
+                      color: '#4f8ef7',
+                      border: '1px solid #333',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    <option value={3}>3 Questions</option>
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -387,7 +298,7 @@ d) [Option 4]
                 </label>
                 <textarea
                   value={overrideText}
-                  onChange={(e) => setOverrideText(e.target.value)}
+                  onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                   className={styles.terminalTextarea}
                   rows={3}
                   placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
@@ -396,9 +307,9 @@ d) [Option 4]
               <div className={styles.terminalFooter}>
                 <button
                   onClick={handleGenerateQuiz}
-                  disabled={isGenerating}
+                  disabled={isBusy || !authReady || !user || !isNodeAccessible}
                   className="tg-btn"
-                  style={{ opacity: isGenerating ? 0.5 : 1, cursor: isGenerating ? "not-allowed" : "pointer" }}
+                  style={{ opacity: isBusy || !authReady || !user || !isNodeAccessible ? 0.5 : 1, cursor: isBusy || !authReady || !user || !isNodeAccessible ? "not-allowed" : "pointer" }}
                 >
                   {isGenerating ? "Compiling Matrix..." : "Initialize Diagnostic"}
                 </button>
@@ -411,13 +322,17 @@ d) [Option 4]
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.loadingBox}>
             <div className={styles.spinner} />
             <p className={styles.loadingLabel}>
-              {isGenerating ? "Generating GPT-4o Parameters..." : "AI Evaluating Telemetry..."}
+              {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
-            <p className={styles.loadingFact}>"{currentFact}"</p>
+            <p className={styles.loadingFact}>“{currentFact}”</p>
           </motion.div>
         )}
 
         {error && <div className={styles.errorBox}>System Error: {error}</div>}
+        {progressWarning && <div className={styles.errorBox}>Progress Warning: {progressWarning}</div>}
+        {!authReady && <div className={styles.errorBox}>Initializing authentication...</div>}
+        {authReady && !user && <div className={styles.errorBox}>Sign in to generate and submit quizzes.</div>}
+        {authReady && user && !isNodeAccessible && <div className={styles.errorBox}>Prerequisites for this node are not yet mastered.</div>}
 
         <div id="quiz-anchor" />
         {showAnswers && (
@@ -429,42 +344,51 @@ d) [Option 4]
             <p className={styles.resultsLabel}>Diagnostic Score</p>
             <div className={styles.resultsScore}>
               {finalScore}
-              <span className={styles.resultsScoreDenom}> / {questions.length}</span>
+              <span className={styles.resultsScoreDenom}> / {parsedQuestions.length}</span>
             </div>
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
-            <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
-            {questions.length > 0 && (
-  <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-    {questions.map((q, idx) => {
-      const correctOption = q.options.find(
-        (opt: string) => opt.charAt(0).toLowerCase() === q.correctAnswer
-      );
-      const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+            <div className={styles.resultsFeedbackText}>
+              <RenderQuizMath text={aiFeedback || ""} />
+            </div>
 
-      return (
-        <div
-          key={idx}
-          style={{
-            background: '#0f0f20',
-            border: '1px solid #333',
-            borderRadius: '6px',
-            padding: '10px 14px',
-          }}
-        >
-          <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
-            Q_0{idx + 1} — Correct: {renderMathText(correctOption || "")}
-          </p>
-          {explanation && (
-            <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-              {explanation}
-            </p>
-          )}
-        </div>
-      );
-    })}
-  </div>
-)}
+            {parsedQuestions.length > 0 && (
+              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {parsedQuestions.map((q, idx) => {
+                  const correctAnswer = normalizeAnswer(q.correctAnswer);
+                  const correctOption = getOptionTextByLetter(q, correctAnswer);
+                  const explanation = questionExplanations.find((e) => e.index === idx)?.explanation;
+
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        background: '#0f0f20',
+                        border: '1px solid #333',
+                        borderRadius: '6px',
+                        padding: '10px 14px',
+                      }}
+                    >
+                      <p style={{ color: '#4f8ef7', fontFamily: 'monospace', fontSize: '13px', margin: 0 }}>
+                        Q_0{idx + 1} — Correct: {<RenderQuizMath text={correctOption || ""} />}
+                      </p>
+                      {explanation && (
+                        <div
+                          style={{
+                            color: "#aaa",
+                            fontSize: "13px",
+                            margin: "6px 0 0 0",
+                          }}
+                        >
+                          <RenderQuizMath text={explanation} />
+                        </div>
+                      )}
+
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -474,29 +398,29 @@ d) [Option 4]
             animate={{ opacity: 1, y: 0 }}
             className={styles.quizSection}
           >
-            {questions.length > 0 && (
+            {parsedQuestions.length > 0 && (
               <form onSubmit={(e) => { e.preventDefault(); handleSubmitAnswers(); }}>
                 <div className={styles.questionList}>
-                  {questions.map((question, index) => {
-                    const userAnswer = answers[index]?.answer?.toLowerCase();
-                    const isCorrect = userAnswer === question.correctAnswer;
+                  {parsedQuestions.map((question, index) => {
+                    const userAnswer = normalizeAnswer(answers[index]?.answer);
+                    const correctAnswer = normalizeAnswer(question.correctAnswer);
+                    const isCorrect = userAnswer === correctAnswer;
 
                     return (
-                      <div
-                        key={index}
+                      <div id={`question-${index}`} key={index}
                         className={[
                           styles.questionCard,
                           showAnswers ? (isCorrect ? styles.correct : styles.incorrect) : "",
                         ].join(" ")}
                       >
                         <div className={styles.questionNumber}>Q_0{index + 1}</div>
-                        <h3 className={styles.questionText}>{renderMathText(question.text)}</h3>
+                        <h3 className={styles.questionText}>{<RenderQuizMath text={question.text} />}</h3>
 
                         <div className={styles.optionsList}>
                           {question.options.map((option: string, optIdx: number) => {
-                            const optionLetter = option.charAt(0).toLowerCase();
+                            const optionLetter = normalizeAnswer(option);
                             const isSelected = userAnswer === optionLetter;
-                            const isActuallyCorrect = optionLetter === question.correctAnswer;
+                            const isActuallyCorrect = optionLetter === correctAnswer;
 
                             let optionClass = styles.optionLabel;
                             if (showAnswers) {
@@ -514,11 +438,11 @@ d) [Option 4]
                                   name={`question-${index}`}
                                   value={optionLetter}
                                   checked={isSelected}
-                                  onChange={(e) => !showAnswers && handleAnswerChange(index, e.target.value)}
-                                  disabled={showAnswers}
+                                  onChange={(e) => !showAnswers && !isBusy && handleAnswerChange(index, e.target.value)}
+                                  disabled={showAnswers || isBusy}
                                   className={styles.optionRadio}
                                 />
-                                <span className={styles.optionText}>{renderMathText(option)}</span>
+                                <span className={styles.optionText}>{<RenderQuizMath text={option} />}</span>
                               </label>
                             );
                           })}
@@ -532,9 +456,9 @@ d) [Option 4]
                   <div className={styles.submitRow}>
                     <button
                       type="submit"
-                      disabled={isEvaluating}
+                      disabled={isBusy || !authReady || !user}
                       className="tg-btn"
-                      style={{ opacity: isEvaluating ? 0.5 : 1 }}
+                      style={{ opacity: isBusy || !authReady || !user ? 0.5 : 1 }}
                     >
                       Transmit Telemetry
                     </button>
@@ -546,6 +470,6 @@ d) [Option 4]
         )}
 
       </div>
-    </main>
+    </main >
   );
 }

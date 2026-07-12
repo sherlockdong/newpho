@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { useRouter } from "next/navigation";
 import { app } from "../../firebase";
 import { motion } from "framer-motion";
@@ -11,7 +16,9 @@ import styles from "./fmapb.module.css";
 const auth = getAuth(app);
 
 export default function FmaIndexPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

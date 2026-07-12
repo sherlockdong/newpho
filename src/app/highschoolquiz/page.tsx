@@ -2,21 +2,28 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import { useRouter } from "next/navigation";
-import { app } from "../../firebase"; 
+import { app } from "../../firebase";
 import { motion } from "framer-motion";
 
 const auth = getAuth(app);
 
 export default function QuizIndexPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const topics = [
     { slug: "mechanics", name: "Mechanics", code: "MCH-00" },
-     { slug: "electricity", name: "Electricity and Magnetism", code: "ELM-00" },
+    { slug: "electricity", name: "Electricity and Magnetism", code: "ELM-00" },
   ];
   /*  { slug: "propertiesomatter", name: "Properties of Matter", code: "prm-00" },
     { slug: "heat", name: "Heat", code: "HEA-00" },
@@ -34,14 +41,14 @@ export default function QuizIndexPage() {
     }
   };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  show: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { type: "spring" as const, stiffness: 100 } 
-  }
-};
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring" as const, stiffness: 100 }
+    }
+  };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -67,12 +74,12 @@ const itemVariants = {
   }
 
   // Prevents UI flashing while router.push executes
-  if (!user) return null; 
+  if (!user) return null;
 
   return (
     <main className="page-wrapper">
       <div className="max-w-[1100px] mx-auto px-6">
-        
+
         {/* Header Section */}
         <div className="mb-12 text-center md:text-left">
           <div className="inline-block px-3 py-1 mb-4 text-xs font-mono text-[#4f8ef7] bg-[#4f8ef7]/10 border border-[#4f8ef7]/20 rounded-full">
@@ -87,15 +94,15 @@ const itemVariants = {
         </div>
 
         {/* The Module Grid */}
-        <motion.div 
-          variants={containerVariants} 
-          initial="hidden" 
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
           animate="show"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {topics.map((topic) => (
             <Link href={`/highschoolquiz/${topic.slug}`} key={topic.slug} className="block group">
-              <motion.div 
+              <motion.div
                 variants={itemVariants}
                 className="flex flex-col h-full bg-[#0A0A18] border border-zinc-800 p-6 rounded-2xl hover:border-[#4f8ef7]/50 hover:bg-[#0c0c1f] transition-all duration-300 relative overflow-hidden module-card"
               >
@@ -105,14 +112,14 @@ const itemVariants = {
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-mono text-zinc-500 group-hover:text-[#4f8ef7] transition-colors">
                     SYS_// {topic.code}
-                  </span> 
+                  </span>
 
                   {/* Added 'bg-transparent' to fix the mismatched box color! */}
                   <svg className="module-arrow w-4 h-4 shrink-0 bg-transparent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </div>
-                
+
                 <h2 className="text-lg font-bold text-white font-heading tracking-wide leading-snug group-hover:text-[#e8eaf6]">
                   {topic.name}
                 </h2>

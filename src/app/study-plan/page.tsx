@@ -1,11 +1,18 @@
 // app/study-plan/page.tsx
 "use client";
 import { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
 import ReactMarkdown from "react-markdown";
 
 export default function StudyPlanPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
   const [studyPlan, setStudyPlan] = useState<string>("Loading your personalized study plan...");
 
   useEffect(() => {
