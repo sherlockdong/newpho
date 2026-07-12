@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyFirebaseToken } from "../../../middleware/auth";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 type GradedResult = {
   index?: number;
@@ -294,7 +294,7 @@ export async function POST(
         },
       },
 
-      max_output_tokens: 2_000,
+      max_output_tokens: isOlympiadLevel ? 16_000 : 10_000,
     });
 
     if (!response.output_text) {
