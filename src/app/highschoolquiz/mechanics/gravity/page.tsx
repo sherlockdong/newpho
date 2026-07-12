@@ -39,7 +39,7 @@ const PHYSICS_FACTS = [
 ];
 
 const NODE_ID = 'MCH-08';
-
+const DIFFICULTY_LEVEL = "high school physics"
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
   'MCH-02': ['MCH-03', 'MCH-07'],
@@ -126,9 +126,9 @@ export default function GravityPage() {
     progressCollection: "mechanics",
     unlocksMap: UNLOCKS_MAP,
     prerequisitesMap: PREREQUISITES_MAP,
-    topicName: "Mechanics",
-    subtopicName: "Gravity",
-    difficultyLevel: "High School Physics",
+    topicName: TOPIC_NAME,
+    subtopicName: SUBTOPIC_NAME,
+    difficultyLevel: DIFFICULTY_LEVEL,
     physicsFacts: PHYSICS_FACTS,
     buildPrompt: buildQuizPrompt,
   });
@@ -257,7 +257,7 @@ export default function GravityPage() {
                   onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                   className={styles.terminalTextarea}
                   rows={3}
-                  placeholder='> e.g., "Make the parsedQuestions strictly conceptual with no math calculations required..."'
+                  placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
                 />
               </div>
               <div className={styles.terminalFooter}>
@@ -280,7 +280,7 @@ export default function GravityPage() {
             <p className={styles.loadingLabel}>
               {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
-            <p className={styles.loadingFact}>"{currentFact}"</p>
+            <p className={styles.loadingFact}>“{currentFact}”</p>
           </motion.div>
         )}
 
@@ -304,13 +304,16 @@ export default function GravityPage() {
             </div>
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
-            <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
+            <div className={styles.resultsFeedbackText}>
+              <RenderQuizMath text={aiFeedback || ""} />
+            </div>
+
             {parsedQuestions.length > 0 && (
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {parsedQuestions.map((q, idx) => {
                   const correctAnswer = normalizeAnswer(q.correctAnswer);
                   const correctOption = getOptionTextByLetter(q, correctAnswer);
-                  const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+                  const explanation = questionExplanations.find((e) => e.index === idx)?.explanation;
 
                   return (
                     <div
@@ -326,10 +329,17 @@ export default function GravityPage() {
                         Q_0{idx + 1} — Correct: {<RenderQuizMath text={correctOption || ""} />}
                       </p>
                       {explanation && (
-                        <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-                          {explanation}
-                        </p>
+                        <div
+                          style={{
+                            color: "#aaa",
+                            fontSize: "13px",
+                            margin: "6px 0 0 0",
+                          }}
+                        >
+                          <RenderQuizMath text={explanation} />
+                        </div>
                       )}
+
                     </div>
                   );
                 })}
@@ -416,6 +426,6 @@ export default function GravityPage() {
         )}
 
       </div>
-    </main>
+    </main >
   );
 }

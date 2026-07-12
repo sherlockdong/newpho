@@ -115,9 +115,9 @@ export default function HistoryPage() {
     progressCollection: "Physics Bowl",
     unlocksMap: UNLOCKS_MAP,
     prerequisitesMap: PREREQUISITES_MAP,
-    topicName: "Physics Bowl",
-    subtopicName: "History and Trivia",
-    difficultyLevel: "Physics Bowl physics competition",
+    topicName: TOPIC_NAME,
+    subtopicName: SUBTOPIC_NAME,
+    difficultyLevel: DIFFICULTY_LEVEL,
     physicsFacts: PHYSICS_FACTS,
     buildPrompt: buildQuizPrompt,
   });
@@ -246,7 +246,7 @@ export default function HistoryPage() {
                   onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                   className={styles.terminalTextarea}
                   rows={3}
-                  placeholder='> e.g., "Make the parsedQuestions strictly conceptual with no math calculations required..."'
+                  placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
                 />
               </div>
               <div className={styles.terminalFooter}>
@@ -269,7 +269,7 @@ export default function HistoryPage() {
             <p className={styles.loadingLabel}>
               {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
-            <p className={styles.loadingFact}>"{currentFact}"</p>
+            <p className={styles.loadingFact}>“{currentFact}”</p>
           </motion.div>
         )}
 
@@ -299,7 +299,7 @@ export default function HistoryPage() {
                 {parsedQuestions.map((q, idx) => {
                   const correctAnswer = normalizeAnswer(q.correctAnswer);
                   const correctOption = getOptionTextByLetter(q, correctAnswer);
-                  const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+                  const explanation = questionExplanations.find((e) => e.index === idx)?.explanation;
 
                   return (
                     <div

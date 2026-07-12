@@ -56,17 +56,17 @@ const TOPIC_NAME = "USAPhO";
 const SUBTOPIC_NAME = "Variable Mass Systems and Continuous Mass Distribution";
 
 function buildQuizPrompt({
-  questionCount,
-  overrideText,
-  subtopicName,
-  difficultyLevel,
+    questionCount,
+    overrideText,
+    subtopicName,
+    difficultyLevel,
 }: {
-  questionCount: number;
-  overrideText: string;
-  subtopicName: string;
-  difficultyLevel: string;
+    questionCount: number;
+    overrideText: string;
+    subtopicName: string;
+    difficultyLevel: string;
 }) {
-  return `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${subtopicName}".
+    return `You are an expert physics professor and competition problem writer generating a diagnostic quiz on: "${subtopicName}".
 
 Target Difficulty Level: ${difficultyLevel}
 
@@ -96,40 +96,41 @@ d) [Option 4]
 
 export default function MassPage() {
     const {
-      overrideText,
-      setOverrideText,
-      questionCount,
-      setQuestionCount,
-      quiz,
-      parsedQuestions,
-      isGenerating,
-      isEvaluating,
-      isBusy,
-      error,
-      answers,
-      showAnswers,
-      finalScore,
-      aiFeedback,
-      questionExplanations,
-      currentFact,
-      isNodeAccessible,
-      authReady,
-      user,
-      progressWarning,
-      handleGenerateQuiz,
-      handleSubmitAnswers,
-      handleAnswerChange,
-      normalizeAnswer,
+        overrideText,
+        setOverrideText,
+        questionCount,
+        setQuestionCount,
+        quiz,
+        parsedQuestions,
+        isGenerating,
+        isEvaluating,
+        isBusy,
+        error,
+        answers,
+        showAnswers,
+        finalScore,
+        aiFeedback,
+        questionExplanations,
+        currentFact,
+        isNodeAccessible,
+        authReady,
+        user,
+        progressWarning,
+        handleGenerateQuiz,
+        handleSubmitAnswers,
+        handleAnswerChange,
+        normalizeAnswer,
     } = useQuizDiagnostics({
-      nodeId: NODE_ID,
-      progressCollection: "USAPhO",
-      unlocksMap: UNLOCKS_MAP,
-      prerequisitesMap: PREREQUISITES_MAP,
-      topicName: "USAPhO",
-      subtopicName: "Variable Mass Systems and Continuous Mass Distribution",
-      difficultyLevel: "USAPhO Mechanics physics competition",
-      physicsFacts: PHYSICS_FACTS,
-      buildPrompt: buildQuizPrompt,
+        nodeId: NODE_ID,
+        progressCollection: "USAPhO",
+        unlocksMap: UNLOCKS_MAP,
+        prerequisitesMap: PREREQUISITES_MAP,
+        topicName: TOPIC_NAME,
+        subtopicName: SUBTOPIC_NAME,
+        difficultyLevel: DIFFICULTY_LEVEL,
+
+        physicsFacts: PHYSICS_FACTS,
+        buildPrompt: buildQuizPrompt,
     });
 
     return (
@@ -256,7 +257,7 @@ export default function MassPage() {
                                     onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                                     className={styles.terminalTextarea}
                                     rows={3}
-                                    placeholder='> e.g., "Make the parsedQuestions strictly conceptual with no math calculations required..."'
+                                    placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
                                 />
                             </div>
                             <div className={styles.terminalFooter}>
@@ -279,15 +280,15 @@ export default function MassPage() {
                         <p className={styles.loadingLabel}>
                             {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
                         </p>
-                        <p className={styles.loadingFact}>"{currentFact}"</p>
+                        <p className={styles.loadingFact}>“{currentFact}”</p>
                     </motion.div>
                 )}
 
                 {error && <div className={styles.errorBox}>System Error: {error}</div>}
-        {progressWarning && <div className={styles.errorBox}>Progress Warning: {progressWarning}</div>}
-        {!authReady && <div className={styles.errorBox}>Initializing authentication...</div>}
-        {authReady && !user && <div className={styles.errorBox}>Sign in to generate and submit quizzes.</div>}
-        {authReady && user && !isNodeAccessible && <div className={styles.errorBox}>Prerequisites for this node are not yet mastered.</div>}
+                {progressWarning && <div className={styles.errorBox}>Progress Warning: {progressWarning}</div>}
+                {!authReady && <div className={styles.errorBox}>Initializing authentication...</div>}
+                {authReady && !user && <div className={styles.errorBox}>Sign in to generate and submit quizzes.</div>}
+                {authReady && user && !isNodeAccessible && <div className={styles.errorBox}>Prerequisites for this node are not yet mastered.</div>}
 
                 <div id="quiz-anchor" />
                 {showAnswers && (
@@ -308,8 +309,8 @@ export default function MassPage() {
                             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {parsedQuestions.map((q, idx) => {
                                     const correctAnswer = normalizeAnswer(q.correctAnswer);
-                  const correctOption = getOptionTextByLetter(q, correctAnswer);
-                                    const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+                                    const correctOption = getOptionTextByLetter(q, correctAnswer);
+                                    const explanation = questionExplanations.find((e) => e.index === idx)?.explanation;
 
                                     return (
                                         <div
@@ -348,8 +349,8 @@ export default function MassPage() {
                                 <div className={styles.questionList}>
                                     {parsedQuestions.map((question, index) => {
                                         const userAnswer = normalizeAnswer(answers[index]?.answer);
-                    const correctAnswer = normalizeAnswer(question.correctAnswer);
-                    const isCorrect = userAnswer === correctAnswer;
+                                        const correctAnswer = normalizeAnswer(question.correctAnswer);
+                                        const isCorrect = userAnswer === correctAnswer;
 
                                         return (
                                             <div id={`question-${index}`} key={index}

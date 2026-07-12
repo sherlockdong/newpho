@@ -65,7 +65,7 @@ const PREREQUISITES_MAP: Record<string, string[]> = {
 
 const TOPIC_NAME = "Electricity and Magnetism";
 const SUBTOPIC_NAME = "Current Circuits";
-
+const DIFFICULTY_LEVEL = "high school physics"
 function buildQuizPrompt({
   questionCount,
   overrideText,
@@ -77,24 +77,60 @@ function buildQuizPrompt({
   subtopicName: string;
   difficultyLevel: string;
 }) {
-  return `You are an expert physics professor generating a diagnostic quiz on: "${subtopicName}".
-${overrideText ? `\nCRITICAL USER OVERRIDE INSTRUCTIONS: "${overrideText}"\n` : "\nVary the conceptual difficulty appropriately to test core knowledge of current circuits.\n"}
+  return String.raw`
+You are an experienced high-school physics teacher creating a diagnostic multiple-choice quiz.
 
-CRITICAL INSTRUCTIONS:
-1. Generate EXACTLY ${questionCount} multiple-choice question${questionCount === 1 ? "" : "s"} — no more, no fewer.
-2. You MUST use standard LaTeX formatting for all variables, formulas, and math. Enclose inline math with single $ signs and block math with double $$ signs.
-3. Output ONLY the quiz. Do not include any introductory text.
-4. You may use standard physics constants.
 
-Strictly follow this exact format for every question:
-### Question [number]
+QUIZ SETTINGS:
+- Topic: ${subtopicName}
+- Difficulty: ${difficultyLevel}
+- Number of questions: exactly ${questionCount}
+${overrideText ? `- Additional instructions: ${overrideText}` : ""}
+
+
+QUESTION REQUIREMENTS:
+1. Generate exactly ${questionCount} questions about ${subtopicName}.
+2. Test genuine physics understanding, not simple vocabulary memorization.
+3. Include a balanced mix of:
+   - conceptual reasoning;
+   - interpretation of physical situations;
+   - calculations appropriate for high-school physics;
+   - common misconceptions students may have.
+4. Each question must have exactly four answer choices labeled a), b), c), and d).
+5. Each question must have exactly one correct answer.
+6. Make incorrect options believable and based on realistic student mistakes.
+7. Keep all calculations solvable using the information provided.
+8. Do not require calculus unless the additional instructions explicitly request it.
+9. Use standard SI units unless another unit system is necessary.
+10. Use LaTeX for variables, equations, and scientific notation:
+    - Inline mathematics: $...$
+    - Display mathematics: $$...$$
+11. Do not repeat questions or create questions that test the same idea in nearly identical ways.
+12. Do not reveal the correct answer inside the question or answer choices.
+
+
+OUTPUT RULES:
+- Output only the quiz.
+- Do not include an introduction, conclusion, explanations, hints, or grading commentary.
+- Follow the exact format below for every question.
+- Write the correct answer as one lowercase letter: a, b, c, or d.
+
+
+EXACT FORMAT:
+
+
+### Question 1
 [Question text]
-a) [Option 1]
-b) [Option 2]
-c) [Option 3]
-d) [Option 4]
-**Correct Answer:** [Correct option letter]
----`;
+a) [First option]
+b) [Second option]
+c) [Third option]
+d) [Fourth option]
+**Correct Answer:** [lowercase letter]
+---
+
+
+Repeat this structure until exactly ${questionCount} complete questions have been generated.
+`;
 }
 
 export default function CurrentCircuitsPage() {
@@ -128,9 +164,9 @@ export default function CurrentCircuitsPage() {
     progressCollection: "electricity",
     unlocksMap: UNLOCKS_MAP,
     prerequisitesMap: PREREQUISITES_MAP,
-    topicName: "Electricity and Magnetism",
-    subtopicName: "Current Circuits",
-    difficultyLevel: "High School Physics",
+    topicName: TOPIC_NAME,
+    subtopicName: SUBTOPIC_NAME,
+    difficultyLevel: DIFFICULTY_LEVEL,
     physicsFacts: PHYSICS_FACTS,
     buildPrompt: buildQuizPrompt,
   });
@@ -265,7 +301,7 @@ export default function CurrentCircuitsPage() {
                   onChange={(e) => !isBusy && setOverrideText(e.target.value)} disabled={isBusy}
                   className={styles.terminalTextarea}
                   rows={3}
-                  placeholder='> e.g., "Make the parsedQuestions strictly conceptual with no math calculations required..."'
+                  placeholder='> e.g., "Make the questions strictly conceptual with no math calculations required..."'
                 />
               </div>
               <div className={styles.terminalFooter}>
@@ -289,7 +325,7 @@ export default function CurrentCircuitsPage() {
             <p className={styles.loadingLabel}>
               {isGenerating ? "Generating GPT 5.4 Parameters..." : "AI Evaluating Telemetry..."}
             </p>
-            <p className={styles.loadingFact}>"{currentFact}"</p>
+            <p className={styles.loadingFact}>“{currentFact}”</p>
           </motion.div>
         )}
 
@@ -315,13 +351,16 @@ export default function CurrentCircuitsPage() {
             </div>
             <hr className={styles.resultsDivider} />
             <h3 className={styles.resultsFeedbackTitle}>AI Feedback Analysis</h3>
-            <p className={styles.resultsFeedbackText}>{aiFeedback}</p>
+            <div className={styles.resultsFeedbackText}>
+              <RenderQuizMath text={aiFeedback || ""} />
+            </div>
+
             {parsedQuestions.length > 0 && (
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {parsedQuestions.map((q, idx) => {
                   const correctAnswer = normalizeAnswer(q.correctAnswer);
                   const correctOption = getOptionTextByLetter(q, correctAnswer);
-                  const explanation = questionExplanations.find((e: any) => e.index === idx)?.explanation;
+                  const explanation = questionExplanations.find((e) => e.index === idx)?.explanation;
 
                   return (
                     <div
@@ -337,10 +376,17 @@ export default function CurrentCircuitsPage() {
                         Q_0{idx + 1} — Correct: {<RenderQuizMath text={correctOption || ""} />}
                       </p>
                       {explanation && (
-                        <p style={{ color: '#aaa', fontSize: '13px', margin: '6px 0 0 0' }}>
-                          {explanation}
-                        </p>
+                        <div
+                          style={{
+                            color: "#aaa",
+                            fontSize: "13px",
+                            margin: "6px 0 0 0",
+                          }}
+                        >
+                          <RenderQuizMath text={explanation} />
+                        </div>
                       )}
+
                     </div>
                   );
                 })}
@@ -428,6 +474,6 @@ export default function CurrentCircuitsPage() {
         )}
 
       </div>
-    </main>
+    </main >
   );
 }
