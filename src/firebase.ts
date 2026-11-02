@@ -1,9 +1,4 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import {
-  getAnalytics,
-  isSupported,
-  type Analytics,
-} from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import {
   collection,
@@ -31,19 +26,9 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let analytics: Analytics | null = null;
-
-if (typeof window !== "undefined") {
-  void isSupported()
-    .then((supported) => {
-      if (supported) {
-        analytics = getAnalytics(app);
-      }
-    })
-    .catch((error: unknown) => {
-      console.error("Firebase Analytics initialization failed:", error);
-    });
-}
+// Analytics is initialized once through gtag in app/layout.tsx.
+// Keep this shared module limited to Auth and Firestore: initializing Firebase
+// Analytics here also starts background Installations token requests.
 
 type LegacyLog = Record<string, unknown>;
 
@@ -97,4 +82,4 @@ async function migrateLogs(uid: string): Promise<number> {
   return logs.length;
 }
 
-export { analytics, app, auth, db, migrateLogs };
+export { app, auth, db, migrateLogs };

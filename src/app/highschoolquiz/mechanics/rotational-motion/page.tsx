@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import QuizStudyPlanLink from "../../../../components/QuizStudyPlanLink";
 import "katex/dist/katex.min.css";
 import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
 import { getOptionTextByLetter } from "../../../../lib/quizUtils";
@@ -52,7 +53,7 @@ const PHYSICS_FACTS = [
   "When a rigid object rotates around a fixed point, every part of it shares the exact same angular velocity, but parts farther from the center travel at a higher linear speed.",
 ];
 
-const NODE_ID = 'MCH-07';
+const NODE_ID = 'MCH-08';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -184,6 +185,7 @@ export default function RotationalMotionPage() {
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
+      {showAnswers && <QuizStudyPlanLink />}
       <div className={styles.inner}>
 
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>

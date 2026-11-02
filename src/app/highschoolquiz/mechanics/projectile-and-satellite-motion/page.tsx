@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import QuizStudyPlanLink from "../../../../components/QuizStudyPlanLink";
 import "katex/dist/katex.min.css";
 import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
 import { getOptionTextByLetter } from "../../../../lib/quizUtils";
@@ -54,7 +55,7 @@ const PHYSICS_FACTS = [
   "When a satellite moves in an elliptical orbit, its speed constantly varies because gravity slows it down as it moves farther away and accelerates it as it pulls closer to the planet.",
 ];
 
-const NODE_ID = 'MCH-09';
+const NODE_ID = 'MCH-07';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -186,6 +187,7 @@ export default function ProjectileAndSatelliteMotionPage() {
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
+      {showAnswers && <QuizStudyPlanLink />}
       <div className={styles.inner}>
 
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>

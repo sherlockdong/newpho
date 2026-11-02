@@ -8,12 +8,7 @@ import {
   type User,
 } from "firebase/auth";
 import {
-  collection,
-  getDocs,
-  getFirestore,
-  query,
   Timestamp,
-  where,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 
@@ -93,6 +88,7 @@ export default function UserDashboard() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setQuizLogs([]);
       setUser(currentUser);
       setError(null);
 
@@ -114,21 +110,17 @@ export default function UserDashboard() {
 
     async function fetchQuizLogs() {
       try {
-        const db = getFirestore(app);
-        const logsQuery = query(
-          collection(db, "quizLogs"),
-          where("userId", "==", user!.uid),
-        );
-
-        const snapshot = await getDocs(logsQuery);
+        const token = await user.getIdToken();
+        const response = await fetch("/api/logs", { headers: { Authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error("Unable to load quiz history.");
+        const records = await response.json();
 
         if (cancelled) return;
 
-        const logs = snapshot.docs.map((document): QuizLog => {
-          const data = document.data();
+        const logs = records.map((data: QuizLog): QuizLog => {
 
           return {
-            id: document.id,
+            id: data.id,
             analysis:
               typeof data.analysis === "string" ? data.analysis : undefined,
             topic: typeof data.topic === "string" ? data.topic : undefined,
@@ -288,6 +280,8 @@ export default function UserDashboard() {
             {error}
           </div>
         )}
+
+        <Link href="/study-plan" className="block mb-8 rounded-2xl border border-[#4f8ef7]/40 bg-[#0A0A18] p-6"><h2 className="text-xl font-semibold text-white mb-2">Your next study session →</h2><p className="text-zinc-400">Build a weekly plan from your quizzes, choose your study time, and track completed sessions.</p></Link>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
           <DashboardMetric

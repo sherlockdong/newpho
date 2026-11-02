@@ -1,0 +1,713 @@
+[
+  {
+    "id": "/fmapb/fma/advanced-collisions",
+    "nodeId": "FMA-06",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Advanced Collisions and Restitution",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/advanced-gravity",
+    "nodeId": "FMA-07",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Orbital Mechanics and Advanced Gravity",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/advanced-rigid-bodies",
+    "nodeId": "FMA-03",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Advanced Rigit Bodies",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/dimensional-analysis-and-error",
+    "nodeId": "FMA-08",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Dimenional Analysis, Scaling, and Error Propagation",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/fluid-mechanics",
+    "nodeId": "FMA-01",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Fluid Mechanics",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/oscillatory-motion",
+    "nodeId": "FMA-02",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Oscillatory Motion",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/potential-energy-stability",
+    "nodeId": "FMA-10",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Potential Energy Curves and Stability",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/resistive-forces-and-drag",
+    "nodeId": "FMA-09",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Non-Conservative Force and Resistive Media",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/statics-and-equilibrium",
+    "nodeId": "FMA-04",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "Static and Mechanical Equilibrium",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/fma/systems-of-masses",
+    "nodeId": "FMA-05",
+    "track": "F=ma",
+    "topic": "F=ma",
+    "title": "System of Particles and Center of Mass",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/electrostatics-and-circuits",
+    "nodeId": "PB-02",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "Electrostatics and DC Circuits",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/history-and-trivia",
+    "nodeId": "PB-06",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "History and Trivia",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/magnetism-and-induction",
+    "nodeId": "PB-03",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "Magnetism and Electromagnetic Induction",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/modern-and-quantum-physics",
+    "nodeId": "PB-05",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "Modern Physics and Quantum Phenomena",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/thermodynamics-kinetic-theory",
+    "nodeId": "PB-01",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "Thermodynamics and Kinetic Theory",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/fmapb/pb/waves-and-optics",
+    "nodeId": "PB-04",
+    "track": "Physics Bowl",
+    "topic": "Physics Bowl",
+    "title": "Waves and Geometric Optics",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/highschoolquiz/electricity/currentcircuits",
+    "nodeId": "ENM-02",
+    "track": "electricity",
+    "topic": "Electricity and Magnetism",
+    "title": "Current Circuits",
+    "prerequisites": [
+      "ENM-01"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Electric Circuits",
+        "url": "https://www.physicsclassroom.com/tutorial/electric-circuits"
+      },
+      {
+        "title": "The Physics Classroom: Interactive Electric Circuits",
+        "url": "https://www.physicsclassroom.com/Interactive/Electric-Circuits"
+      },
+      {
+        "title": "Flipping Physics: Electric Circuits",
+        "url": "http://www.flippingphysics.com/ap-physics-2.html#unit11"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=r-SCyD7f_zI&pp=ygUpb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgZWxlY3RyaWMgY2lyY3VpdHPSBwkJPwsBhyohjO8%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/electricity/electrostatics",
+    "nodeId": "ENM-01",
+    "track": "electricity",
+    "topic": "Electricity and Magnetism",
+    "title": "Electrostatics",
+    "prerequisites": [],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Static Electricity",
+        "url": "https://www.physicsclassroom.com/tutorial/static-electricity"
+      },
+      {
+        "title": "The Physics Classroom: Interactive Static Electricity",
+        "url": "https://www.physicsclassroom.com/Interactive/Static-Electricity"
+      },
+      {
+        "title": "Khan Academy: Four",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:electrostatics"
+      },
+      {
+        "title": "Flipping Physics: Unit 10",
+        "url": "http://www.flippingphysics.com/ap-physics-2.html#unit10"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Coulomb's Law",
+        "url": "https://www.youtube.com/watch?v=kCp5yYjo9zE&pp=ygUmb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgZWxlY3Ryb3N0YXRpY3PSBwkJPwsBhyohjO8%3D"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Electric Flux, Gauss's Law & Electric Fields",
+        "url": "https://www.youtube.com/watch?v=q1eor6oIuUo"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/electricity/induction",
+    "nodeId": "ENM-04",
+    "track": "electricity",
+    "topic": "Electricity and Magnetism",
+    "title": "Induction",
+    "prerequisites": [
+      "ENM-03"
+    ],
+    "resources": []
+  },
+  {
+    "id": "/highschoolquiz/electricity/magnetism",
+    "nodeId": "ENM-03",
+    "track": "electricity",
+    "topic": "Electricity and Magnetism",
+    "title": "Magnetism",
+    "prerequisites": [
+      "ENM-02"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Magnetic Fields and Electromagnetism",
+        "url": "https://www.physicsclassroom.com/tutorial/magnetic-fields-and-electromagnetism"
+      },
+      {
+        "title": "The Physics Classroom: Interactive",
+        "url": "https://www.physicsclassroom.com/Interactive/Magnetic-Fields-and-Electromagnetism"
+      },
+      {
+        "title": "Khan Academy: Unit 6",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:electromagnetics"
+      },
+      {
+        "title": "Flipping Physics: Magnetism and Electromagnetism",
+        "url": "http://www.flippingphysics.com/ap-physics-2.html#unit12"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=csMqfwJRjCs&pp=ygUhb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgbWFnbmV0aXNt"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/energy",
+    "nodeId": "MCH-06",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Energy",
+    "prerequisites": [
+      "MCH-03"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Work, Energy and Power",
+        "url": "https://www.physicsclassroom.com/class/energy"
+      },
+      {
+        "title": "Khan Academy: Unit Five",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:energy"
+      },
+      {
+        "title": "Flipping Physics: Unit 3",
+        "url": "https://www.flippingphysics.com/ap-physics-1-unit-3-review.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Work and Energy",
+        "url": "https://www.youtube.com/watch?v=DyaVgHGssos&list=PLj-UXqz9Ig3SPLt-3iW5g_zd17MJmqNpR&pp=0gcJCUUDOCosWNin"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/gravity",
+    "nodeId": "MCH-09",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Gravity",
+    "prerequisites": [
+      "MCH-06",
+      "MCH-07"
+    ],
+    "resources": [
+      {
+        "title": "Khan Academy: Unit Three",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:gravitation"
+      },
+      {
+        "title": "Flipping Physics: Unit 2b",
+        "url": "https://www.ultimatereviewpacket.com/pages/physics-1-products"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Gravity",
+        "url": "https://www.youtube.com/watch?v=Ep1jIhHdf2A&pp=ygUib3JnYW5pYyBjaGVtaXRyeSBndWlkZSBncmF2aXRhdGlvbg%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/linear-motion",
+    "nodeId": "MCH-02",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Linear Motion",
+    "prerequisites": [],
+    "resources": [
+      {
+        "title": "The Physics Classroom: 1-D Kinematics",
+        "url": "https://www.physicsclassroom.com/Physics-Tutorial/1-D-Kinematics"
+      },
+      {
+        "title": "Khan Academy: Unit One",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:describing-motion/v/position_velocity_speed"
+      },
+      {
+        "title": "Flipping Physics: Displacement, Speed and Velocity",
+        "url": "https://www.flippingphysics.com/uploads/2/1/1/0/21103672/02-01_lecture_notes_compilation_-_displacement_speed_and_velocity.pdf"
+      },
+      {
+        "title": "Flipping Physics: One Dimensional Motion Demos",
+        "url": "https://www.youtube.com/playlist?list=PLPyapQSxH6mbXWoeU5ZqSwQiJmn6NqRGN"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=RDRDoBqYT7s&pp=ygUNbGluZWFyIG1vdGlvbg%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/momentum",
+    "nodeId": "MCH-05",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Momentum",
+    "prerequisites": [
+      "MCH-03",
+      "MCH-04"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Momentum and Its Conservation",
+        "url": "https://www.physicsclassroom.com/class/momentum"
+      },
+      {
+        "title": "Khan Academy: Unit Two Lesson Two",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:force-pairs-and-momentum/x6679aa2c65c01e53:momentum/v/momentum"
+      },
+      {
+        "title": "Flipping Physics: Unit 4, Unit 5a, Unit 6",
+        "url": "https://www.flippingphysics.com/ap-physics-1-unit-4-review.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Linear Momentum ",
+        "url": "https://www.youtube.com/playlist?list=PLPyapQSxH6mbXWoeU5ZqSwQiJmn6NqRGN"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Angular Momentum",
+        "url": "https://www.youtube.com/watch?v=WzjIMuf-yuo&pp=ygUob3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgYW5ndWxhciBtb21lbnR1bdIHCQk5CwGHKiGM7w%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/newtons-first-law",
+    "nodeId": "MCH-01",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Newton's First Law of Motion \u2014 Inertia",
+    "prerequisites": [],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Newtos Laws Lesson One",
+        "url": "https://www.physicsclassroom.com/class/newtlaws/Lesson-1/Newton-s-First-Law"
+      },
+      {
+        "title": "Khan Academy: Unit One",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_first_law"
+      },
+      {
+        "title": "Flipping Physics: First Law Demos",
+        "url": "https://www.flippingphysics.com/first-law.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=Fr5EMXZaujc&pp=ygUQbmV3dG9uIGZpcnN0IGxhdw%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/newtons-second-law",
+    "nodeId": "MCH-03",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Newton's Second Law",
+    "prerequisites": [
+      "MCH-01",
+      "MCH-02"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Lesson Three",
+        "url": "https://www.physicsclassroom.com/class/newtlaws/Lesson-3/Newton-s-Second-Law"
+      },
+      {
+        "title": "Khan Academy: Newton's Second Law",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:motion-and-forces/x6679aa2c65c01e53:newtons-first-and-second-laws/v/newtons_second_law"
+      },
+      {
+        "title": "Flipping Physics: Introduction to Newton's Second Law",
+        "url": "https://www.flippingphysics.com/second-law.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=Ee6CHn0MRKE&pp=ygUSTmV3dG9ucyBzZWNvbmQgbGF30gcJCTgLAYcqIYzv"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/newtons-third-law",
+    "nodeId": "MCH-04",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Newton's Third Law",
+    "prerequisites": [
+      "MCH-01"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Unit 4",
+        "url": "https://www.physicsclassroom.com/class/newtlaws/Lesson-4/Newton-s-Third-Law"
+      },
+      {
+        "title": "Khan Academy: Unit Two Lesson One",
+        "url": "https://www.khanacademy.org/science/highschool-physics/x6679aa2c65c01e53:force-pairs-and-momentum/x6679aa2c65c01e53:newtons-third-law/v/newtons_third_law"
+      },
+      {
+        "title": "Flipping Physics: 12:24 of the Video",
+        "url": "https://www.flippingphysics.com/ap-physics-1-unit-2a-review.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor",
+        "url": "https://www.youtube.com/watch?v=TxhESW6YtOg&pp=ygUpb3JnYW5pYyBjaGVtaXN0cnkgdHV0b3IgbmV3dG9ucyB0aGlyZCBsYXc%3D"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/projectile-and-satellite-motion",
+    "nodeId": "MCH-07",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Projectile and Satellite Motion",
+    "prerequisites": [
+      "MCH-02"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Circular Motion and Satellite Motion",
+        "url": "https://www.physicsclassroom.com/class/circles"
+      },
+      {
+        "title": "Khan Academy(AP Physics 1): Circular Motion",
+        "url": "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:force-and-translational-dynamics/xf557a762645cccc5:circular-motion/a/what-is-centripetal-force"
+      },
+      {
+        "title": "Khan Academy(AP Physics 1): Motion in 2D",
+        "url": "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:kinematics/xf557a762645cccc5:motion-in-2d/a/what-are-velocity-components"
+      },
+      {
+        "title": "Flipping Physics: Circular Motion",
+        "url": "https://www.ultimatereviewpacket.com/pages/physics-1-products"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Introduction to Projectile Motion",
+        "url": "https://www.youtube.com/watch?v=8NLzuURxFwY&list=PL3iEuD5Hr0UBRszEzwor3xfXZfl8lbBqs&pp=0gcJCUUDOCosWNin"
+      }
+    ]
+  },
+  {
+    "id": "/highschoolquiz/mechanics/rotational-motion",
+    "nodeId": "MCH-08",
+    "track": "mechanics",
+    "topic": "Mechanics",
+    "title": "Rotational Motion",
+    "prerequisites": [
+      "MCH-03",
+      "MCH-05"
+    ],
+    "resources": [
+      {
+        "title": "The Physics Classroom: Balance and Rotation",
+        "url": "https://www.physicsclassroom.com/class/Balance-and-Rotation"
+      },
+      {
+        "title": "Khan Academy(AP Physics 1): Unit 5",
+        "url": "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:torque-and-rotational-dynamics"
+      },
+      {
+        "title": "Khan Academy(AP Physics 1): Unit 6",
+        "url": "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:energy-and-momentum-of-rotating-systems"
+      },
+      {
+        "title": "Flipping Physics: Unit 5a",
+        "url": "https://www.flippingphysics.com/ap-physics-1-unit-5a-review.html"
+      },
+      {
+        "title": "Organic Chemistry Tutor: Work and Energy",
+        "url": "https://www.youtube.com/watch?v=WQ9AH2S8B6Y&list=PLj-UXqz9Ig3S2PSrW2mu8UE1A7DXH3Fqs"
+      }
+    ]
+  },
+  {
+    "id": "/usapho/dataanalysis/data-analysis-and-error",
+    "nodeId": "USA-22",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Data Analysis and Error Propagation",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/eandm/advanced-electrostatics",
+    "nodeId": "USA-12",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Electrostatic Fields, Potentials, and Multipole Expansions",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/eandm/dielectrics-and-capacitance",
+    "nodeId": "USA-13",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Dielectric, Capatitance, and Electrostatic Energy Densities",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/eandm/electromagnetic-induction",
+    "nodeId": "USA-16",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Electromagnetic Induction and Maxwell's Equations",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/eandm/magnetostatics",
+    "nodeId": "USA-15",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Magnetic Fields, Biot-Savart Law, and Ampere's Law",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/eandm/transient-circuits",
+    "nodeId": "USA-14",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "DC and transient circuits",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/3d-rigid-bodies",
+    "nodeId": "USA-03",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "3D Rigid Body Mechanics and Variable Contact Constraints",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/advanced-celestial-mechanics",
+    "nodeId": "USA-03",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "3D Rigid Body Mechanics and Variable Contact Constraints",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/advanced-fluid-mechanics",
+    "nodeId": "USA-01",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Advanced Fluid Mechanics and Non-Inertial Hydrodynamics",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/advanced-statics",
+    "nodeId": "USA-05",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Variable Mass Systems and Continuous Mass Distribution",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/complex-oscillations",
+    "nodeId": "USA-02",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Arbitrary Potential Wells and Approximated Oscillations",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/differential-drag",
+    "nodeId": "USA-08",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Resistive Media and Differential Trajectories",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/rotational-collisions",
+    "nodeId": "USA-07",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Elliptical Orbits and Gravitational Self-Energy",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/mechanics/variable-mass-systems",
+    "nodeId": "USA-05",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Variable Mass Systems and Continuous Mass Distribution",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/relativity/nuclear-and-particle",
+    "nodeId": "USA-19",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Nuclear Physics, Radioactive Decay, and Particle Reactions",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/relativity/quantum-and-atomic",
+    "nodeId": "USA-18",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Quantum Mechanics, Photons, and Atomic Structure",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/relativity/special-relativity",
+    "nodeId": "USA-17",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Special Relativity and Relativistic Mechanics",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/thermo/kinetic-theory-gases",
+    "nodeId": "USA-20",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Kinetic Theory, Statistical Transport, and Calorimetry",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/thermo/thermodynamic-cycles",
+    "nodeId": "USA-21",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Thermodynamic Cycles and Entropy Formulations",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/wavesoptics/geometrical-optics",
+    "nodeId": "USA-23",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Geometrical Optics and Optical Instrument Matrix Analysis",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/wavesoptics/mechanical-waves",
+    "nodeId": "USA-22",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Mechanical Waves, Standing Modes, and Acoustics",
+    "prerequisites": [],
+    "resources": []
+  },
+  {
+    "id": "/usapho/wavesoptics/wave-optics",
+    "nodeId": "USA-24",
+    "track": "USAPhO",
+    "topic": "USAPhO",
+    "title": "Wave Optics, Interference, and Diffraction Regimes",
+    "prerequisites": [],
+    "resources": []
+  }
+]

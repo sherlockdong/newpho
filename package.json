@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "tsx --test scripts/test-quiz-utils.ts"
+    "test": "node --import tsx --test scripts/test-*.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",

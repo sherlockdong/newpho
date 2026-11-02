@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import QuizStudyPlanLink from "../../../../components/QuizStudyPlanLink";
 import "katex/dist/katex.min.css";
 import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
 import { getOptionTextByLetter } from "../../../../lib/quizUtils";
@@ -176,6 +177,7 @@ export default function AdvancedStatPage() {
 
     return (
         <main className={`page-wrapper ${styles.pageWrapper}`}>
+      {showAnswers && <QuizStudyPlanLink />}
             <div className={styles.inner}>
 
                 <Link href="/usapho/dataanalysis" className={styles.breadcrumb}>

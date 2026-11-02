@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import QuizStudyPlanLink from "../../../../components/QuizStudyPlanLink";
 import "katex/dist/katex.min.css";
 import { motion } from "framer-motion";
 import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
@@ -45,7 +46,7 @@ const PHYSICS_FACTS = [
   "You experience a massive generation of heat and deformation during a sudden car crash because a huge amount of kinetic energy is rapidly converting into other forms of energy.",
 ];
 
-const NODE_ID = 'MCH-07';
+const NODE_ID = 'MCH-06';
 
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -177,6 +178,7 @@ export default function EnergyPage() {
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
+      {showAnswers && <QuizStudyPlanLink />}
       <div className={styles.inner}>
 
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>

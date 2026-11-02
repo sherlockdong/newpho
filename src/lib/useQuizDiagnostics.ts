@@ -7,9 +7,6 @@ import {
   type User,
 } from "firebase/auth";
 import {
-  collection,
-  addDoc,
-  Timestamp,
   doc,
   getDoc,
   getFirestore,
@@ -49,13 +46,14 @@ export interface QuizDiagnosticsConfig {
 }
 
 export function createAuthenticatedFetch(auth = getAuth(app)) {
+  const expectedUid = auth.currentUser?.uid;
   return async function authenticatedFetch(
     url: string,
     options: RequestInit = {},
   ): Promise<Response> {
     const currentUser = auth.currentUser;
 
-    if (!currentUser) {
+    if (!currentUser || currentUser.uid !== expectedUid) {
       throw new Error("You must be signed in to continue.");
     }
 
@@ -76,6 +74,7 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
   const auth = getAuth(app);
   const authenticatedFetch = createAuthenticatedFetch(auth);
   const operationIdRef = useRef(0);
+  const attemptIdRef = useRef<string | null>(null);
 
   const [overrideText, setOverrideText] = useState("");
   const [questionCount, setQuestionCount] = useState(3);
@@ -102,11 +101,23 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      operationIdRef.current++;
+      attemptIdRef.current = null;
+      setIsGenerating(false); setIsEvaluating(false);
+      setShowAnswers(false); setParsedQuestions([]); setQuiz(null);
+      setFinalScore(null); setAiFeedback(null); setError(null);
+      setQuestionExplanations([]); setProgressWarning(null);
+      setIsNodeAccessible(false);
       setUser(currentUser);
       setAuthReady(true);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      // This ref is a request counter, not a DOM node; invalidate pending work on unmount.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      operationIdRef.current++;
+    };
   }, [auth]);
 
   useEffect(() => {
@@ -114,7 +125,9 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
       return;
     }
 
+    let cancelled = false;
     async function loadNodeAccess() {
+      try {
       const db = getFirestore(app);
       const progressRef = doc(
         db,
@@ -128,6 +141,7 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
         snapshot.exists() ? snapshot.data() : {}
       ) as Record<string, string>;
 
+      if (cancelled) return;
       setIsNodeAccessible(
         checkNodeAccessible(
           config.nodeId,
@@ -135,9 +149,13 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
           current,
         ),
       );
+      } catch {
+        if (!cancelled) { setIsNodeAccessible(false); setError("Unable to load prerequisites. Please reload to retry."); }
+      }
     }
 
     void loadNodeAccess();
+    return () => { cancelled = true; };
   }, [authReady, user, config.nodeId, config.prerequisitesMap, config.progressCollection]);
 
   useEffect(() => {
@@ -158,6 +176,7 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
   }, [config.physicsFacts, isBusy]);
 
   async function handleGenerateQuiz() {
+    if (isBusy) return;
     if (!authReady || !user) {
       setError("Please sign in to generate a quiz.");
       return;
@@ -173,6 +192,7 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
     setIsGenerating(true);
     setError(null);
     setProgressWarning(null);
+    attemptIdRef.current = crypto.randomUUID();
     setQuiz(null);
     setParsedQuestions([]);
     setAnswers({});
@@ -281,6 +301,7 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
   }
 
   async function handleSubmitAnswers() {
+    if (isBusy || !parsedQuestions.length) return;
     if (!authReady || !user) {
       setError("Please sign in to submit your answers.");
       return;
@@ -320,6 +341,33 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
       setFinalScore(correctCount);
       setShowAnswers(true);
 
+      async function saveAttempt(status: string, analysis?: EvaluationAnalysis) {
+        attemptIdRef.current ??= crypto.randomUUID();
+        const response = await authenticatedFetch("/api/logs", {
+          method: "POST",
+          body: JSON.stringify({
+            attemptId: attemptIdRef.current, schemaVersion: 1, eventType: "quiz_completed",
+            nodeId: config.nodeId, progressCollection: config.progressCollection,
+            lessonId: window.location.pathname,
+            topicName: config.topicName, subtopicName: config.subtopicName,
+            topic: `${config.topicName} - ${config.subtopicName}`,
+            difficultyLevel: config.difficultyLevel,
+            score: correctCount, totalQuestions: parsedQuestions.length,
+            timeTakenSeconds, gradedResults, evaluationStatus: status,
+            analysis: analysis?.feedbackSummary ?? "Feedback pending. Your quiz result has been saved.",
+            questionExplanations: analysis?.questionExplanations ?? [],
+          }),
+        });
+        await parseApiError(response);
+      }
+      // Persist before any optional AI work. A retry uses the same attempt ID.
+      await saveAttempt("pending");
+      try {
+        await updateProgress(correctCount, parsedQuestions.length);
+      } catch {
+        setProgressWarning("Your quiz is saved, but roadmap progress could not be updated. Submit again to retry.");
+      }
+
       const response = await authenticatedFetch("/api/evaluate", {
         method: "POST",
         body: JSON.stringify({
@@ -344,36 +392,16 @@ export function useQuizDiagnostics(config: QuizDiagnosticsConfig) {
       setQuestionExplanations(data.analysis?.questionExplanations || []);
 
       try {
-        await updateProgress(correctCount, parsedQuestions.length);
-      } catch (progressErr: unknown) {
-        console.error("Progress update failed:", progressErr);
-        setProgressWarning(
-          progressErr instanceof Error
-            ? progressErr.message
-            : "Progress could not be saved.",
-        );
-      }
-
-      try {
-        const db = getFirestore(app);
-        await addDoc(collection(db, "quizLogs"), {
-          score: correctCount,
-          totalQuestions: parsedQuestions.length,
-          topic: `${config.topicName} - ${config.subtopicName}`,
-          timeTakenSeconds,
-          analysis: data.analysis?.feedbackSummary,
-          timestamp: Timestamp.fromDate(new Date()),
-          userId: user.uid,
-        });
-      } catch (logErr: unknown) {
-        console.error("Quiz log write failed:", logErr);
+        await saveAttempt("complete", data.analysis);
+      } catch {
+        setProgressWarning("Your score is saved, but feedback could not be saved. Submit again to retry.");
       }
     } catch (err: unknown) {
       if (operationId !== operationIdRef.current) {
         return;
       }
 
-      setError(err instanceof Error ? err.message : "Evaluation failed.");
+      setError(err instanceof Error ? `${err.message} You can submit again to retry; saved attempts will not be duplicated.` : "Evaluation failed. Submit again to retry.");
     } finally {
       if (operationId === operationIdRef.current) {
         setIsEvaluating(false);

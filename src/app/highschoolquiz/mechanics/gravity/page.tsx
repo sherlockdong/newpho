@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import QuizStudyPlanLink from "../../../../components/QuizStudyPlanLink";
 import "katex/dist/katex.min.css";
 import { useQuizDiagnostics } from "../../../../lib/useQuizDiagnostics";
 import { getOptionTextByLetter } from "../../../../lib/quizUtils";
@@ -38,7 +39,7 @@ const PHYSICS_FACTS = [
   "A satellite moving in a perfectly circular orbit maintains a constant speed because the gravitational pull of the host planet acts perpendicular to the satellite’s direction of motion, doing no work on it."
 ];
 
-const NODE_ID = 'MCH-08';
+const NODE_ID = 'MCH-09';
 const DIFFICULTY_LEVEL = "high school physics"
 const UNLOCKS_MAP: Record<string, string[]> = {
   'MCH-01': ['MCH-03', 'MCH-04'],
@@ -135,6 +136,7 @@ export default function GravityPage() {
 
   return (
     <main className={`page-wrapper ${styles.pageWrapper}`}>
+      {showAnswers && <QuizStudyPlanLink />}
       <div className={styles.inner}>
 
         <Link href="/highschoolquiz/mechanics" className={styles.breadcrumb}>

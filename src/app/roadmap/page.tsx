@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db, auth } from '../../firebase';
+import curriculum from '../../data/curriculum.json';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -55,7 +56,7 @@ const MECHANICS_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })
     title: ['Linear', 'Momentum'],
     defaultStatus: 'locked',
     desc: 'Ballistics, impulse, and center of mass.',
-    url: '/highschoolquiz/mechanics/linear-momentum',
+    url: '/highschoolquiz/mechanics/momentum',
     prerequisites: ['MCH-03', 'MCH-04']
   },
   {
@@ -63,7 +64,7 @@ const MECHANICS_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })
     title: ['Work &', 'Energy'],
     defaultStatus: 'locked',
     desc: 'Potential wells, work-energy theorem, and conservation.',
-    url: '/highschoolquiz/mechanics/work-energy',
+    url: '/highschoolquiz/mechanics/energy',
     prerequisites: ['MCH-03']
   },
   {
@@ -71,7 +72,7 @@ const MECHANICS_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })
     title: ['Projectile', 'Motion'],
     defaultStatus: 'locked',
     desc: 'Two-dimensional kinematics and independent horizontal/vertical components.',
-    url: '/highschoolquiz/mechanics/projectile-motion',
+    url: '/highschoolquiz/mechanics/projectile-and-satellite-motion',
     prerequisites: ['MCH-02']
   },
   {
@@ -87,7 +88,7 @@ const MECHANICS_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })
     title: ['Orbital', 'Mechanics'],
     defaultStatus: 'locked',
     desc: "Kepler's laws, universal gravitation, and escape velocity.",
-    url: '/highschoolquiz/mechanics/orbital-mechanics',
+    url: '/highschoolquiz/mechanics/gravity',
     prerequisites: ['MCH-06', 'MCH-07']
   },
   // New Higher-Difficulty Nodes
@@ -135,7 +136,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["Electrostatics"],
     defaultStatus: 'unlocked',
     desc: "Coulomb's law, electric fields, and electric potential.",
-    url: '/highschoolquiz/electricity-magnetism/electrostatics',
+    url: '/highschoolquiz/electricity/electrostatics',
     prerequisites: []
   },
   {
@@ -143,7 +144,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["Electric Current", "& Circuits"],
     defaultStatus: 'locked',
     desc: "Ohm's law, Kirchhoff's laws, and circuit analysis.",
-    url: '/highschoolquiz/electricity-magnetism/currentcircuits',
+    url: '/highschoolquiz/electricity/currentcircuits',
     prerequisites: ['ENM-01']
   },
   {
@@ -151,7 +152,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["Magnetism"],
     defaultStatus: 'locked',
     desc: "Magnetic field lines, fields on moving charges, and materials.",
-    url: '/highschoolquiz/electricity-magnetism/magnetism',
+    url: '/highschoolquiz/electricity/magnetism',
     prerequisites: ['ENM-02']
   },
   {
@@ -159,7 +160,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["Electromagnetic", "Induction"],
     defaultStatus: 'locked',
     desc: "Faraday's law, Lenz's law, and applied induction.",
-    url: '/highschoolquiz/electricity-magnetism/induction',
+    url: '/highschoolquiz/electricity/induction',
     prerequisites: ['ENM-03']
   },
   // New Higher-Difficulty Nodes
@@ -168,7 +169,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["AC Circuits"],
     defaultStatus: 'locked',
     desc: "RLC circuits, impedance, phasors, and resonance.",
-    url: '/highschoolquiz/electricity-magnetism/ac-circuits',
+    url: '/highschoolquiz/electricity/ac-circuits',
     prerequisites: ['ENM-04']
   },
   {
@@ -176,7 +177,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["EM Waves"],
     defaultStatus: 'locked',
     desc: "Maxwell's equations and electromagnetic radiation.",
-    url: '/highschoolquiz/electricity-magnetism/em-waves',
+    url: '/highschoolquiz/electricity/em-waves',
     prerequisites: ['ENM-04']
   },
   {
@@ -184,7 +185,7 @@ const ENM_TEMPLATE: (Omit<TreeNode, 'status'> & { defaultStatus: Status })[] = [
     title: ["Optics"],
     defaultStatus: 'locked',
     desc: "Geometric optics, diffraction, and wave interference.",
-    url: '/highschoolquiz/electricity-magnetism/optics',
+    url: '/highschoolquiz/electricity/optics',
     prerequisites: ['ENM-06']
   },
 ];
@@ -244,7 +245,8 @@ function HexNode({ node, cx, cy, delay, onNavigate }: {
   };
 
   const c = colors[node.status];
-  const isNavigable = node.status !== 'locked';
+  const available = curriculum.some(lesson => lesson.id === node.url);
+  const isNavigable = node.status !== 'locked' && available;
 
   return (
     <motion.g
@@ -252,6 +254,10 @@ function HexNode({ node, cx, cy, delay, onNavigate }: {
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.4, delay, ease: 'backOut' }}
+      role={isNavigable ? "link" : "img"}
+      tabIndex={isNavigable ? 0 : undefined}
+      aria-label={`${node.title.join(" ")}: ${available ? node.status : "lesson coming soon"}`}
+      onKeyDown={event => { if (isNavigable && event.key === "Enter") onNavigate(node.url); }}
       onClick={() => { if (isNavigable) onNavigate(node.url); }}
       style={{ cursor: isNavigable ? 'pointer' : 'not-allowed' }}
     >

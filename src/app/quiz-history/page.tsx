@@ -11,32 +11,10 @@ import {
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
   Timestamp,
 } from "firebase/firestore";
 import { app } from "../../firebase";
 const auth = getAuth(app);
-interface QuizLog {
-  analysis: string;
-  quizTopic?: string;
-  timestamp?: any;
-  score?: number;
-}
-
-
-
-export default function QuizHistoryPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(false);
-
-  const [quizLogs, setQuizLogs] = useState<QuizLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   type QuizTimestamp = Timestamp | Date | number | string | null;
 
   interface QuizLog {
@@ -85,8 +63,18 @@ export default function QuizHistoryPage() {
     });
   }
 
+
+export default function QuizHistoryPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  const [quizLogs, setQuizLogs] = useState<QuizLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setQuizLogs([]);
       setUser(currentUser);
       setAuthReady(true);
       setError(null);
@@ -105,25 +93,18 @@ export default function QuizHistoryPage() {
   useEffect(() => {
     if (!authReady || !user) return;
   
-    const userId = user.uid;
     let cancelled = false;
   
     async function fetchLogs() {
       try {
-        const db = getFirestore(app);
-        const logsQuery = query(
-          collection(db, "quizLogs"),
-          where("userId", "==", userId),
-        );
-  
-        const snapshot = await getDocs(logsQuery);
-  
+        const token = await user.getIdToken();
+        const response = await fetch("/api/logs", { headers: { Authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error("Unable to load quiz history.");
+        const records = await response.json();
+
         if (cancelled) return;
   
-        const logs: QuizLog[] = snapshot.docs.map((document) => ({
-          id: document.id,
-          ...(document.data() as Omit<QuizLog, "id">),
-        }));
+        const logs: QuizLog[] = records.map((data: QuizLog) => data);
   
         logs.sort(
           (first, second) =>
@@ -181,7 +162,7 @@ export default function QuizHistoryPage() {
             Quiz Analytics <span className="text-[#4f8ef7]">Logs</span>
           </h1>
           <p className="text-zinc-400">
-            Review detailed AI diagnostic evaluations and feedback profiles from your past training iterations.
+            Showing up to 200 saved attempts and 200 legacy records per older storage format. Review detailed AI diagnostic evaluations and feedback profiles from your past training iterations.
           </p>
         </div>
 

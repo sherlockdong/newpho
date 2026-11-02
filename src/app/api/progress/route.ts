@@ -1,3 +1,4 @@
+import curriculum from "../../../data/curriculum.json";
 import { FieldValue } from "firebase-admin/firestore";
 
 import {
@@ -63,10 +64,10 @@ function validateBody(
 
   if (
     typeof body.correctCount !== "number" ||
-    !Number.isFinite(body.correctCount) ||
+    !Number.isInteger(body.correctCount) ||
     typeof body.totalQuestions !== "number" ||
-    !Number.isFinite(body.totalQuestions) ||
-    body.totalQuestions <= 0 ||
+    !Number.isInteger(body.totalQuestions) ||
+    body.totalQuestions <= 0 || body.totalQuestions > 100 ||
     body.correctCount < 0 ||
     body.correctCount > body.totalQuestions
   ) {
@@ -126,10 +127,20 @@ export async function POST(request: Request): Promise<Response> {
       nodeId,
       correctCount,
       totalQuestions,
-      unlocksMap,
-      prerequisitesMap,
     } = validation.body;
 
+    const lessons = curriculum.filter(lesson => lesson.track === progressCollection);
+    if (!lessons.some(lesson => lesson.nodeId === nodeId)) {
+      return Response.json({ error: "Unknown curriculum node" }, { status: 400 });
+    }
+    const trustedPrerequisites: Record<string, string[]> = {};
+    const trustedUnlocks: Record<string, string[]> = {};
+    for (const lesson of lessons) {
+      trustedPrerequisites[lesson.nodeId] = [...new Set([...(trustedPrerequisites[lesson.nodeId] ?? []), ...lesson.prerequisites])];
+      for (const prerequisite of lesson.prerequisites) {
+        trustedUnlocks[prerequisite] = [...new Set([...(trustedUnlocks[prerequisite] ?? []), lesson.nodeId])];
+      }
+    }
     const database = getAdminFirestore();
     const progressRef = database
       .collection("users")
@@ -143,7 +154,7 @@ export async function POST(request: Request): Promise<Response> {
         snapshot.exists ? snapshot.data() : {}
       ) as Record<string, string>;
 
-      if (!checkNodeAccessible(nodeId, prerequisitesMap, current)) {
+      if (!checkNodeAccessible(nodeId, trustedPrerequisites, current)) {
         return {
           ok: false as const,
           status: 403,
@@ -153,8 +164,8 @@ export async function POST(request: Request): Promise<Response> {
 
       const updates = buildProgressUpdates(
         nodeId,
-        unlocksMap,
-        prerequisitesMap,
+        trustedUnlocks,
+        trustedPrerequisites,
         current,
         correctCount,
         totalQuestions,

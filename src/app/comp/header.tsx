@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import styles from "./header.module.css";
 import {
   getAuth,
   onAuthStateChanged,
@@ -15,7 +16,7 @@ const auth = getAuth(app);
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(false);
+  const [navMenu, setNavMenu] = useState<"sections" | "about" | null>(null);
 
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -46,16 +47,16 @@ export default function Header() {
 
   return (
     <motion.header
-      className="fixed left-1/2 top-4 z-50 w-max site-header-floating"
+      className={styles.header}
       style={{ x: "-50%" }}
       variants={{
         visible: { y: 0 },
         hidden: { y: -150 }, // Pushes the header exactly 150px up and out of frame
       }}
-      animate={hidden ? "hidden" : "visible"}
+      animate={hidden && !navMenu ? "hidden" : "visible"}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <div className="flex items-center gap-8 md:gap-12 px-8 h-14 rounded-full bg-[#0A0A18]/80 backdrop-blur-md border border-zinc-800 shadow-2xl nav-pill-container">
+      <div className={styles.inner}>
 
         {/* 1. BRAND / LOGO (Left Side) */}
         <div className="nav-brand-container">
@@ -65,24 +66,25 @@ export default function Header() {
         </div>
 
         {/* 2. NAVIGATION LINKS (Center) */}
-        <nav className="flex items-center text-sm font-medium text-zinc-300 main-nav-list">
+        <nav className={styles.nav}>
 
-          <div className="relative group cursor-pointer nav-dropdown">
-            <span className="hover:text-[#4f8ef7] transition-colors nav-trigger">Sections</span>
-            <ul className="absolute left-1/2 -translate-x-1/2 top-full w-56 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
+          <div className={styles.dropdown} onKeyDown={e => { if (e.key === "Escape") setNavMenu(null); }}>
+            <button type="button" aria-expanded={navMenu === "sections"} onClick={() => setNavMenu(navMenu === "sections" ? null : "sections")}>Sections</button>
+            <ul data-open={navMenu === "sections"} className="absolute left-1/2 -translate-x-1/2 top-full w-56 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
               <li><Link href="/highschoolquiz" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">High School Physics</Link></li>
               <li><Link href="/fmapb" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">F=ma / Physics Bowl</Link></li>
               <li><Link href="/usapho" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">USAPhO</Link></li>
             </ul>
           </div>
 
+          <Link href="/study-plan" className="hover:text-[#4f8ef7] transition-colors nav-link">Study Plan</Link>
           <Link href="/quiz-history" className="hover:text-[#4f8ef7] transition-colors nav-link">Logs</Link>
           <Link href="/insights" className="hover:text-[#4f8ef7] transition-colors nav-link">Insights</Link>
           <Link href="/roadmap" className="hover:text-[#4f8ef7] transition-colors nav-link">Roadmap</Link>
 
-          <div className="relative group cursor-pointer nav-dropdown">
-            <span className="hover:text-[#4f8ef7] transition-colors nav-trigger">About Us</span>
-            <ul className="absolute left-1/2 -translate-x-1/2 top-full w-48 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
+          <div className={styles.dropdown} onKeyDown={e => { if (e.key === "Escape") setNavMenu(null); }}>
+            <button type="button" aria-expanded={navMenu === "about"} onClick={() => setNavMenu(navMenu === "about" ? null : "about")}>About Us</button>
+            <ul data-open={navMenu === "about"} className="absolute left-1/2 -translate-x-1/2 top-full w-48 bg-[#0A0A18] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col dropdown-menu">
               <li><Link href="/aboutus" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">Meet the Team</Link></li>
               <li><Link href="/contact" className="block rounded-lg hover:bg-white/5 hover:text-[#4f8ef7] transition-colors dropdown-item">Contact Us</Link></li>
             </ul>
